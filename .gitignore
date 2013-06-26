@@ -1,0 +1,9 @@
+/dime-client-model/nbproject/private/private.properties
+/dime-client-model/build/
+/dime-client-model/dist/
+*.*~
+/dime-client-mobile/gen/
+dime-client-mobile/nbandroid/private.properties
+dime-client-mobile/local.properties
+dime-client-mobile/libs/dimeModel.jar
+dime-client-mobile/bin/
