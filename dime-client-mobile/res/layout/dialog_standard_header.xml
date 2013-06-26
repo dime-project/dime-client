@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@android:style/Theme.Dialog"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="#333333" >
+
+        <TextView
+            android:id="@+dialog/title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <View
+                android:layout_width="2px"
+                android:layout_height="fill_parent"
+                android:layout_gravity="right"
+                android:background="@drawable/gradient_double_line" />
+
+            <Button
+                android:id="@+dialog/button_info"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/button_transp_bar"
+                android:drawableRight="@drawable/icon_white_info"
+                android:paddingRight="12dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <View
+                android:layout_width="2px"
+                android:layout_height="fill_parent"
+                android:layout_gravity="right"
+                android:background="@drawable/gradient_double_line" />
+
+            <Button
+                android:id="@+dialog/button_search"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/button_transp_bar"
+                android:drawableRight="@drawable/icon_white_search"
+                android:paddingRight="4dp" />
+        </LinearLayout>
+    </LinearLayout>
+    
+    <View 
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#525452"/>
+
+    <LinearLayout
+        android:id="@+dialog/info_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#333333"
+        android:paddingBottom="6dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="4dp"
+        android:paddingTop="6dp" >
+
+        <TextView
+            android:id="@+dialog/info_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textColor="@android:color/white"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+dialog/search_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="6dp"
+        android:visibility="gone" >
+
+        <AutoCompleteTextView
+            android:id="@+dialog/searchfield"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="fill_vertical"
+            android:hint="search items..."
+            android:singleLine="true"
+            android:text="" >
+
+            <requestFocus />
+        </AutoCompleteTextView>
+        
+        <TextView 
+            android:id="@+dialog/searchresults"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="0 results"
+            android:layout_marginLeft="6dp" />
+    </LinearLayout>
+
+</LinearLayout>

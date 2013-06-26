@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <dimen name="corner_roundness">9dp</dimen>
+    <dimen name="focus_width">3dp</dimen>
+    <dimen name="focus_pad">2dp</dimen>
+    
+</resources>

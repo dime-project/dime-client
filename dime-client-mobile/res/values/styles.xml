@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="default_theme" parent="android:Theme.Light"></style>
+
+    <style name="dimeTheme" parent="android:Theme.Light.NoTitleBar">
+        <item name="android:textColor">@color/dm_text</item>
+        <item name="android:typeface">monospace</item>
+    </style>
+
+    <style name="dime_bar">
+        <item name="android:windowContentOverlay">@drawable/actionbar_shadow</item>
+    </style>
+
+    <style name="dm_tab" parent="@android:style/Widget.TabWidget">
+        <item name="android:textColor">#FF0000</item>
+        <item name="android:background">@drawable/tab</item>
+    </style>
+
+    <style name="dime_labelTV" parent="@android:style/Widget.TextView">
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    
+    <!--
+        <item name="android:paddingLeft"></item>
+        <item name="android:paddingRight"></item>
+        <item name="android:paddingTop"></item>
+        <item name="android:paddingBottom"></item>
+        
+     -->
+</resources>

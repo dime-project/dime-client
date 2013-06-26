@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="vertical"
+    android:padding="10dp" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:descendantFocusability="blocksDescendants"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+placeitem/image"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/icon_black_place" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingLeft="5dp" >
+
+            <TextView
+                android:id="@+placeitem/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Place unknown"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+placeitem/distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Distance 200m" />
+
+            <TextView
+                android:id="@+placeitem/favourite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:text="favourite"
+                android:textColor="@color/dm_col4_low" />
+
+            <TextView
+                android:id="@+placeitem/current"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="current"
+                android:textColor="@color/dm_col2_low" />
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" >
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:baselineAligned="false" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Recommendation" />
+
+                    <RatingBar
+                        android:id="@+placeitem/ratingSocial"
+                        style="?android:attr/ratingBarStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:isIndicator="true"
+                        android:numStars="5"
+                        android:stepSize="0.1" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Public rating" />
+
+                    <RatingBar
+                        android:id="@+placeitem/ratingPublic"
+                        style="?android:attr/ratingBarStyleSmall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:isIndicator="true"
+                        android:numStars="5"
+                        android:stepSize="0.1" />
+                </TableRow>
+            </TableLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

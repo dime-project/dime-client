@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- text -->
+    <color name="dm_text">#303030</color>
+    <color name="dm_back">#ffffff</color>
+    <!-- backgrounds -->
+    <color name="dm_col1">#9cc4e4</color>
+    <color name="dm_col1_low">#60a0d4</color>
+    <color name="dm_col2">#f0c000</color>
+    <color name="dm_col2_alt">#ffe681</color>
+    <color name="dm_col2_low">#a48300</color>
+    <color name="dm_col3">#888784</color>
+    <color name="dm_col3_low">#61615e</color>
+    <color name="dm_col4">#e49ca0</color>
+    <color name="dm_col4_low">#d9747a</color>
+    <color name="dm_col5">#9ce4bc</color>
+    <color name="dm_trans_low">#44000000</color>
+    <color name="dm_focus">#58e49cc4</color>
+    <color name="dm_row_alternate">#DFDFDF</color>
+    <color name="dm_row_alternate_light">#ececec</color>
+    <color name="metabar_grey">#dddedd</color>
+    <color name="dm_neutral">#939393</color>
+    <!-- warning levels -->
+    <color name="warning_level_low">#d00d1d</color>
+    <color name="warning_level_neutral">#286496</color>
+    <color name="warning_level_medium">#f0c000</color>
+    <color name="warning_level_high">#649614</color>
+    <!-- dividers -->
+    <color name="divider_black">#000000</color>
+    <color name="divider_grad2_top">#6b6b6b</color>
+    <color name="divider_grad2_bottom">#454545</color>
+    <color name="divider_blue">#286496</color>
+    <color name="divider_blue_grad2_top">#7bacd3</color>
+    <color name="divider_blue_grad2_bottom">#7fbdf0</color>
+    <color name="bar_grad_top">#454545</color>
+    <color name="bar_grad_bottom">#212121</color>
+    <color name="divider_bottom">#8c8c8c</color>
+    <!-- buttons -->
+    <color name="button_blue_top">#96c8f0</color>
+    <color name="button_blue_bottom">#64a0c8</color>
+    <color name="button_yellow_top">#f5d049</color>
+    <color name="button_yellow_bottom">#ecbe18</color>
+    <color name="button_grey_top">#868686</color>
+    <color name="button_grey_bottom">#606060</color>
+    <color name="button_shadow_top">#96000000</color>
+    <color name="button_shadow_bottom">#32000000</color>
+</resources>

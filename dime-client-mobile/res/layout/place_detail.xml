@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:descendantFocusability="blocksDescendants"
+        android:orientation="vertical"
+        android:paddingBottom="10dip"
+        android:paddingTop="10dip"
+        android:paddingLeft="10dp"
+    	android:paddingRight="10dp" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dip"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+placedetail/image"
+                android:layout_width="100dip"
+                android:layout_height="100dip"
+                android:src="@drawable/icon_black_place" />
+
+            <LinearLayout
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingLeft="5dip" >
+
+                <TextView
+                    android:id="@+placedetail/distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Distance" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:id="@+placedetail/favourite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:text="favourite"
+                        android:textColor="@color/dm_col4_low" />
+
+                    <TextView
+                        android:id="@+placedetail/current"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="current"
+                        android:textColor="@color/dm_col2_low" />
+                </LinearLayout>
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dip" >
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Public rating" />
+
+                        <RatingBar
+                            android:id="@+placedetail/ratingPublic"
+                            style="?android:attr/ratingBarStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dip"
+                            android:isIndicator="true"
+                            android:numStars="5"
+                            android:stepSize="0.1" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:baselineAligned="false" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Social rating" />
+
+                        <RatingBar
+                            android:id="@+placedetail/ratingSocial"
+                            style="?android:attr/ratingBarStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dip"
+                            android:isIndicator="true"
+                            android:numStars="5"
+                            android:stepSize="0.1" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Your rating" />
+
+                        <RatingBar
+                            android:id="@+placedetail/ratingPersonal"
+                            style="?android:attr/ratingBarStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right"
+                            android:isIndicator="true"
+                            android:numStars="5"
+                            android:stepSize="0.1" />
+                    </TableRow>
+                </TableLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+placedetail/info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dip"
+            android:layout_marginTop="5dip"
+            android:text=""
+            android:textStyle="bold"
+            android:paddingLeft="10dp"
+    		android:paddingRight="10dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+    		android:paddingRight="10dp" >
+
+            <Button
+                android:id="@+placedetail/button_openmaps"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_col1_blue"
+                android:focusable="true"
+                android:text="open in Maps" />
+
+            <Button
+                android:id="@+placedetail/button_openurl"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_col1_blue"
+                android:focusable="true"
+                android:text="open website" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dip"
+            android:text="Set your Rating: "
+            android:paddingLeft="10dp"
+    		android:paddingRight="10dp" />
+
+        <RatingBar
+            android:id="@+placedetail/ratingSetPersonal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</ScrollView>

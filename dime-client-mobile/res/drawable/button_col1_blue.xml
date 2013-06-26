@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <item android:state_pressed="true">
+        <nine-patch android:src="@drawable/button_col1_blue_pressed"></nine-patch>
+    </item>
+    <item android:state_focused="true">
+        <layer-list >
+            <item >
+		        <shape>
+		            <stroke android:width="@dimen/focus_width" android:color="@color/dm_focus"/>
+		            <gradient 
+		           	    android:startColor="@color/button_blue_top"
+		           	    android:endColor="@color/button_blue_bottom"
+		           	    android:type="linear"
+		           	    android:angle="270"/>
+				    <corners android:radius="@dimen/corner_roundness"/>
+				    <padding android:left="@dimen/focus_pad"
+				        android:top="@dimen/focus_pad"
+				        android:right="@dimen/focus_pad"
+				        android:bottom="@dimen/focus_pad" />
+		        </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item>
+         <nine-patch android:src="@drawable/button_col1_blue_normal"></nine-patch>
+    </item>
+    
+</selector>
+
+

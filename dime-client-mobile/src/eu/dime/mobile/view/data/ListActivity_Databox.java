@@ -1,0 +1,60 @@
+package eu.dime.mobile.view.data;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import eu.dime.control.LoadingViewHandler;
+import eu.dime.mobile.helper.handler.LoadingViewHandlerFactory;
+import eu.dime.mobile.helper.objects.DimeIntentObject;
+import eu.dime.mobile.helper.DimeIntentObjectHelper;
+import eu.dime.mobile.view.abstr.ListActivityDisplayableItem;
+import eu.dime.mobile.view.adapter.BaseAdapter_Standard;
+import eu.dime.model.Model;
+import eu.dime.model.TYPES;
+import eu.dime.model.displayable.DisplayableItem;
+import eu.dime.model.specialitem.NotificationItem;
+
+import java.util.List;
+
+public class ListActivity_Databox extends ListActivityDisplayableItem {
+
+	/**
+     * Called when the activity is first created.
+     */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+    	super.onCreate(savedInstanceState);
+    	TAG = ListActivity_Databox.class.getSimpleName();
+        setBaseAdapter(new BaseAdapter_Standard());
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected List<DisplayableItem> loadListData() {
+        return (List<DisplayableItem>) (Object) Model.getInstance().getAllItems(mrContext, dio.getItemType());
+    }
+
+    @Override
+    protected void initializeHeader() {
+        
+    }
+    
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent myIntent = new Intent(ListActivity_Databox.this, TabActivity_Databox_Detail.class);
+        startActivity(DimeIntentObjectHelper.populateIntent(myIntent, new DimeIntentObject(getListItems().get(position))));
+    }
+
+	@Override
+	public void notificationReceived(String fromHoster, NotificationItem item) {
+		if(item.getElement().getType().equalsIgnoreCase(TYPES.DATABOX.toString())){
+    		reloadList();
+    	}
+	}
+
+	@Override
+	protected LoadingViewHandler createLoadingViewHandler() {
+		return LoadingViewHandlerFactory.<ListActivity_Databox>createLVH(ListActivity_Databox.this);
+	}
+}

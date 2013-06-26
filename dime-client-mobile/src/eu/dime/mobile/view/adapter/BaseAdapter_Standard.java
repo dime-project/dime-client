@@ -1,0 +1,138 @@
+package eu.dime.mobile.view.adapter;
+
+import android.app.Activity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import eu.dime.mobile.R;
+import eu.dime.mobile.helper.AndroidModelHelper;
+import eu.dime.mobile.helper.ImageHelper;
+import eu.dime.mobile.helper.UIHelper;
+import eu.dime.mobile.helper.listener.CheckListener;
+import eu.dime.mobile.helper.listener.ExpandClickListener;
+import eu.dime.mobile.view.abstr.BaseAdapterDisplayableItem;
+import eu.dime.model.ModelHelper;
+import eu.dime.model.displayable.AgentItem;
+import eu.dime.model.displayable.DisplayableItem;
+import eu.dime.model.displayable.GroupItem;
+import eu.dime.model.displayable.ResourceItem;
+import eu.dime.model.displayable.ShareableItem;
+
+public class BaseAdapter_Standard extends BaseAdapterDisplayableItem {
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		// Keeps reference to avoid future findViewById()
+		DimeViewHolder viewHolder;
+		final DisplayableItem di = mItems.get(position);
+		if (convertView == null) {
+			viewHolder = new DimeViewHolder();
+			convertView = mInflater.inflate(R.layout.adapter_standard_item, null);
+			viewHolder.name = (TextView) convertView.findViewById(R.adapter.name);
+			viewHolder.image = (ImageView) convertView.findViewById(R.adapter.image);
+			viewHolder.attribute1 = (TextView) convertView.findViewById(R.adapter.attribute1);
+			viewHolder.attribute2 = (TextView) convertView.findViewById(R.adapter.attribute2);
+			viewHolder.selectedCB = (CheckBox) convertView.findViewById(R.adapter.checkBox);
+			viewHolder.expander = (ImageButton) convertView.findViewById(R.id.buttonExp);
+			viewHolder.lockedIcon = (ImageView) convertView.findViewById(R.id.locked);
+			viewHolder.expandedArea = (LinearLayout) convertView.findViewById(R.id.expandedArea);
+			viewHolder.previewArea = (LinearLayout) convertView.findViewById(R.adapter.previewArea);
+			viewHolder.previewContainer = (LinearLayout) convertView.findViewById(R.adapter.previewContainer);
+			viewHolder.previewNoItems = (TextView) convertView.findViewById(R.adapter.preview_noitems);
+			viewHolder.infoContainer = (LinearLayout) convertView.findViewById(R.adapter.info_container);
+			viewHolder.sharedContainer = (LinearLayout) convertView.findViewById(R.adapter.shared_container);
+			viewHolder.sharedNoItems = (TextView) convertView.findViewById(R.adapter.shared_noitems);
+	    	convertView.setTag(viewHolder);
+		} else {
+			viewHolder = (DimeViewHolder) convertView.getTag();
+		}
+		viewHolder.removeAllViews();
+    	//initialize values of all DisplayableItems
+		viewHolder.name.setText((ModelHelper.isParentable(di)) ? di.getName() + " ("+di.getItems().size()+")": di.getName());
+		ImageHelper.loadImageAsynchronously(viewHolder.image, di, context);
+		viewHolder.selectedCB.setChecked(selection.contains(di.getGuid()));
+		viewHolder.lockedIcon.setVisibility(View.GONE);
+		//initialize values of GroupItem
+		switch (di.getMType()) {
+		case GROUP:
+			GroupItem group = (GroupItem) di;
+			viewHolder.attribute1.setText(di.getType());
+			if (group.getGroupType().equals(GroupItem.VALID_GROUP_TYPE_VALUES[0])){
+				convertView.setBackgroundColor(context.getResources().getColor(R.color.dm_col2_alt));
+			} else if (group.getGroupType().equals(GroupItem.VALID_GROUP_TYPE_VALUES[1])) {
+				convertView.setBackgroundColor(context.getResources().getColor(R.color.dm_col5));
+			}
+			if(!group.isEditable()){
+				viewHolder.lockedIcon.setVisibility(View.VISIBLE);
+			}
+			break;
+		case PERSON:
+			viewHolder.attribute1.setVisibility(View.GONE);
+			AndroidModelHelper.loadGroupsOfChildAsynchronously(context, mrContext.owner, di, viewHolder.attribute2);
+			break;
+		case RESOURCE:
+			ResourceItem resource = (ResourceItem) di;
+			if (resource.getMimeType() != null && resource.getMimeType().length() > 0) {
+				viewHolder.attribute1.setText(resource.getMimeType());
+	        }
+	        if (resource.getFileSize() != null) {
+	        	viewHolder.attribute2.setText(resource.getFileSize() + " Byte");
+	        	viewHolder.attribute2.setVisibility(View.VISIBLE);
+	        }
+			break;
+		default:
+			viewHolder.attribute1.setText(di.getType());
+			break;
+		}
+		if (expandedListItemId == position) {
+			viewHolder.expandedArea.setVisibility(View.VISIBLE);
+			viewHolder.expander.setBackgroundResource(R.drawable.button_collapse);
+    		UIHelper.updateInfoContainer((Activity)context, viewHolder.infoContainer, di);
+    		if(ModelHelper.isParentable(di)){
+    			viewHolder.previewArea.setVisibility(View.VISIBLE);
+    			AndroidModelHelper.loadChildrenOfDisplayableItemAsynchronously(context, mrContext.owner, viewHolder.previewContainer, di, viewHolder.previewNoItems);
+    		} else {
+    			viewHolder.previewArea.setVisibility(View.GONE);
+    		}
+    		if(ModelHelper.isAgent(di.getMType())) {
+    			AndroidModelHelper.loadSharedResourcesAsynchronously(context, mrContext.owner, (AgentItem) di, viewHolder.sharedContainer, viewHolder.sharedNoItems);
+    		} else if(ModelHelper.isShareable(di.getMType())) {
+    			AndroidModelHelper.loadAccessingAgentsAsynchronously(context, (ShareableItem) di, viewHolder.sharedContainer, viewHolder.sharedNoItems);
+    		}
+		} else {
+			viewHolder.expandedArea.setVisibility(View.GONE);
+			viewHolder.expander.setBackgroundResource(R.drawable.button_expand);
+		}
+		viewHolder.selectedCB.setOnCheckedChangeListener(new CheckListener<DisplayableItem>(position, this));
+		viewHolder.expander.setOnClickListener(new ExpandClickListener<DisplayableItem>(position, this));
+		return convertView;
+	}
+	
+	static class DimeViewHolder {
+		TextView name;
+		ImageView image;
+		TextView attribute1;
+		TextView attribute2;
+		CheckBox selectedCB;
+		ImageButton expander;
+		ImageView lockedIcon;
+    	LinearLayout expandedArea;
+    	LinearLayout previewArea;
+    	LinearLayout previewContainer;
+    	TextView previewNoItems;
+    	LinearLayout infoContainer;
+    	LinearLayout sharedContainer;
+    	TextView sharedNoItems;
+    	
+    	public void removeAllViews() {
+    		infoContainer.removeAllViews();
+    		sharedContainer.removeAllViews();
+    		previewContainer.removeAllViews();
+    	}
+	}
+
+}

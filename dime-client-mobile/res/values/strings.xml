@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">di.me</string>
+    
+    <!-- tab -->
+    <string name="tab_persons">Persons</string>
+    <string name="tab_groups">Groups</string>
+    <string name="tab_personDetailProfile">Profile</string>
+    <string name="tab_personDetailData">Data</string>
+    <string name="tab_personDetailMessages">Liveposts</string>
+    <string name="tab_groupDetail">Group detail: </string>
+    <string name="tab_profileCards">My Profile Cards</string>
+    <string name="tab_profileDetail">Card Detail: </string>
+    <string name="tab_communication">Liveposts</string>
+    <string name="tab_communicationDetail">Livepost: </string>
+    <string name="tab_myResourcesData">Resources</string>
+    <string name="tab_myResourcesDataboxes">Databoxes</string>
+    <string name="tab_dataDetail">Resource detail: </string>
+    <string name="tab_databoxDetail">Databox detail: </string>
+    <string name="tab_settingsGeneral">General</string>
+    <string name="tab_settingsServices">Services</string>
+    <string name="tab_settingsRules">Rules</string>
+    <string name="tab_places">Places</string>
+    <string name="tab_placeDetail">Place detail: </string>
+    <string name="tab_situations">Situations</string>
+    <string name="tab_activities">Activities</string>
+    <string name="tab_notifications">Notifications</string>
+    <string name="tab_publicResolver">Public resolver</string>
+    
+    <!-- buttons -->
+    <string name="peopleBtnText">People</string>
+    <string name="myProfileBtnText">myProfile</string>
+    <string name="communicateBtnText">Communicate</string>
+    <string name="dataBtnText">Data</string>
+    <string name="situationsBtnText">Situations/Places</string>
+    <string name="shareBtnText">Share</string>
+    <string name="clearCredentialsBtnText">Clear stored password</string>
+    <string name="exitSystemBtnText">Exit di.me</string>
+    <string name="autoDetectionBtnOn">turn crawling sensor data on</string>
+    <string name="autoDetectionBtnOff">turn crawling sensor data off</string>
+    
+    <!-- hints -->
+    <string name="emptySearchText">search</string>
+    
+    <!-- labels and captions -->
+    <string name="people_view_caption">People</string>
+    <string name="communication_view_caption">Communication</string>
+    <string name="share_view_caption">Share</string>
+    <string name="data_view_caption">MyData</string>
+    <string name="profile_view_caption">MyProfiles</string>
+    <string name="situation_view_caption">Situations</string>
+    <string name="no_notifications_pending">no notifications</string>
+    <string name="autoDetectionDialogTitle">Crawling settings</string>
+    <string name="acceptTermsAndConditions">By login into the system, you accept the &lt;a href=\"http://dimedns.bdigital.org:8080/UserInformationAndUsageTerms.html\"&gt;User Information and Usage Terms&lt;/a&gt;</string>
+    <string name="autoDetectionDialogText">If you switch on this setting, sensor data from your device will be crawled and sent to the personal server. Some services will use this data to provide automatic suggestions. A complete list of services which are using this data is available on the &lt;a href=\"http://dimedns.bdigital.org:8080/UserInformationAndUsageTerms.html\"&gt;Di.me documentation&lt;/a&gt;.</string>
+	<string name="account_configuration_label">Settings</string>
+	
+	<!-- settings -->
+	<string name="settings_view_info_private_server">Private Server information</string>
+	<string name="settings_view_info_client">Client information</string>
+	<string name="settings_view_info_label">Informations</string>
+	<string name="settings_view_info">Di.me info</string>
+	<string name="settings_view_info_client_version">Di.me version</string>
+	<string name="settings_view_terms">Terms and conditions</string>
+	<string name="settings_view_howto">How-to</string>
+	<string name="settings_view_functionalities">Add-on functionalities</string>
+	<string name="settings_view_password">Password settings</string>
+	<string name="settings_view_toggleContextCrawlingBtn_label">Store Android sensor data:</string>
+	<string name="settings_view_toggleSet_label">Scientific Evaluation:</string>
+    <string name="settings_view_toggleContextCrawlingBtn">Send location and sensor data to your Private Server. Activitated services use this information, e.g. the ProximityService to show people nearby to you. </string>
+	<string name="settings_view_toggleSet">Send anonymous click data and statistic for the scientific evaluation of the prototype. Further Information: see link</string>
+    
+    <!-- dialog labels -->
+    
+    <!-- items of action menu -->
+    <string name="action_addPeopleToGroup">Add selected people to group</string>
+    <string name="action_addPeopleToGroupDetail">Add people to group</string>
+    <string name="action_removeSelectedPeopleFromGroup">Remove selected people from group</string>
+    <string name="action_renameGroup">Rename group</string>
+    <string name="action_mergeSelection">Merge selected people</string>
+    <string name="action_shareSelectedItems">Share selected</string>
+    <string name="action_share">Share</string>
+    <string name="action_unshare">Unshare</string>
+    <string name="action_saveAsNewGroup">Save as new group</string>
+    <string name="action_addNewGroup">Add new group</string>
+    <string name="action_deleteSelectedGroups">Delete selected group(s)</string>
+    <string name="action_searchPublicResolverService">Search Di.me User Directory</string>
+    <string name="action_importSpecificContactFromPhoneBook">Import contact from phone book</string>
+    <string name="action_importAllContactsFromPhoneBook">Import all contacts from phone book</string>
+    <string name="action_addToNewGroup">Add selected people to new group</string>
+    <string name="action_uploadFile">Upload file</string>
+    <string name="action_uploadImage">Upload image</string>
+    <string name="action_assignToNewDatabox">Assign selected resource(s) to new databox</string>
+    <string name="action_assignToDatabox">Assign selected resource(s) to databox</string>
+    <string name="action_addNewDatabox">Add new databox</string>
+    <string name="action_deleteSelectedDataboxes">Delete selected databox(es)</string>
+    <string name="action_addResourcesToDatabox">Add resource(s) to databox</string>
+    <string name="action_removeResourcesFromDatabox">Remove selected resource(s) from databox</string>
+    <string name="action_newMessage">New livepost</string>
+    <string name="action_newProfile">New profile</string>
+    <string name="action_deleteSelectedProfiles">Delete selected profile(s)</string>
+    <string name="action_addExistingAttribute">Add existing attribute</string>
+    <string name="action_addNewAttribute">Add new attribute</string>
+    <string name="action_deleteSelectedAttributeCategories">Delete selected attribute(s)</string>
+    <string name="action_exit">Exit</string>
+    <string name="action_logout">Logout</string>
+    <string name="action_newSituation">New situation</string>
+    <string name="action_deleteSituation">Delete selected situation(s)</string>
+    <string name="action_setCurrentPositionTag">Set manually as current position</string>
+    <string name="action_removeCurrentPositionTag">Remove current position tag</string>
+    <string name="action_setFavouriteTag">Set favourite tag</string>
+    <string name="action_removeFavouriteTag">Remove favourite tag</string>
+    <string name="action_removeSelectedNotifications">Remove selected notifications</string>
+    <string name="action_removeAllNotifications">Remove all notifications</string>
+    <string name="action_renameResource">Rename resource</string>
+    <string name="action_removeLivepost">Delete selected livepost(s)</string>
+    <string name="action_removeSelectedResources">Delete selected resource(s)</string>
+    <string name="action_connectServiceAdapter">Connect service</string>
+    <string name="action_disconnectServiceAdapter">Disconnect selected service(s)</string>
+    <string name="action_editItem">Edit item</string>
+    <string name="action_removePerson">Delete selected person(s)</string>
+    <string name="action_homeButtonPressed">homePressed</string>
+    
+    <!--  other -->
+    <string name="sharing_warningLevel_low">It is not recommended to share </string>
+    <string name="sharing_warningLevel_high">Warning: you better do not share </string>
+    <string name="sharing_warning_not_possible">Sharing not possible because not all items selected!</string>
+    <string name="sharing_no_receiver">no receiver(s) selected</string>
+    <string name="sharing_no_items">no item(s) selected</string>
+    <string name="sharing_no_warnings">Sharing possible without warnings!</string>
+    <string name="sharing_label_receivers">Recipients:</string>
+    <string name="sharing_label_items">Items:</string>
+    <string name="sharing_label_warnings">Warnings:</string>
+    
+    <string name="sharing_dialog_select_profile_info">The selected profile will be used for sharing. If you chose a different profile than the one people know, they may become linkable!</string>
+    <string name="sharing_dialog_select_group_info">All containing persons of the selected group(s) will get access to the shared items, even those persons you probably add to the group after the initial sharing process!</string>
+    <string name="sharing_dialog_select_persons_info">The selected person(s) will get access to the shared items!</string>
+    <string name="sharing_dialog_select_databoxes_info">All containing resources of the selected databox(es) will be shared to the receiver(s), even those resources you probably add to the databox after the initial sharing process!</string>
+    <string name="sharing_dialog_select_resources_info">The selected resource(s) will be shared to the receiver(s)!</string>
+    <string name="sharing_dialog_select_liveposts_info">The selected livepost(s) will be shared to the receiver(s)!</string>
+    
+    <string name="dialog_add_resources_to_databox_info">If the databox is shared to somebody they will automatically get access to the resource(s) you currently add!</string>
+    <string name="dialog_add_people_to_group_info">All people will get access to the data you have shared to the group before!</string>
+    
+    <string name="service_connection_dialog_label">Select service</string>
+    <string name="service_connection_dialog_info">By connecting to services you will get access to data or further functionalities!</string>
+    
+    <!--  self evaluation tool -->
+    <string name="self_evaluation_tool_actiondialog">actiondialog</string>
+    <string name="self_evaluation_tool_search">search</string>
+    <string name="self_evaluation_tool_expandedview">expandedview</string>
+    <string name="self_evaluation_tool_dialog_canceled">operation_canceled</string>
+    <string name="self_evaluation_tool_dialog_edit_item_save">edit_item_confirmed</string>
+    <string name="self_evaluation_tool_dialog_account_configuration_save">account_created</string>
+    <string name="self_evaluation_tool_dialog_account_configuration_update">account_updated</string>
+    <string name="self_evaluation_tool_dialog_unshare_save">unshare_items_confirmed</string>
+    <string name="self_evaluation_tool_dialog_merge_save">merge_confirmed</string>
+    <string name="self_evaluation_tool_dialog_public_search_save">person_from_public_resolver_added</string>
+</resources>

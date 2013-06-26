@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/gradient_dime_top"
+        android:gravity="right" >
+
+            <TextView
+                android:id="@+main/dime_user"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textColor="@android:color/white"
+                android:gravity="center_vertical"
+                android:layout_gravity="right"
+                android:paddingRight="10dp"
+                android:textSize="11sp" />
+
+            <View
+                android:layout_width="2px"
+                android:layout_height="fill_parent"
+                android:layout_gravity="right"
+                android:background="@drawable/gradient_double_line" />
+
+            <ImageButton
+                android:id="@+main/logout"
+                android:layout_width="60dp"
+                android:layout_height="48dp"
+                android:background="@drawable/button_transp_bar"
+                android:padding="4dp"
+                android:src="@drawable/icon_white_logout" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#525452" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3px"
+        android:background="@drawable/actionbar_shadow" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:layout_marginTop="-42dp" >
+
+        <ImageView
+            android:id="@+main/dime_logo"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/logo_white" />
+
+        <TextView
+            android:id="@+main/dime_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="32dp"
+            android:layout_marginTop="32dp"
+            android:textColor="@android:color/white"
+            android:textSize="6sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_weight="1" >
+
+            <Button
+                android:id="@+main/button_people"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@drawable/button_transp"
+                android:drawableTop="@drawable/icon_black_people"
+                android:focusable="true"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:text="People" />
+
+            <View
+                android:layout_width="6dp"
+                android:layout_height="fill_parent" />
+
+            <Button
+                android:id="@+main/button_communication"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@drawable/button_transp"
+                android:drawableTop="@drawable/icon_black_communication"
+                android:focusable="true"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:text="Communication" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_weight="1" >
+
+            <Button
+                android:id="@+main/button_mydata"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@drawable/button_transp"
+                android:drawableTop="@drawable/icon_black_mydata"
+                android:focusable="true"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:text="My Data" />
+
+            <View
+                android:layout_width="6dp"
+                android:layout_height="fill_parent" />
+
+            <Button
+                android:id="@+main/button_myprofile"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@drawable/button_transp"
+                android:drawableTop="@drawable/icon_black_myprofile"
+                android:focusable="true"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:text="My Profile Cards" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_weight="1" >
+
+            <Button
+                android:id="@+main/button_calendar"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@drawable/button_transp"
+                android:drawableTop="@drawable/icon_black_calendar"
+                android:focusable="true"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:text="Calendar" />
+
+            <View
+                android:layout_width="6dp"
+                android:layout_height="fill_parent" />
+
+            <Button
+                android:id="@+main/button_settings"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@drawable/button_transp"
+                android:drawableTop="@drawable/icon_black_settings"
+                android:focusable="true"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:text="Settings" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <requestFocus />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="6dp" >
+
+            <Button
+                android:id="@+main/button_place"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_col1_blue"
+                android:drawableLeft="@drawable/icon_color_myplaces"
+                android:drawablePadding="6dp"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:paddingBottom="2dp"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:paddingTop="2dp"
+                android:text="place unknown" />
+
+            <Button
+                android:id="@+main/button_situation"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:background="@drawable/button_col2_yellow"
+                android:drawableLeft="@drawable/icon_color_situation"
+                android:drawablePadding="6dp"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:paddingBottom="2dp"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:paddingTop="2dp"
+                android:text="situation unknown" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+main/button_notification"
+            android:layout_width="fill_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="6dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:background="@drawable/button_col3_grey"
+            android:drawableLeft="@drawable/icon_black_notification"
+            android:drawablePadding="6dp"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:paddingBottom="2dp"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="2dp"
+            android:text="notifications" />
+    </LinearLayout>
+
+</LinearLayout>

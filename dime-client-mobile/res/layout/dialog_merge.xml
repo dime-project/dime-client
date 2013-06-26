@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+merge/person_image"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:padding="10dp"
+            android:src="@drawable/preview_unknown" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp" >
+
+            <TextView
+                android:id="@+merge/person_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="person name"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/gradient_blue"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+merge/label_warnings"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:paddingLeft="12dp"
+            android:text="merge suggestions"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3px"
+        android:background="@drawable/actionbar_shadow_blue" />
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1" >
+    </ListView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/gradient_dime_top"
+        android:orientation="horizontal"
+        android:paddingBottom="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp" >
+
+        <ImageView
+            android:id="@+merge/message"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/button_transp_bar"
+            android:padding="10dp"
+            android:src="@drawable/icon_white_info" />
+
+        <Button
+            android:id="@+merge/button_merge"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/button_col2_yellow"
+            android:focusable="true"
+            android:paddingBottom="12dp"
+            android:paddingTop="12dp"
+            android:text="Accept" />
+
+        <Button
+            android:id="@+merge/button_cancel"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_col2_yellow"
+            android:focusable="true"
+            android:paddingBottom="12dp"
+            android:paddingTop="12dp"
+            android:text="Cancel" />
+    </LinearLayout>
+
+</LinearLayout>

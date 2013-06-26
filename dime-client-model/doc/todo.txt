@@ -1,0 +1,43 @@
+Known Bugs:
+
+
+
+TODO:
+
+
+* handle "changed" for GenItems in a proper way - current solution is not acceptable
+
+* refresh items
+
+** handle warnings 
+* add merge function
+* notifications
+** handle various types of notifications
+* add factory method for creation of various kinds of profile-attributes
+* adapt model for not caching context information
+* battery saving functions - mobile network saving functions!!!!
+
+
+DONE:
+* adapt fields:
+** groups: nao:creator
+** place: value of distance is not of type Integer --> float
+* handle relative URLs for download and ...
+* handling of sharedTo
+** find a way to transport saidSender to sharing action in DimeMemory!!!!
+* notifications
+** for received notification - add function to update model cache accordingly - ! without updating the (remote) model!!!!
+** slow down server requests in case server not reachable
+* create items synchronous - or only add items to the model in case they have been created at PS
+* fix issue with MultiThreadParallelApiTest - --> connection refused with 1000 threads running
+* move handling for rest-calls to DimeMemory
+* add function sharedTo
+* add separate call in Model for creating items (--> separate REST-API call)
+* TODO establish subscriber model for notifying several subscribers about incoming notifications!!!
+* add comet call functionality
+* detail payload of displayable item - decision on how this will be done
+* update mobile client according to new model - done
+* handling of createJSON and readJSON calls in GenItem by forcing super calls in respective inherited classes - done
+
+
+SCRATCH

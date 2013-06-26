@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/people_detail_header"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_item_round"
+        android:padding="10dp"
+        android:layout_margin="10dp" >
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="70dip"
+            android:layout_height="70dip"
+            android:src="@drawable/icon_black_person" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="16dp" >
+
+            <TextView
+                android:id="@+id/textView_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceLarge"  />
+
+            <LinearLayout
+                android:id="@+profile/read_only"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="read-only" />
+                
+                <ImageView 
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/icon_black_lock" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+profile/standard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Standard profile"
+                android:textSize="11sp"
+                android:textColor="@color/dm_col2" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/dm_text" >
+    </View>
+
+</LinearLayout>

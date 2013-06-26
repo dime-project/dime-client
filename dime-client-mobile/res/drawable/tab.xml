@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_selected="false" android:state_pressed="true">
+        <shape>
+            <solid android:color="@color/dm_text" />
+        </shape>
+    </item>
+    <item android:state_selected="true" android:state_pressed="true">
+		<shape>
+            <solid android:color="@color/dm_col1_low" />
+        </shape>
+    </item>
+    <item android:state_selected="true" android:state_pressed="false">
+        <shape>
+            <solid android:color="@color/dm_col1_low" />
+        </shape>
+    </item>
+    <item android:state_selected="false" android:state_pressed="false">
+        <layer-list >
+            <item >
+		        <shape android:shape="rectangle" >
+		            <solid android:color="@color/divider_bottom" />
+		            <size android:height="1px"/>
+		        </shape>
+            </item>
+            <item 
+                android:drawable="@drawable/gradient_double_line"/>
+            <item android:left="2px" android:top="1px">
+                <shape>
+		            <gradient
+		      			android:startColor="@color/bar_grad_top"
+		      			android:endColor="@color/bar_grad_bottom"
+		     			android:angle="-90" />
+        		</shape>
+            </item>
+        </layer-list>
+    </item>
+    <item android:state_focused="true">
+        <shape>
+            <stroke android:width="@dimen/focus_width" android:color="@color/dm_focus" />
+            <solid android:color="@color/dm_col1_low" />
+            <padding android:bottom="@dimen/focus_pad" android:left="@dimen/focus_pad" android:right="@dimen/focus_pad" android:top="@dimen/focus_pad" />
+        </shape>
+    </item>
+    <item android:state_enabled="false">
+        <shape>
+            <solid android:color="@color/dm_neutral" />
+        </shape>
+    </item>
+</selector>

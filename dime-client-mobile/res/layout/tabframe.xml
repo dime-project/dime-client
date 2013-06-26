@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/gradient_dime_top" >
+
+        <LinearLayout
+            android:id="@+tabframe/view_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+tabframe/button_home"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:background="@drawable/button_transp_bar"
+                android:drawableRight="@drawable/icon_white_home"
+                android:paddingRight="8dp" />
+
+            <View
+                android:layout_width="2px"
+                android:layout_height="fill_parent"
+                android:layout_gravity="right"
+                android:background="@drawable/gradient_double_line" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="right"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:id="@+tabframe/view_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="fill_parent"
+                    android:layout_gravity="right"
+                    android:background="@drawable/gradient_double_line" />
+
+                <Button
+                    android:id="@+tabframe/button_open_search"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:background="@drawable/button_transp_bar"
+                    android:drawableRight="@drawable/icon_white_search"
+                    android:paddingRight="8dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+tabframe/view_action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <View
+                    android:layout_width="2px"
+                    android:layout_height="fill_parent"
+                    android:layout_gravity="right"
+                    android:background="@drawable/gradient_double_line" />
+
+                <Button
+                    android:id="@+tabframe/button_action"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:background="@drawable/button_transp_bar"
+                    android:drawableRight="@drawable/icon_white_action"
+                    android:paddingRight="8dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+tabframe/search_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:visibility="gone" >
+
+        <AutoCompleteTextView
+            android:id="@+tabframe/autocompleteTextView_searchfield"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:gravity="fill_vertical"
+            android:hint="search items..."
+            android:singleLine="true"
+            android:text="" >
+
+            <requestFocus />
+        </AutoCompleteTextView>
+
+        <TextView
+            android:id="@+tabframe/searchresults"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="6dp"
+            android:gravity="center_vertical"
+            android:text="0 results" />
+    </LinearLayout>
+
+    <TabHost
+        android:id="@android:id/tabhost"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical" >
+
+            <FrameLayout
+                android:id="@android:id/tabcontent"
+                android:layout_width="fill_parent"
+                android:layout_height="0dip"
+                android:layout_weight="1" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="@color/dm_col1_low" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TabWidget
+                    android:id="@android:id/tabs"
+                    android:layout_width="fill_parent"
+                    android:layout_height="48dip" />
+            </LinearLayout>
+        </LinearLayout>
+    </TabHost>
+
+</LinearLayout>

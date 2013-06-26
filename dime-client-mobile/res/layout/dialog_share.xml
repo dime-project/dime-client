@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+share/container_profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/border_item_round"
+            android:padding="6dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" >
+
+                <ImageView
+                    android:id="@+share/image_profile"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/icon_black_person" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+share/text_full_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="&lt;no profile selected>"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+share/text_profile_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="..."
+                    android:textSize="11sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:id="@+share/text_attribute_key"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:textSize="11sp" />
+
+                    <TextView
+                        android:id="@+share/text_attribute_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="5dp"
+                        android:textSize="11sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/gradient_blue"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+share/label_receivers"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:paddingLeft="12dp"
+                android:text="@string/sharing_label_receivers"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="2px"
+                android:layout_height="fill_parent"
+                android:layout_gravity="right"
+                android:background="@drawable/gradient_double_line_blue" />
+
+            <Button
+                android:id="@+share/button_sel_person"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/button_transp_bar"
+                android:drawableRight="@drawable/action_add_person"
+                android:paddingRight="9dp" />
+
+            <View
+                android:layout_width="2px"
+                android:layout_height="fill_parent"
+                android:layout_gravity="right"
+                android:background="@drawable/gradient_double_line_blue" />
+
+            <Button
+                android:id="@+share/button_sel_group"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/button_transp_bar"
+                android:drawableRight="@drawable/action_add_group"
+                android:paddingRight="9dp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3px"
+            android:background="@drawable/actionbar_shadow_blue" />
+
+        <LinearLayout
+            android:id="@+share/container_reciever"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" >
+
+            <TextView
+                android:id="@+share/text_add_reciever"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sharing_no_receiver"
+                android:textColor="@android:color/darker_gray" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/gradient_blue"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+share/label_items"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:paddingLeft="12dp"
+                android:text="@string/sharing_label_items"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="2px"
+                android:layout_height="fill_parent"
+                android:layout_gravity="right"
+                android:background="@drawable/gradient_double_line_blue" />
+
+            <Button
+                android:id="@+share/button_sel_databox"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/button_transp_bar"
+                android:drawableRight="@drawable/action_add_new_databox"
+                android:paddingRight="9dp" />
+
+            <View
+                android:layout_width="2px"
+                android:layout_height="fill_parent"
+                android:layout_gravity="right"
+                android:background="@drawable/gradient_double_line_blue" />
+
+            <Button
+                android:id="@+share/button_sel_resource"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/button_transp_bar"
+                android:drawableRight="@drawable/action_add_resources"
+                android:paddingRight="9dp" />
+
+            <View
+                android:layout_width="2px"
+                android:layout_height="fill_parent"
+                android:layout_gravity="right"
+                android:background="@drawable/gradient_double_line_blue" />
+
+            <Button
+                android:id="@+share/button_sel_message"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/button_transp_bar"
+                android:drawableRight="@drawable/action_add_new_message"
+                android:paddingRight="9dp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3px"
+            android:background="@drawable/actionbar_shadow_blue" />
+
+        <LinearLayout
+            android:id="@+share/container_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" >
+
+            <TextView
+                android:id="@+share/text_add_attachments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sharing_no_items"
+                android:textColor="@android:color/darker_gray" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/gradient_blue"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+share/label_warnings"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:paddingLeft="12dp"
+                android:text="@string/sharing_label_warnings"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+share/button_expander_warnings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:focusable="true"
+                android:gravity="right"
+                android:src="@drawable/button_collapse_bar" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3px"
+            android:background="@drawable/actionbar_shadow_blue" />
+
+        <LinearLayout
+            android:id="@+share/container_warnings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="@string/sharing_warning_not_possible"
+                android:textColor="@android:color/darker_gray" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/gradient_dime_top"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp"
+            android:layout_marginTop="5dp" >
+
+            <ImageView
+                android:id="@+share/message"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/button_transp_bar"
+                android:src="@drawable/icon_white_share" />
+
+            <Button
+                android:id="@+share/button_share"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/button_col2_yellow"
+                android:focusable="true"
+                android:paddingBottom="12dp"
+                android:paddingTop="12dp"
+                android:text="Share" />
+
+            <Button
+                android:id="@+share/button_cancel"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_col2_yellow"
+                android:focusable="true"
+                android:paddingBottom="12dp"
+                android:paddingTop="12dp"
+                android:text="Cancel" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="horizontal"
+    android:paddingBottom="10dip"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dip" >
+
+    <ImageView
+        android:id="@+drd/image"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="6dp"
+        android:src="@drawable/icon_black_person" />
+
+    <TextView
+        android:id="@+drd/person_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Loreley Ipsiley"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_weight="1" />
+
+    <CheckBox
+        android:id="@+drd/checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:gravity="center_vertical|right" />
+
+</LinearLayout>

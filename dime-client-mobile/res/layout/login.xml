@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/gradient_dime_top"
+            android:gravity="right" >
+
+            <TextView
+                android:id="@+login/register"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:autoLink="web"
+                android:gravity="center_vertical"
+                android:paddingRight="10dp"
+                android:text="Register page"
+                android:textColor="@android:color/white"
+                android:textSize="11sp" />
+
+            <View
+                android:layout_width="2px"
+                android:layout_height="fill_parent"
+                android:layout_gravity="right"
+                android:background="@drawable/gradient_double_line" />
+
+            <ImageButton
+                android:id="@+id/exit"
+                android:layout_width="60dp"
+                android:layout_height="48dp"
+                android:background="@drawable/button_transp_bar"
+                android:padding="4dp"
+                android:src="@drawable/icon_white_logout" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="#525452" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3px"
+            android:background="@drawable/actionbar_shadow" />
+
+        <ImageView
+            android:id="@+login/dime_logo"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="-42dp"
+            android:src="@drawable/logo_white" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Username" />
+
+                <EditText
+                    android:id="@+login/editText_user"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:maxLines="1"
+                    android:inputType="textNoSuggestions" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Password" />
+
+                <EditText
+                    android:id="@+login/editText_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textPassword"
+                    android:maxLines="1" />
+
+                <TextView
+                    android:id="@+login/label_edittext_server"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Server IP"
+                    android:visibility="gone" />
+
+                <EditText
+                    android:id="@+login/editText_server"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:singleLine="true"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+login/label_view_port_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Port"
+                    android:visibility="gone" />
+
+                <EditText
+                    android:id="@+login/editText_port"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:singleLine="true"
+                    android:inputType="number"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+login/label_is_https_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="HTTPS/HTTP"
+                    android:visibility="gone" />
+
+                <CheckBox
+                    android:id="@+login/checkbox_is_https"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="HTTPS"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp" >
+
+                    <CheckBox
+                        android:id="@+login/checkBox_accept"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="" />
+
+                    <TextView
+                        android:id="@+login/textView_acceptText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="By login into the system, you accept the User Information and Usage Terms" />
+                </LinearLayout>
+
+                <CheckBox
+                    android:id="@+login/checkBox_remember"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="remember login" />
+
+                <Button
+                    android:id="@+login/button_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="10dip"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginRight="2dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/button_col1_blue"
+                    android:focusable="true"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
+                    android:text="login" />
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+</LinearLayout>

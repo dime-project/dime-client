@@ -1,0 +1,17 @@
+
+
+body {
+
+        /* background-image:url("../img/digitalSphere.jpg"); */
+       background-repeat: no-repeat;
+       background-color: gray;
+       background-position: 500px top;
+       background-attachment: fixed;
+
+}
+
+table { border:1px solid #C0C0C0; border-collapse:collapse; background-color:#FFFFFF; }
+
+th { background-color:#EEEEEE; text-align:left; vertical-align:top; }
+
+td { border:1px solid #C0C0C0; padding-left:6px; padding-right:4px }
