@@ -350,10 +350,11 @@ DimeView = {
             }
         }
 
-        //for profile we skip profiles with no said
+        //for @me profiles we skip profiles with no said
         if (type===Dime.psMap.TYPE.PROFILE){
             isInFilter = function(entry){
-                if (!entry.said || entry.said.length<1){
+                if ((entry.userId==='@me')
+                    &&(!entry.said || entry.said.length<1)){
                     return false; //skip this
                 }
                 return isSubString(DimeView.searchFilter, entry.name);
@@ -1255,7 +1256,7 @@ DimeView = {
         
     },
 
-    OrangeBubble: function(handlerSelf, bubbleBody, dismissHandler){
+    OrangeBubble: function(handlerSelf, caption, bubbleBody, dismissHandler){
 
         var bubbleSelf = this;
 
@@ -1264,19 +1265,23 @@ DimeView = {
         //bubbleBody.addClass('modal-body');
         bubbleBody.addClass('bubble-body');
 
-        var footerElement=$('<div></div>').addClass("modal-footer")
-            .append($('<button class="YellowMenuButton" data-dismiss="modal" aria-hidden="true">Dismiss</button>')
+        var headerElement=
+            $('<div></div>').addClass("modal-header")
+            .append($('<button type="button" class="close" data-dismiss="modal" aria-hidden="true" >x</button>')
                 .click(function(){
-                    bubbleSelf.dismiss.call(bubbleSelf);
-                    dismissHandler.call(handlerSelf);
-                }));
+                        bubbleSelf.dismiss.call(bubbleSelf);
+                        dismissHandler.call(handlerSelf);
+                    }
+                ))
+            .append($('<h3 id="myModalLabel">'+caption+'</h3>\n'));
+
 
         this.bubble= $('<div/>')
           //  .addClass('modal')
             .addClass('orangeBubble')
             .attr('id',this.bubbleId)
+            .append(headerElement)
             .append(bubbleBody)
-            .append(footerElement)
             ;
     },
 
@@ -1300,9 +1305,8 @@ DimeView = {
 
             var bubbleBody = $('<div/>')
                 .append(
-                    $('<div/>')
-                        .append($('<h2/>').text('Welcome and many thanks for trying out di.me!'))
-                        .append($('<h3/>').text('Getting started with di.me:').css('margin-top','30px'))
+                    $('<div/>')                        
+                        .append($('<h3/>').text('Getting started with di.me:')) 
                         .append($('<p/>')
                             .append($('<span/>').text('Please follow our'))
                             .addHrefOpeningInNewWindow(loginbaselink+'howto','tutorial!','orangeBubbleLink')
@@ -1359,7 +1363,7 @@ DimeView = {
                         ))
                 );
 
-                DimeView.bubble = new DimeView.OrangeBubble(this, bubbleBody, function(){
+                DimeView.bubble = new DimeView.OrangeBubble(this,'Welcome and many thanks for trying out di.me!',  bubbleBody, function(){
                     //dismiss handler
                     DimeView.bubble=null;
                 });
