@@ -94,7 +94,7 @@ DimeView = {
    
         var groupClass=(entry.type!==Dime.psMap.TYPE.GROUP?entry.type+"Item groupItem":"groupItem");
         
-        var jGroupItem=$('<div/>').addClass(groupClass)
+        var jGroupItem=$('<div/>').addClass(groupClass).append($('<div/>')
                 .append(
                     $('<img/>').attr('src', Dime.psHelper.guessLinkURL(entry.imageUrl)))
                 .append(
@@ -105,7 +105,7 @@ DimeView = {
                 .append(
                     $('<h4>'+ DimeView.getShortName(entry.name) + '</h4>')
                         .clickExt(DimeView, DimeView.editItem, entry)
-                );
+                ));
    
 
         DimeView.setActionAttributeForElements(entry, jGroupItem, true, false);
