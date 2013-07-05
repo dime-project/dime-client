@@ -534,12 +534,16 @@ input[type="file"] {
     z-index: 300;
 
 }
-
 .ItemChecked{
     background-color: #F6C200;
     border: 2px solid white;
     height: 18px;
     width: 18px;
+}
+
+.groupChecked.groupItem{
+    background-color: #F6C200;
+    /* border: thick dashed #F6C200;*/
 }
 
 #containerCaption{
@@ -556,8 +560,8 @@ input[type="file"] {
     background-color: #F9F8F8; 
     border: 1px solid silver;
     border-radius: 5px;
-    margin-bottom: 20px;
-    margin-left: 15px;
+    margin: 10px;
+    
 }
 
 .groupItem:hover {

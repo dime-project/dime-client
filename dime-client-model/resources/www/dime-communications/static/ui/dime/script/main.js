@@ -161,7 +161,7 @@ jQuery.fn.extend({
         this.append($('<a/>').addClass(classes)
             .attr('href',targetUrl).text(caption)
             .attr('target','_blank')
-        );
+            );
         return this;
     }
 });
@@ -561,7 +561,21 @@ NO=0;
 Dime.Tool = {
     pipeFunction: function(firstCall, secondCall){
         return secondCall(firstCall);
+    },
+    /**
+    * keep session alive
+    * FIXME could be taken out, when sending token with every ajax call
+    * FIXME should use a smaller file
+    */
+    keep_alive: function() {
+
+        jQuery.get(Dime.PsConfigurationClass.uiMainSite, null, function(data, textStatus){
+            if (textStatus.toLowerCase()!=='success'){
+                window.location=Dime.ps_configuration.getRealBasicUrlString()+'/dime-communications/web/access/login';
+            }
+        });
     }
+
 };
 
 //---------------------------------------------
@@ -684,7 +698,7 @@ Dime.psMap = {
     
     getInfoHtmlForType: function(type){
         return "Detail view for "+Dime.psHelper.getCaptionForItemType(type)
-            +"<br/><br/>In this dialog, you can see (and edit) the properties of this item...";
+        +"<br/><br/>In this dialog, you can see (and edit) the properties of this item...";
     }
 
 
@@ -1279,8 +1293,8 @@ Dime.PsConfigurationClass = function(mainSaid, hostname, port, useHttps){
 
     this.getUserUrlString=function(){
         return this.getBasicUrlString()
-            +'/'
-            + encodeURIComponent(this.mainSaid);
+        +'/'
+        + encodeURIComponent(this.mainSaid);
     };
 
     this.getQuestionairePath=function(){
@@ -1456,7 +1470,7 @@ Dime.psHelper = {
             return false;
         }
         return ((agent.type!==Dime.psMap.TYPE.PERSON)
-                || (agent.defProfile && agent.defProfile.length >0));
+            || (agent.defProfile && agent.defProfile.length >0));
 
     },
    
@@ -2877,7 +2891,7 @@ Dime.REST = {
   
 
         var callPath = Dime.ps_configuration.getRealBasicUrlString()
-            + '/dime-communications/api/dime/server';
+        + '/dime-communications/api/dime/server';
 
         var jointCallBack = function(response){
             var responseEntries = Dime.REST.handleResponse(response, true);
@@ -3306,8 +3320,8 @@ Dime.initProcessor.registerFunction( function(callback){
     var serverInfoCallBack=function(response){
         var userString = Dime.ps_configuration.mainSaid+'@'+response.name;
         $('#username').text(userString.substr(0, 27)).click(function(){
-                    DimeView.showAbout.call(DimeView)
-                });
+            DimeView.showAbout.call(DimeView)
+        });
     };
     Dime.REST.getServerInformation(serverInfoCallBack)
     
@@ -4190,7 +4204,7 @@ Dime.DetailDialog.prototype = {
         
         //FIXME interaction disabled
         //.clickExt(this, showAddItemsDlg);
-            .append(editDlgRef.itemsItemSection);
+        .append(editDlgRef.itemsItemSection);
       
     },            
 
@@ -4220,11 +4234,11 @@ Dime.DetailDialog.prototype = {
             }
 
             listItem.append(
-                    $('<div class="listElementText"/>')
-                        .append($('<span class="listElementTextName"/>').text(name))
-                        .append($('<span class="listElementTextValue"/>').text(value))
-                    )
-                    .append(listIconElement);
+                $('<div class="listElementText"/>')
+                .append($('<span class="listElementTextName"/>').text(name))
+                .append($('<span class="listElementTextValue"/>').text(value))
+                )
+            .append(listIconElement);
             return listItem;
         };
 
@@ -4259,7 +4273,7 @@ Dime.DetailDialog.prototype = {
                     addAgentsToContainer(profileContainerList, aclPackage.serviceItems);
 
                     var profileContainer = createAgentListItem("shared as:",pName,pImage, "metaDataShareProfile")
-                            .append(profileContainerList);
+                    .append(profileContainerList);
 
                     editDlgRef.itemsItemSection.append(profileContainer);
                 };
@@ -4349,7 +4363,7 @@ Dime.DetailDialog.prototype = {
             }
             if(parentType){
                 container.append("No "+childCaption+" in the "+
-                Dime.psHelper.getCaptionForItemType(parentType));
+                    Dime.psHelper.getCaptionForItemType(parentType));
             }else{
                 container.append("No "+childCaption);
             }
@@ -4861,7 +4875,7 @@ Dime.ConfigurationDialog.prototype = {
                                 var callback = function(response){
                                     $.each(response, function(index, value) {
 
-                                         var updateProfileOnClick=function(){
+                                        var updateProfileOnClick=function(){
                                             dialogSelf.selectedProfile=value;
                                             console.log("profile", value, "said", value.said);
                                         };
@@ -4958,10 +4972,10 @@ Dime.ConfigurationDialog.prototype = {
         var deleteAcc = "";
         if(!isNewAccount){
             deleteAcc = $('<div></div>')
-                .addClass("ConfigServiceDeleteAccount")
-                .attr("href", "#")
-                .clickExt(Dime.Settings, Dime.Settings.deactivateServiceAccount, serviceAccount)
-                .append("Delete");
+            .addClass("ConfigServiceDeleteAccount")
+            .attr("href", "#")
+            .clickExt(Dime.Settings, Dime.Settings.deactivateServiceAccount, serviceAccount)
+            .append("Delete");
         }
 
         $(this.modal)
@@ -5196,20 +5210,20 @@ Dime.Dialog={
             var infoBoxId=JSTool.randomGUID();
 
             return $('<div/>').addClass('dimeDialogInfoBoxMeta')
-                .append(
-                    $('<div/>')
-                    .addClass('infoBoxIcon').addClass(infoBoxIconClass)
-                    .append($('<img/>').attr('src','img/metaData/info.png'))
+            .append(
+                $('<div/>')
+                .addClass('infoBoxIcon').addClass(infoBoxIconClass)
+                .append($('<img/>').attr('src','img/metaData/info.png'))
                     
                 ).append(
                 $('<div/>').addClass('dimeDialogInfoBox hidden').addClass(infoBoxClass)
-                    .attr('id',infoBoxId)
-                    .append(
+                .attr('id',infoBoxId)
+                .append(
                     $('<div/>').append(infoHtml)
-                ))
-                .click(function(){
-                    $('#'+infoBoxId).toggleClass('hidden');
-                });
+                    ))
+            .click(function(){
+                $('#'+infoBoxId).toggleClass('hidden');
+            });
             
         }
     }
@@ -5230,3 +5244,7 @@ Dime.initProcessor.registerFunction( function(callback){
     Dime.Navigation.updateCurrentPlace();
     callback();
 });
+
+
+
+setInterval(Dime.Tool.keep_alive,1000*60*5);  //repeat every 5 minutes

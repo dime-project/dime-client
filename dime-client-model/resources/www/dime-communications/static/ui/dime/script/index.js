@@ -309,11 +309,18 @@ DimeView = {
     
     itemEntries: [],
 
-    initContainer: function(jContainer, caption){
+    initContainer: function(jContainer, caption, selectingGroupName){
+        var containerCaption = JSTool.upCaseFirstLetter(caption);
+        if (selectingGroupName){
+            containerCaption += ' in "' +selectingGroupName+'"';
+        }else if (DimeView.searchFilter.length===0){
+            containerCaption = "All "+containerCaption;
+        }
+
         jContainer.empty();
         jContainer.append(
             $('<div/>').attr('id','containerCaption').addClass('h2ModalScreen')
-                .text(JSTool.upCaseFirstLetter(caption))
+                .text(containerCaption)
                 .append($('<div/>').addClass('clear')));
 
     },
@@ -401,7 +408,7 @@ DimeView = {
         for (var i=0;i<mySelectedItems.length;i++){
             var item = mySelectedItems[i];
             if (item){
-                $(item).removeClass("ItemChecked");
+                item.element.removeClass("ItemChecked");
             }
         }
         DimeView.selectedItems = {};
@@ -494,7 +501,8 @@ DimeView = {
                 guid:guid, 
                 userId:entry.userId,
                 type:entry.type,
-                isGroupItem:isGroupItem
+                isGroupItem:isGroupItem,
+                element:element
             };
             $(element).addClass("ItemChecked");
         }
@@ -761,10 +769,11 @@ DimeView = {
         }
     },
         
-    updateItemContainerFromArray: function(entries){
+    updateItemContainerFromArray: function(entries, selectingGroupName){
 
-         DimeView.initContainer($('#itemNavigation'), Dime.psHelper.getPluralCaptionForItemType(DimeView.itemType));
-
+         DimeView.initContainer($('#itemNavigation'), 
+            Dime.psHelper.getPluralCaptionForItemType(DimeView.itemType),
+            selectingGroupName);
 
 
         var itemContainer = $('#itemNavigation');
@@ -784,9 +793,11 @@ DimeView = {
         if ((!groupEntry) || (!groupEntry.items)){
          return;
         }
+        $('.groupItem').removeClass('groupChecked');
+        element.addClass('groupChecked');
 
         var updateGroupMembers = function(response){
-         this.updateItemContainerFromArray(response);
+            this.updateItemContainerFromArray(response, groupEntry.name);
         }
 
         Dime.REST.getItems(groupEntry.items,Dime.psHelper.getChildType(groupEntry.type), updateGroupMembers, groupEntry.userId, this);
@@ -805,7 +816,7 @@ DimeView = {
     editSelected: function(){
         var selectedItems = JSTool.getDefinedMembers(DimeView.selectedItems);
         if (selectedItems.length!==1){
-            window.alert("Please select only a single item.");
+            window.alert("Please select a single item.");
             return;
         }
         var triggerDialog=function(response){
@@ -818,9 +829,11 @@ DimeView = {
     
     removeSelected: function(){
         var mySelectedItems = JSTool.getDefinedMembers(DimeView.selectedItems);
-        for (var i=0;i<mySelectedItems.length;i++){
-            var item = mySelectedItems[i];
-            Dime.REST.removeItem(item);
+        if (confirm("Are you sure, you want to delete "+mySelectedItems.length+" items?")){
+            for (var i=0;i<mySelectedItems.length;i++){
+                var item = mySelectedItems[i];
+                Dime.REST.removeItem(item);
+            }
         }
     },    
            
