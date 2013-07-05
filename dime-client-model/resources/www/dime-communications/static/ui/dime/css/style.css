@@ -1904,6 +1904,11 @@ input[type="checkbox"] {
 .inactiveButton{
     color: lightgray;
 }
+
+.detailDialogBody{
+    width: 98%;
+}
+
 .DimeDetailDialogText{
     float: left;
     clear: both;
@@ -2589,6 +2594,7 @@ input[type="checkbox"] {
 
 .shareDlg > .modal-body{
     height: 650px;
+    width: 104%;
 }
 
 
@@ -2964,7 +2970,7 @@ input[type="checkbox"] {
 
 .dimeDialogInfoBox{
     position: fixed;
-    background-color: white;
+    background-color: #F6F2E1;
     left: 50%;
     width: 320px;
     margin-left: -150px;

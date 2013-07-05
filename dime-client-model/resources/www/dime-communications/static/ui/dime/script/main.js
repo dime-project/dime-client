@@ -4083,13 +4083,12 @@ Dime.DetailDialog.prototype = {
             this.body.append(
                 $('<div/>').addClass('DimeDetailDialogText')
                 .append(
-                    $('<span/>').addClass('h2ModalScreen')
-                    .append(
-                        $('<textarea/>').addClass('itemDetailTextInput')
-                        .attr('id',this.itemDetailModalTextInput)
-                        .attr('placeholder', 'Write a message ...')
-                        .text(item.text)
-                        )));
+                    
+                $('<textarea/>').addClass('itemDetailTextInput')
+                .attr('id',this.itemDetailModalTextInput)
+                .attr('placeholder', 'Write a message ...')
+                .text(item.text)
+                ));
                 
             //add assemble function for text(
             var updateText = function(){            
@@ -4442,7 +4441,7 @@ Dime.ShareDialog = function(){
         .append($('<button type="button" class="close" data-dismiss="modal" aria-hidden="true" >x</button>')
             .clickExt(this, this.cancelHandler)
             )
-        .append($('<h3 id="myModalLabel">Share a thing ...</h3>\n'))            
+        .append($('<h3 id="myModalLabel">Share</h3>\n'))            
         )
     //body
     .append(this.body)
@@ -4452,7 +4451,7 @@ Dime.ShareDialog = function(){
         .append($('<button class="YellowMenuButton" data-dismiss="modal" aria-hidden="true">Cancel</button>')
             .clickExt(this, this.cancelHandler)
             )
-        .append($('<button class="YellowMenuButton">Submit</button>')
+        .append($('<button class="YellowMenuButton">Share</button>')
             .clickExt(this, this.okHandler)
             )   
         );             
