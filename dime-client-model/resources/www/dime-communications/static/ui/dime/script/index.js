@@ -871,7 +871,7 @@ DimeView = {
             .append($('<div/>').addClass('addPublicPersonBtn btn')
                     .clickExt(DimeView, DimeView.addPublicPerson, entry.said)
                     .text('add'))
-            .append('<div class="globalSearchResultBackgroundText">di.me Users in the di.me User Directory</div>')
+            .append('<div class="globalSearchResultBackgroundText">Public Profile</div>')
             .append(
                 $('<div class="globalSearchResultName"/>')
                     .append(createNameEntryString(entry, "name","FirstName"))
@@ -1006,7 +1006,7 @@ DimeView = {
             //also search on global search if groupType==GROUP
             if (DimeView.groupType===Dime.psMap.TYPE.GROUP && searchText.value && (searchText.value.length>0)){
 
-                DimeView.initContainer($('#globalItemNavigation'), "PRS");
+                DimeView.initContainer($('#globalItemNavigation'), "di.me Users in the di.me User Directory");
                 
                 Dime.REST.searchGlobal(searchText.value, DimeView.handleGlobalSearchResult);
                 
@@ -1160,7 +1160,7 @@ DimeView = {
             $('#searchText').attr('placeholder', 'find data');
         }else if (DimeView.groupType===Dime.psMap.TYPE.PROFILE){
             Dime.Navigation.setButtonsActive("navButtonProfile");
-            $('#searchText').attr('placeholder', 'find my profile(s)');
+            $('#searchText').attr('placeholder', 'find my profile cards');
         }else if (DimeView.groupType===Dime.psMap.TYPE.GROUP){
             Dime.Navigation.setButtonsActive("navButtonPeople");
             $('#searchText').attr('placeholder', 'find persons and groups (single search-word, avoid incomplete names)');
