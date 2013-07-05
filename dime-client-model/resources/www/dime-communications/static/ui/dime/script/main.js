@@ -4098,7 +4098,7 @@ Dime.DetailDialog.prototype = {
             
         }else if (item.type===Dime.psMap.TYPE.RESOURCE && item.downloadUrl && item.downloadUrl.length>0){
             
-            var innerHtml = '<a href="' + Dime.psHelper.guessLinkURL(item.downloadUrl) + '" target="_blank">download</a>';
+            var innerHtml = '<a href="' + Dime.psHelper.guessLinkURL(item.downloadUrl) + '" target="_blank">open</a>';
             this.body.append(
                 $(JSTool.createHTMLElementString("div", null, ["dimeDetailDialogLink"], null, innerHtml)));
             
@@ -4441,7 +4441,7 @@ Dime.ShareDialog = function(){
         .append($('<button type="button" class="close" data-dismiss="modal" aria-hidden="true" >x</button>')
             .clickExt(this, this.cancelHandler)
             )
-        .append($('<h3 id="myModalLabel">Share</h3>\n'))            
+        .append($('<h3 id="myModalLabel">OK</h3>\n'))
         )
     //body
     .append(this.body)

@@ -871,7 +871,7 @@ DimeView = {
             .append($('<div/>').addClass('addPublicPersonBtn btn')
                     .clickExt(DimeView, DimeView.addPublicPerson, entry.said)
                     .text('add'))
-            .append('<div class="globalSearchResultBackgroundText">PRS Profile</div>')
+            .append('<div class="globalSearchResultBackgroundText">di.me Users in the di.me User Directory</div>')
             .append(
                 $('<div class="globalSearchResultName"/>')
                     .append(createNameEntryString(entry, "name","FirstName"))
@@ -1163,7 +1163,7 @@ DimeView = {
             $('#searchText').attr('placeholder', 'find my profile(s)');
         }else if (DimeView.groupType===Dime.psMap.TYPE.GROUP){
             Dime.Navigation.setButtonsActive("navButtonPeople");
-            $('#searchText').attr('placeholder', 'find persons and groups');
+            $('#searchText').attr('placeholder', 'find persons and groups (single search-word, avoid incomplete names)');
         }else if (DimeView.groupType===Dime.psMap.TYPE.LIVESTREAM){
             Dime.Navigation.setButtonsActive("navButtonMessages");
             $('#searchText').attr('placeholder', 'find liveposts');
