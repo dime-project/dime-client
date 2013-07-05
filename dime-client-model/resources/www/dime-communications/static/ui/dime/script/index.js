@@ -423,7 +423,7 @@ DimeView = {
         {
             id: "actionButtonAddRemove",
             minItems: 1,
-            maxItems: 1
+            maxItems: 0
         },
         {
             id: "actionButtonDelete",
