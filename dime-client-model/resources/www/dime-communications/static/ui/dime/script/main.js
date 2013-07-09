@@ -722,7 +722,7 @@ Dime.psMap.addToTypeMap(new Dime.PSMap(Dime.psMap.TYPE.LIVESTREAM, "livestream",
 Dime.psMap.addToTypeMap(new Dime.PSMap(Dime.psMap.TYPE.LIVEPOST, "livepost", Dime.psMap.TYPE.LIVESTREAM, 0, 'livepost.png', 'livepost', NO, YES, 'liveposts'));
 Dime.psMap.addToTypeMap(new Dime.PSMap(Dime.psMap.TYPE.NOTIFICATION, "notification", 0, 0,  'notification.png', 'notification', NO, YES, 'notification'));
 Dime.psMap.addToTypeMap(new Dime.PSMap(Dime.psMap.TYPE.PROFILE, "profile card", 0, Dime.psMap.TYPE.PROFILEATTRIBUTE, 'profileCard.png', 'profile', YES, YES, 'profile cards'));
-Dime.psMap.addToTypeMap(new Dime.PSMap(Dime.psMap.TYPE.PROFILEATTRIBUTE, "attribute", Dime.psMap.TYPE.PROFILE, 0, 'profileCard.png', 'profileattribute', YES, YES, 'attributes'));
+Dime.psMap.addToTypeMap(new Dime.PSMap(Dime.psMap.TYPE.PROFILEATTRIBUTE, "profile detail", Dime.psMap.TYPE.PROFILE, 0, 'profileCard.png', 'profileattribute', YES, YES, 'profile details'));
 Dime.psMap.addToTypeMap(new Dime.PSMap(Dime.psMap.TYPE.SITUATION, "situation", 0, 0,  'situation_general.png', 'situation', YES, YES, 'situations'));
 Dime.psMap.addToTypeMap(new Dime.PSMap(Dime.psMap.TYPE.EVENT, "calendar entry", 0, 0,  'resource.png', 'event', YES, YES, 'calendar entries'));
 Dime.psMap.addToTypeMap(new Dime.PSMap(Dime.psMap.TYPE.SERVICEADAPTER, "service", 0, 0,  'resource.png', 'serviceadapter', YES, YES, 'services'));
