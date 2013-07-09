@@ -794,37 +794,49 @@ Dime.PA_CATEGORY_MAP = {
     PERSON_NAME: {
         name: "PersonName",
         caption: "Name",
-        keys: ["nameHonorificSuffix", "nameFamily", "nameHonorificPrefix", "nameAdditional", "nameGiven", "nickname", "fullname"]
+        keys: ["nameHonorificSuffix", "nameFamily", "nameHonorificPrefix", "nameAdditional", "nameGiven", "nickname", "fullname"],
+        keyCaptions: ["HonorificSuffix", "Family", "HonorificPrefix", "Additional", "Given", "Nickname", "Fullname"]
     },
+//    NAME: { //only internally
+//        name: "Name",
+//        caption: "Name",
+//        keys: ["nickname", "fullname"]
+//    },
     BIRTH_DATE: {
         name: "BirthDate",
         caption: "Birthday",
-        keys: ["birthDate"]
+        keys: ["birthDate"],
+        keyCaptions: ["birthDate"]
     },
     EMAIL_ADDRESS: {
         name: "EmailAddress",
         caption: "Email",
-        keys: ["emailAddress"]
+        keys: ["emailAddress"],
+        keyCaptions: ["emailAddress"]
     },
     PHONE_NUMBER: {
         name: "PhoneNumber",
         caption: "Phone",
-        keys: ["phoneNumber"]
+        keys: ["phoneNumber"],
+        keyCaptions: ["phoneNumber"]
     },
     POSTAL_CODE: {
         name: "PostalAddress",
         caption: "Address",
-        keys: ["region", "country", "extendedAddress", "addressLocation", "streetAddress", "postalcode", "locality", "pobox"]
+        keys: ["region", "country", "extendedAddress", "addressLocation", "streetAddress", "postalcode", "locality", "pobox"],
+        keyCaptions: ["region", "country", "extendedAddress", "addressLocation", "streetAddress", "postalcode", "locality", "pobox"]
     },
     AFFILIATION: {
         name: "Affiliation",
         caption: "Affiliation",
-        keys: ["department", "org", "title", "role"]
+        keys: ["department", "org", "title", "role"],
+        keyCaptions: ["Department", "Organisation", "Title", "Role"]
     },
     INTERESTS: {
-        name: "Interests",
-        caption: "Interests",
-        keys: ["interest"]
+        name: "Hobby",
+        caption: "Hobby",
+        keys: ["hobby"],
+        keyCaptions: ["Hobby"]
     }
     
 };
@@ -3875,13 +3887,14 @@ Dime.DetailDialog.prototype = {
      
         for (var i=0; i<category.keys.length;i++){
             var key = category.keys[i];
+            var keyCaption = category.keyCaptions[i];
             
             if (!this.item.value[key]){
                 this.item.value[key]="";
             }
             
             ul.append($('<li class="DimeDetailDialogPAValueListItem" />')
-                .append($('<span class="DimeDetailDialogPAValueListItemKey"/>').text(key))
+                .append($('<span class="DimeDetailDialogPAValueListItemKey"/>').text(keyCaption))
                 .append($('<input class="DimeDetailDialogPAValueListItemValue" type="text"/>')
                     .attr('id',this.pAValueListItemValueIdPrefix+key)
                     .attr('value',this.item.value[key]))
