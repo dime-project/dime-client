@@ -4441,7 +4441,7 @@ Dime.ShareDialog = function(){
         .append($('<button type="button" class="close" data-dismiss="modal" aria-hidden="true" >x</button>')
             .clickExt(this, this.cancelHandler)
             )
-        .append($('<h3 id="myModalLabel">OK</h3>\n'))
+        .append($('<h3 id="myModalLabel">Share</h3>\n'))
         )
     //body
     .append(this.body)
@@ -4451,7 +4451,7 @@ Dime.ShareDialog = function(){
         .append($('<button class="YellowMenuButton" data-dismiss="modal" aria-hidden="true">Cancel</button>')
             .clickExt(this, this.cancelHandler)
             )
-        .append($('<button class="YellowMenuButton">Share</button>')
+        .append($('<button class="YellowMenuButton">OK</button>')
             .clickExt(this, this.okHandler)
             )   
         );             
