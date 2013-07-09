@@ -667,7 +667,6 @@ Dime.psMap = {
         SERVICEADAPTER: 'serviceadapter',
         DEVICE: 'device',
         CONTEXT: 'context',
-        EVALUATION: 'evaluation',
         PLACE: 'place',
         ACCOUNT: 'account',
         USERNOTIFICATION:'usernotification'
@@ -728,7 +727,6 @@ Dime.psMap.addToTypeMap(new Dime.PSMap(Dime.psMap.TYPE.EVENT, "calendar entry", 
 Dime.psMap.addToTypeMap(new Dime.PSMap(Dime.psMap.TYPE.SERVICEADAPTER, "service", 0, 0,  'resource.png', 'serviceadapter', YES, YES, 'services'));
 Dime.psMap.addToTypeMap(new Dime.PSMap(Dime.psMap.TYPE.DEVICE, "device", 0, 0,  'resource.png', 'device', NO, YES, 'devices'));
 Dime.psMap.addToTypeMap(new Dime.PSMap(Dime.psMap.TYPE.CONTEXT, "context", 0, 0, 'resource.png', 'context', NO, NO, 'context'));
-Dime.psMap.addToTypeMap(new Dime.PSMap(Dime.psMap.TYPE.EVALUATION, "evaluation", 0, 0,  'resource.png', 'evaluation', NO, YES, 'evaluations'));
 Dime.psMap.addToTypeMap(new Dime.PSMap(Dime.psMap.TYPE.PLACE, "place", 0, 0, 'resource.png', 'place', NO, YES, 'places'));
 Dime.psMap.addToTypeMap(new Dime.PSMap(Dime.psMap.TYPE.ACCOUNT, "account", 0, 0, 'resource.png', 'account', NO, YES, 'accounts'));
 Dime.psMap.addToTypeMap(new Dime.PSMap(Dime.psMap.TYPE.USERNOTIFICATION, "notification", 0, 0, 'notification.png', 'usernotification', NO, YES, 'notifications'));
@@ -1156,6 +1154,13 @@ Dime.AdvisoryItem.prototype={
        
         return message;
     }
+};
+
+Dime.evaluation={
+   createEvaluationItem: function(){
+       
+
+   }
 };
 
 
@@ -2350,7 +2355,8 @@ Dime.psHelper = {
             items:[]
         };
         
-        if (Dime.psHelper.isAgentType(type)){
+        // only persons are trustable if (Dime.psHelper.isAgentType(type)){
+        if (type===Dime.psMap.TYPE.PERSON){
             entry["nao:trustLevel"]=0.5;
         }else if (Dime.psHelper.isShareableType(type)){
             entry["nao:privacyLevel"]=1.0;
