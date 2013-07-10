@@ -1157,10 +1157,91 @@ Dime.AdvisoryItem.prototype={
 };
 
 Dime.evaluation={
-   createEvaluationItem: function(){
-       
 
-   }
+    getViewStackItemByGroupType: function(groupType, viewType){
+        //https://confluence.deri.ie:8443/display/digitalme/SET+%28Self+Evaluation+Tool%29+Specs#SET%28SelfEvaluationTool%29Specs-Viewstack
+        
+        if (viewType===DimeView.SETTINGS_VIEW){
+            return "Settings";
+        }
+        if (viewType===DimeView.PERSON_VIEW){
+            return "Person_Detail";
+        }
+        if (groupType===Dime.psMap.TYPE.GROUP){
+            return "People";
+        }else if (groupType===Dime.psMap.TYPE.DATABOX){
+            return "Data";
+        }else if (groupType===Dime.psMap.TYPE.PROFILE){
+            return "Myprofile";
+        }else if (groupType===Dime.psMap.TYPE.LIVESTREAM){
+            return "Communication";
+        }else if (groupType===Dime.psMap.TYPE.SITUATION){
+            return "Situations";
+        }else if (groupType===Dime.psMap.TYPE.PLACE){
+            return "Place";
+        }
+        return 'undefined';
+    },
+
+    createEmptyInvolvedItems: function(){
+          return {
+            "profile":0,
+            "profileattribute":0,
+            "person":0,
+            "group":0,
+            "databox":0,
+            "livepost":0,
+            "account":0
+        };
+    },
+
+    createInvolvedItems: function(profiles, profileattributes, persons,
+        groups, databoxes, liveposts, accounts){
+        return {  
+            "profile":profiles,
+            "profileattribute":profileattributes,
+            "person":persons,
+            "group":groups,
+            "databox":databoxes,
+            "livepost":liveposts,
+            "account":accounts
+        };
+    },
+
+    createViewStack: function(){
+        return [];
+    },
+
+
+   createEvaluationItem: function(evaluationId, viewStack, action, involvedItems){
+       return {
+            "guid": JSTool.randomGUID(),
+            "type": "evaluation",
+            "created": new Date().getTime(),
+            "tenantId": evaluationId, //evaluation id from user call
+            "clientId":"0.01",
+            "viewStack":viewStack,
+            "action": action,
+            "currPlace":"unknown",
+            "currSituationId":"unknown",
+            "involvedItems":involvedItems
+        };
+    },
+    updateViewStack: function(groupType, viewType){
+        if (!Dime.ps_configuration.viewStack){
+            Dime.ps_configuration.viewStack=this.createViewStack();
+            //store initial evaluation
+            var action = "navigate_search_web_UI";
+            this.createAndSendEvaluationItemForAction(action);
+        }
+        Dime.ps_configuration.viewStack.push(this.getViewStackItemByGroupType(groupType, viewType))
+    },
+
+    createAndSendEvaluationItemForAction: function(action){
+        var evaluationItem = this.createEvaluationItem(Dime.ps_configuration.userInformation.evaluationId,
+            Dime.ps_configuration.viewStack, action, this.createEmptyInvolvedItems());
+        Dime.REST.postEvaluation(evaluationItem);
+    }
 };
 
 
@@ -1285,6 +1366,8 @@ Dime.PsConfigurationClass = function(mainSaid, hostname, port, useHttps){
     this.serverPath = '/dime-communications/api/dime/rest';   
     this.deviceGuid = JSTool.randomGUID();
     this.startTime = new Date().getTime();
+    this.serverInformation={}; //will be set in the initRegister call
+    this.userInformation={};//will be set in the initRegister call
     
     //old config from segovia
     this.uiMainSite = '/dime-communications/static/ui/dime/index.html';
@@ -2993,6 +3076,17 @@ Dime.REST = {
         var request = Dime.psHelper.prepareRequest(userItem);
 
         $.postJSON(callPath, request, jointCallBack);
+    },
+    postEvaluation: function(evaluationItem){                     
+        var callPath = Dime.ps_configuration.getUserUrlString()+"/evaluation/@me";
+
+        var callback = function(response){
+            console.log(response);
+        };
+
+        var request = Dime.psHelper.prepareRequest(evaluationItem);
+
+        $.postJSON(callPath, request, callback);
     }
 
     
@@ -3326,26 +3420,42 @@ Dime.initProcessor.registerFunction( function(callback){
 });
 
 /*
- * handler of username 
+ * get server information
+ * handler of username
  */
 Dime.initProcessor.registerFunction( function(callback){
     
-    if (!Dime.ps_configuration.createNavigation){ //if no navigation needed skip this
-        callback();
-        return;
-    }
-
+ 
     var serverInfoCallBack=function(response){
-        var userString = Dime.ps_configuration.mainSaid+'@'+response.name;
-        $('#username').text(userString.substr(0, 27)).click(function(){
-            DimeView.showAbout.call(DimeView)
-        });
+
+        Dime.ps_configuration.serverInformation = response;
+
+        if (Dime.ps_configuration.createNavigation){
+            var userString = Dime.ps_configuration.mainSaid+'@'+response.name;
+            $('#username').text(userString.substr(0, 21)).click(function(){
+                DimeView.showAbout.call(DimeView)
+            });
+        }
+        callback();
     };
-    Dime.REST.getServerInformation(serverInfoCallBack)
+    Dime.REST.getServerInformation(serverInfoCallBack);
     
-    callback();
 });
 
+/*
+ * evaluation information
+ */
+Dime.initProcessor.registerFunction( function(callback){
+
+
+    var userCallBack=function(response){
+
+        Dime.ps_configuration.userInformation = response;
+        callback();
+    };
+    Dime.REST.getUser(userCallBack);
+
+});
 
 
 Dime.Navigation.registerCometCall = function(){    
