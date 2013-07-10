@@ -1464,7 +1464,7 @@ Dime.Settings = {
                     $('<img></img>')                    
                     .attr("src", Dime.psHelper.guessLinkURL(item.imageUrl))                    
                    )
-                .append("<b>" + item.name.substring(0,25) + "</b></br>")
+                .append("<b>" + item.name.substr(0,17) + "</b></br>")
                 .append(
                     $("<span></span>")
                     .addClass("serviceActiveMessage")
@@ -1673,12 +1673,12 @@ Dime.Settings = {
 
         if(isNewAccount){
             callBack = function(response) {
-                console.log("NEW ACCOUNT: " + response);
+                console.log("NEW ACCOUNT: ", response);
             };
             Dime.REST.postNewItem(serviceAccount, callBack);
         }else{
             callBack = function(response) {
-                console.log("ACCOUNT UPDATED: " + response);
+                console.log("ACCOUNT UPDATED: ", response);
             };
             Dime.REST.updateItem(serviceAccount, callBack);
         }
