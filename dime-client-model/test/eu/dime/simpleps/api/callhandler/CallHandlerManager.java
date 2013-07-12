@@ -15,15 +15,13 @@ import java.util.logging.Logger;
  * @author simon
  */
 public class CallHandlerManager implements Iterable<CallHandler> {
-    private Vector<CallHandler> callHandlers = new Vector();
+	
+    private Vector<CallHandler> callHandlers = new Vector<CallHandler>();
     
     public void register(CallHandler callHandler){
         logCallHandler(callHandler);
-        
         callHandlers.add(callHandler);
     }
-
-    
     
     public Iterator<CallHandler> iterator() {
         return callHandlers.iterator();
@@ -31,7 +29,7 @@ public class CallHandlerManager implements Iterable<CallHandler> {
     
     public CallHandler getHandlerForCall(String[] postPath){
         //get a copy to sort out the non-fitting callhandlers
-        ArrayList<CallHandler> resultSet = new ArrayList(callHandlers);
+        ArrayList<CallHandler> resultSet = new ArrayList<CallHandler>(callHandlers);
         
         //sort out - handles with too long signature
         Iterator<CallHandler> iter = resultSet.iterator();
@@ -45,13 +43,10 @@ public class CallHandlerManager implements Iterable<CallHandler> {
         //sort out non-fitting handlers
         for (int i=0; i<postPath.length;i++){
             String pathSeg = postPath[i];
-            
             iter = resultSet.iterator();
             while (iter.hasNext()){
              CallHandler handler = iter.next();
-             
-                if ((handler.getSignature().length<=i)
-                    || (!signatureElementFits(handler.getSignature()[i], pathSeg))){
+                if ((handler.getSignature().length<=i) || (!signatureElementFits(handler.getSignature()[i], pathSeg))){
                     iter.remove();
                     continue;
                 }//else
@@ -60,14 +55,11 @@ public class CallHandlerManager implements Iterable<CallHandler> {
         if (!resultSet.isEmpty()){
             return resultSet.get(0);
         }
-        
         return null;
     }
 
     private boolean signatureElementFits(DIME_HANDLER_PARAMS sigType, String pathSeg) {
         String sigPattern = CallHandler.DIME_HANDLE_PARAMS_MAP.get(sigType).getSigPattern();
-        
-        
         if(sigPattern.equals(DimeHandleParamsEntry.SIG_PATTERN_WILDCARD)){
             return true;
         }
@@ -75,14 +67,10 @@ public class CallHandlerManager implements Iterable<CallHandler> {
             return true;
         }
         return false;
-        
     }
 
     private void logCallHandler(CallHandler callHandler) {
-        Logger.getLogger(CallHandlerManager.class.getName()).log(Level.INFO, 
-                "\nregistering:"+callHandler.getName()+" sig:" +callHandler.getSignatureString());
+        Logger.getLogger(CallHandlerManager.class.getName()).log(Level.INFO, "\nregistering:"+callHandler.getName()+" sig:" +callHandler.getSignatureString());
     }
-    
-    
     
 }

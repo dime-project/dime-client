@@ -1,107 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@android:color/white"
-    android:orientation="vertical"
-    android:padding="10dp" >
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:text="@string/settings_view_info_private_server"
-        android:textStyle="bold" />
+    android:layout_height="match_parent" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:padding="10dp" >
 
         <TextView
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical|right"
-            android:paddingRight="5dp"
-            android:text="Host:" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="@string/info_dialog_welcome_text"
+            android:textColor="@color/dm_text" />
 
-        <EditText
-            android:id="@+id/settings_view_ip_address"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:text="@string/info_dialog_getting_started_label"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/info_dialog_getting_started_text"
+                android:textColor="@color/dm_text" />
+
+            <TextView
+                android:id="@+info/tutorial"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/info_dialog_getting_started_link"
+                android:textColor="@color/text_url" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:text="@string/info_dialog_feedback_label"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+info/feedback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="@string/info_dialog_feeback_link"
+            android:textColor="@color/text_url" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:text="@string/info_dialog_bugs_label"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+info/bugs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="@string/info_dialog_bugs_text"
+            android:textColor="@color/dm_text" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:text="@string/info_dialog_about"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+info/test_trial"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/info_dialog_about_trial_homepage" />
+
+        <TextView
+            android:id="@+info/open_source"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/info_dialog_about_os_homepage" />
+
+        <TextView
+            android:id="@+info/research_project"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/info_dialog_about_project_homepage" />
+
+        <TextView
+            android:id="@+info/usage_terms"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingTop="4dp"
+            android:text="@string/info_dialog_about_usage"
+            android:textColor="@color/text_url" />
+
+        <TextView
+            android:id="@+info/privacy_declaration"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:paddingTop="4dp"
+            android:text="@string/info_dialog_about_privacy"
+            android:textColor="@color/text_url" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:text="@string/info_dialog_client"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+info/ip_address"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:clickable="false"
-            android:cursorVisible="false"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:inputType="textEmailSubject"
             android:singleLine="true" />
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-        <TextView
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical|right"
-            android:paddingRight="5dp"
-            android:text="Port:" />
-
-        <EditText
-            android:id="@+id/settings_view_port"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:inputType="number"
-            android:minWidth="100dp"
-            android:singleLine="true" />
+            android:orientation="horizontal" >
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
+            <TextView
+                android:layout_width="140dp"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|right"
+                android:paddingRight="5dp"
+                android:text="API version:" />
 
-        <CheckBox
-            android:id="@+id/settings_view_is_https"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:text="HTTPS" />
+            <TextView
+                android:id="@+info/api_version"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="140dp"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|right"
+                android:paddingRight="5dp"
+                android:text="@string/info_dialog_client_version" />
+
+            <TextView
+                android:id="@+info/client_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="20dp"
-        android:text="@string/settings_view_info_client"
-        android:textStyle="bold" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingLeft="10dp" >
-
-        <TextView
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical|right"
-            android:paddingRight="5dp"
-            android:text="@string/settings_view_info_client_version" />
-
-        <TextView
-            android:id="@+id/settings_view_client_version"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
-</LinearLayout>
+</ScrollView>

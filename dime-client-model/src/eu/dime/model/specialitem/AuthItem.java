@@ -18,48 +18,75 @@ import sit.sstl.ObjectWithKey;
  */
 public class AuthItem extends JSONItem<AuthItem> implements ObjectWithKey<String> {
 
+	public final static String TYPE_TAG = "type";
+	public final static String ROLE_TAG = "role";
+	public final static String SAID_TAG = "said";
     public final static String USERNAME_TAG = "username";
     public final static String PASSWORD_TAG = "password";
-    public final static String ROLE_TAG = "role";
     public final static String ENABLED_TAG = "enabled";
-     
-    private String username;
-    private String password = "";
-    private String role = "";    
-    private boolean enabled = false;    
-
-    public AuthItem(String username) {
-        this.username = username;
-    }
+    public final static String UI_LANGUAGE_TAG = "uiLanguage";
+    public final static String EVALUATION_DATA_CAPTURING_ENABLED_TAG = "evaluationDataCapturingEnabled";
+    public final static String EVALUATION_ID_TAG = "evaluationId";
+    public final static String USER_STATUS_FLAG_TAG = "userStatusFlag"; // 0==initialized; 1==loggedInWebUI at least once
+    
+    private String type = "";
+    private int role = 1;
+    private String said = "";
+    private String username = "";
+    private String password = "";      
+    private boolean enabled = false;
+    private String uiLanguage = "en";
+    private boolean evaluationDataCapturingEnabled = false;
+    private String evaluationId = "";
+    private int userStatusFlag = 0;
     
     public AuthItem() {
-        this.username = null; 
+        wipeItem();
     }
     
     @Override
     public AuthItem getClone() {
-        AuthItem result = new AuthItem(this.username);        
+        AuthItem result = new AuthItem();
+        result.type = this.type;
+        result.role = this.role;
+        result.said = this.said;
+        result.username = this.username;
         result.password = this.password;
-        result.role = this.role;    
         result.enabled = this.enabled;
+        result.uiLanguage = this.uiLanguage;
+        result.evaluationDataCapturingEnabled = this.evaluationDataCapturingEnabled;
+        result.evaluationId = this.evaluationId;
+        result.userStatusFlag = this.userStatusFlag;
         return result;
     }
 
     @Override
     protected void wipeItem() {
+    	type = "auth";
+    	role = 1;
+    	said = "";
         username = "";
-        password = "";
-        role = "";    
+        password = "";  
         enabled = false;
+        uiLanguage = "en";
+        evaluationDataCapturingEnabled = false;
+        evaluationId = "";
+        userStatusFlag = 0;
     }
 
     @Override
     public JSONObject createJSONObject() {
         JSONObject newJSONObject = new JSONObject("0");
+        newJSONObject.addChild(getJSONValue(this.type, TYPE_TAG));
+        newJSONObject.addChild(getJSONValue(this.role, ROLE_TAG));
+        newJSONObject.addChild(getJSONValue(this.said, SAID_TAG));
         newJSONObject.addChild(getJSONValue(this.username, USERNAME_TAG));
         newJSONObject.addChild(getJSONValue(this.password, PASSWORD_TAG));
-        newJSONObject.addChild(getJSONValue(this.role, ROLE_TAG));
-        newJSONObject.addChild(getJSONValue(this.enabled, ENABLED_TAG));        
+        newJSONObject.addChild(getJSONValue(this.enabled, ENABLED_TAG));
+        newJSONObject.addChild(getJSONValue(this.uiLanguage, UI_LANGUAGE_TAG));
+        newJSONObject.addChild(getJSONValue(this.evaluationDataCapturingEnabled, EVALUATION_DATA_CAPTURING_ENABLED_TAG));
+        newJSONObject.addChild(getJSONValue(this.evaluationId, EVALUATION_ID_TAG));
+        newJSONObject.addChild(getJSONValue(this.userStatusFlag, USER_STATUS_FLAG_TAG));
         return newJSONObject;
     }
 
@@ -68,70 +95,100 @@ public class AuthItem extends JSONItem<AuthItem> implements ObjectWithKey<String
          // clean up first
         wipeItem();
 
+        this.type = getStringValueOfJSONO(jsonObject, TYPE_TAG);
+        this.role = getIntegerValueOfJSONO(jsonObject, ROLE_TAG);
+        this.said = getStringValueOfJSONO(jsonObject, SAID_TAG);
         this.username = getStringValueOfJSONO(jsonObject, USERNAME_TAG);
-        this.password = getStringValueOfJSONO(jsonObject, PASSWORD_TAG);
-        this.role = getStringValueOfJSONO(jsonObject, ROLE_TAG);
+        this.password = getStringValueOfJSONO(jsonObject, PASSWORD_TAG);        
         this.enabled = getBooleanValueOfJSONO(jsonObject, ENABLED_TAG);
+        this.uiLanguage = getStringValueOfJSONO(jsonObject, UI_LANGUAGE_TAG);
+        this.evaluationDataCapturingEnabled = getBooleanValueOfJSONO(jsonObject, EVALUATION_DATA_CAPTURING_ENABLED_TAG);
+        this.evaluationId = getStringValueOfJSONO(jsonObject, EVALUATION_ID_TAG);
+        this.userStatusFlag = getIntegerValueOfJSONO(jsonObject, USER_STATUS_FLAG_TAG);
     }
 
-    public String getKey() {
+    public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public int getRole() {
+		return role;
+	}
+
+	public void setRole(int role) {
+		this.role = role;
+	}
+
+	public String getSaid() {
+		return said;
+	}
+
+	public void setSaid(String said) {
+		this.said = said;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public String getUiLanguage() {
+		return uiLanguage;
+	}
+
+	public void setUiLanguage(String uiLanguage) {
+		this.uiLanguage = uiLanguage;
+	}
+
+	public boolean isEvaluationDataCapturingEnabled() {
+		return evaluationDataCapturingEnabled;
+	}
+
+	public void setEvaluationDataCapturingEnabled(boolean evaluationDataCapturingEnabled) {
+		this.evaluationDataCapturingEnabled = evaluationDataCapturingEnabled;
+	}
+
+	public String getEvaluationId() {
+		return evaluationId;
+	}
+
+	public void setEvaluationId(String evaluationId) {
+		this.evaluationId = evaluationId;
+	}
+
+	public int getUserStatusFlag() {
+		return userStatusFlag;
+	}
+
+	public void setUserStatusFlag(int userStatusFlag) {
+		this.userStatusFlag = userStatusFlag;
+	}
+
+	public String getKey() {
         return username;
     }
     
-    /**
-     * @return the username
-     */
-    public String getUsername() {
-        return username;
-    }
-
-    /**
-     * @return the password
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * @return the role
-     */
-    public String getRole() {
-        return role;
-    }
-
-    /**
-     * @return the enabled
-     */
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    /**
-     * @param username the username to set
-     */
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    /**
-     * @param password the password to set
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    /**
-     * @param role the role to set
-     */
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    /**
-     * @param enabled the enabled to set
-     */
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
 }

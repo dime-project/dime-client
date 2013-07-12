@@ -22,7 +22,6 @@ public class AdvisoryRequestHandler extends CallHandler {
 
     @Override
     public DIME_HANDLER_PARAMS[] getSignature() {
-        
         //POST dime-communications/api/dime/rest/{mainSaId}/advisory/@request
         return new DIME_HANDLER_PARAMS[]{
                     DIME_HANDLER_PARAMS.HOSTER,
@@ -30,31 +29,24 @@ public class AdvisoryRequestHandler extends CallHandler {
                     DIME_HANDLER_PARAMS.ADVISORY_ENDPOINT,
                 };
     }
-  @Override
+    
+   @Override
     public String handleCall(WebRequest wr, ParamsMap params) {
-        
         ModelRequestContext mrc = getMRC(params);        
         mrc = new ModelRequestContext(mrc.hoster, Model.ME_OWNER, mrc.lvHandler);
         try {
-            
-            
-            
             if (wr.httpCommand.equals(HttpConstants.HTTP_COMMAND_POST)) {
-                
-                
-                
                 return DatabaseAccess.getAdvisories(mrc, parser.parseJSON(wr.getBodyAsString()));
             }//else
         } catch (Exception ex) {
             return EndpointHelper.logAccessExceptionAndPrepareErrorMessage(AdvisoryRequestHandler.class, ex, wr, "advisoryrequest", "unknown");
         }
-        return EndpointHelper.logAccessErrorAndPrepareErrorMessage(AdvisoryRequestHandler.class,
-                "unable to handle call:" + wr.fname, "unknown", "advisoryrequest");
+        return EndpointHelper.logAccessErrorAndPrepareErrorMessage(AdvisoryRequestHandler.class, "unable to handle call:" + wr.fname, "unknown", "advisoryrequest");
     }
 
-    
     @Override
     public String getName() {
         return this.getClass().toString();
     }
+    
 }

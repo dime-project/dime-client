@@ -1,7 +1,6 @@
 package eu.dime.mobile.crawler.sensors;
 
 import java.util.ArrayList;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -11,13 +10,11 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import eu.dime.model.context.constants.Scopes;
-
 import eu.dime.mobile.crawler.Constants;
 import eu.dime.mobile.crawler.ContextCrawler;
 import eu.dime.mobile.crawler.Defaults;
 import eu.dime.mobile.crawler.data.WiFi;
 import eu.dime.mobile.helper.ContextHelper;
-import eu.dime.mobile.helper.interfaces.IContextSensor;
 import eu.dime.model.context.ContextItem;
 import android.content.BroadcastReceiver;
 import android.content.Context;

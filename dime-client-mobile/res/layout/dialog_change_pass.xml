@@ -12,6 +12,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="150dp"
             android:text="Old password:"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/dm_back" />
@@ -32,6 +33,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="150dp"
             android:text="New password:"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/dm_back" />
@@ -40,7 +42,8 @@
             android:id="@+changePass/editText_newpw"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10" />
+            android:ems="10"
+            android:inputType="textPassword" />
     </LinearLayout>
 
     <LinearLayout
@@ -51,6 +54,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="150dp"
             android:text="Re-type new:"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/dm_back" />

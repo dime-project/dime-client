@@ -13,12 +13,6 @@ import sit.web.WebRequest;
  * @author simon
  */
 public class CollectionCallHandler extends CallHandler{
-    
-    
-    
-    
-    
-      
 
     @Override
     public DIME_HANDLER_PARAMS[] getSignature() {
@@ -30,8 +24,6 @@ public class CollectionCallHandler extends CallHandler{
                 DIME_HANDLER_PARAMS.AT_ALL
         };
     }
-    
-    
 
     @Override
     public String handleCall(WebRequest wr, ParamsMap params) {
@@ -40,19 +32,16 @@ public class CollectionCallHandler extends CallHandler{
         try {
             ModelRequestContext mrc = getMRC(params);
             type = getMType(params);
-            
-
             if (wr.httpCommand.equals("GET")){
-                String result = DatabaseAccess.getAllJSONItems(mrc, type).toJson();
+            	String result = DatabaseAccess.getAllJSONItems(mrc, type).toJson();
                 return result;
             }//else
             DimeHelper dimeHelper = new DimeHelper();
             return dimeHelper.createAccessErrorResponse(type, endpointName,  "Error while handling request...\n" + wr.toString()).toJson();
         } catch (ModelTypeNotFoundException ex) {
             return EndpointHelper.logAccessExceptionAndPrepareErrorMessage(this.getClass(), ex, wr, type, endpointName);
-        }catch (Exception ex){
+        } catch (Exception ex){
             return EndpointHelper.logAccessExceptionAndPrepareErrorMessage(this.getClass(), ex, wr, type, endpointName);
-
         }
   
     }
@@ -61,6 +50,5 @@ public class CollectionCallHandler extends CallHandler{
     public String getName() {
         return this.getClass().toString();
     }
-
     
 }

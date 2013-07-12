@@ -20,17 +20,18 @@ public class ProfileAttributeCategoriesEntry implements StrictSITEnumContainer<V
     public final String name;
     public final String caption;
     public final String [] keys;
+    public final String [] labels;
 
-    public ProfileAttributeCategoriesEntry(VALUE_CATEGORIES category, String name, String caption, String[] keys) {
+    public ProfileAttributeCategoriesEntry(VALUE_CATEGORIES category, String name, String caption, String[] keys, String[] labels) {
         this.category = category;
         this.name = name;
         this.caption = caption;
         this.keys = keys;
+        this.labels = labels;
     }
 
     public VALUE_CATEGORIES getEnumType() {
         return category;
     }
-    
     
 }

@@ -3,6 +3,7 @@ package eu.dime.mobile.view.data;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -28,11 +29,11 @@ import eu.dime.mobile.helper.AndroidModelHelper;
 import eu.dime.mobile.helper.FileHelper;
 import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.handler.LoadingViewHandlerFactory;
-import eu.dime.mobile.helper.interfaces.ResultsOfStandardDialogInterface;
 import eu.dime.mobile.helper.objects.DimeIntentObject;
 import eu.dime.mobile.helper.objects.DimeTabObject;
 import eu.dime.mobile.helper.objects.ResultObject;
 import eu.dime.mobile.helper.objects.ResultObjectDisplayable;
+import eu.dime.mobile.helper.objects.IResultOfStandardDialog;
 import eu.dime.mobile.view.abstr.TabActivityDime;
 import eu.dime.mobile.view.adapter.BaseAdapter_Standard;
 import eu.dime.model.ItemFactory;
@@ -41,7 +42,7 @@ import eu.dime.model.TYPES;
 import eu.dime.model.displayable.DataboxItem;
 import eu.dime.model.displayable.DisplayableItem;
 
-public class TabActivity_Data extends TabActivityDime implements ResultsOfStandardDialogInterface {
+public class TabActivity_Data extends TabActivityDime implements IResultOfStandardDialog {
 	
 	private static final int PICK_FILE = 1;
 

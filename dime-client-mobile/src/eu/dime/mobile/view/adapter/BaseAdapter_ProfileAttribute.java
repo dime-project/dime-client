@@ -44,17 +44,15 @@ public class BaseAdapter_ProfileAttribute extends BaseAdapterDisplayableItem {
         labelCat.setText(pai.getCategory());
         int counter = 0;
         for (String key : pai.getValue().keySet()) {
+        	String label = pai.getLabelForValueKey(key);
             String value = pai.getValue().get(key);
             LinearLayout line = new LinearLayout(context);
             line.setOrientation(LinearLayout.HORIZONTAL);
             line.setPadding(0, 2, 0, 2);
-            TextView labelTV = new TextView(context);
-            labelTV.setText(key);
-            labelTV.setTextAppearance(context, R.style.dimeTheme);
             LinearLayout.LayoutParams lpms = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1f);
             lpms.setMargins(10, 0, 0, 0);
-            labelTV.setLayoutParams(lpms);
-            line.addView(labelTV);
+            TextView labelTV = UIHelper.createTextView(context, R.style.dimeTheme, -1, -1, lpms, true);
+            labelTV.setText(label);
             EditText valueET = new EditText(context);
             valueET.setText(value);
             valueET.setTextAppearance(context, R.style.dimeTheme);
@@ -69,6 +67,7 @@ public class BaseAdapter_ProfileAttribute extends BaseAdapterDisplayableItem {
             } else {
                 valueET.setEnabled(false);
             }
+            line.addView(labelTV);
             line.addView(valueET);
             if (counter % 2 == 0) {
                 line.setBackgroundColor(context.getResources().getColor(R.color.dm_row_alternate));

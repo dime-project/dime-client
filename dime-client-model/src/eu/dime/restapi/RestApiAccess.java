@@ -128,6 +128,10 @@ public class RestApiAccess {
         return result;
     }
     
+    protected static Vector<GenItem> getItemsOfAllOwners(String hoster, TYPES type, RestApiConfiguration conf) {
+    	return getItemsOfAllOwners(hoster, type, new JSONResponseContainer(), conf);
+    }
+    
     protected static Vector<GenItem> getItemsOfAllOwners(String hoster, TYPES type, JSONResponseContainer resultContainer, RestApiConfiguration conf) {
         Vector<GenItem> result = new Vector<GenItem>();
         JSONResponse response = null;
@@ -189,9 +193,6 @@ public class RestApiAccess {
         JSONResponse result = dimeHelper.doDIMEJSONPOST(ModelHelper.getPath(CALLTYPES.AT_ITEM_POST_NEW, hoster, owner, type, ""), payload, conf);
         result = handleResponse(result);
         resultContainer.jsonResponse = result; //save a copy (ref) for testing purposes
-//        Logger.getLogger(RestApiAccess.class.getName()).log(Level.INFO, "did POST: create "+item.getGuid()
-//                + " ("+item.getType()+") \nResponse:\n"
-//                + ((result!=null)?result.getReply():"null"));
         if ((result != null) && (!result.hasError()) && (!result.replyObjects.isEmpty())) {
             return jsonToGenItem(type, result.replyObjects.get(0));
         }
@@ -247,29 +248,21 @@ public class RestApiAccess {
         }
         JSONResponse result = dimeHelper.doDIMEJSONPOST(ModelHelper.getPath(CALLTYPES.MERGE, hoster, owner, type, null), payload, conf);
         result = handleResponse(result);
-        //TODO handle various replies --> recommendations etc.
         if ((result != null) && (!result.hasError()) && (!result.replyObjects.isEmpty())) {
             return jsonToGenItem(type, result.replyObjects.get(0));
         }
         return null;
     }
 
-    public static Vector<AuthItem> getAllAuthItems(String hoster, RestApiConfiguration conf) {
-        Vector<AuthItem> result = new Vector<AuthItem>();
+    public static AuthItem getAuthItem(String hoster, RestApiConfiguration conf) {
         JSONResponse response = null;
-        response = (dimeHelper.doDIMEJSONGET(ModelHelper.getPath(CALLTYPES.AUTH_ALL_GET, hoster, null, null, null), "", conf));
+        response = (dimeHelper.doDIMEJSONGET(ModelHelper.getPath(CALLTYPES.AUTH_GET, hoster, null, null, null), "", conf));
         response = handleResponse(response);
         if ((response == null) || (response.hasError())) {
             //we have not been able to fetch something
-            return result;
+            return null;
         }
-        for (JSONObject jsonObject : response.replyObjects) {
-            AuthItem item = ItemFactory.createNewAuthItem(jsonObject);
-            if (item != null) {
-                result.add(item);
-            }
-        }
-        return result;
+        return ItemFactory.createNewAuthItem(response.replyObjects.get(0));
     }
 
     public static boolean postAuthItem(String hoster, AuthItem item, RestApiConfiguration conf) {

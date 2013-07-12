@@ -9,7 +9,7 @@ import eu.dime.mobile.helper.DimeIntentObjectHelper;
 import eu.dime.mobile.helper.handler.LoadingViewHandlerFactory;
 import eu.dime.mobile.helper.objects.DimeIntentObject;
 import eu.dime.mobile.view.abstr.ListActivityDisplayableItem;
-import eu.dime.mobile.view.adapter.BaseAdapter_Livepost;
+import eu.dime.mobile.view.adapter.BaseAdapter_Standard;
 import eu.dime.model.ModelHelper;
 import eu.dime.model.TYPES;
 import eu.dime.model.displayable.DisplayableItem;
@@ -26,7 +26,7 @@ public class ListActivity_Livepost extends ListActivityDisplayableItem {
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
     	TAG = ListActivity_Livepost.class.getSimpleName();
-        setBaseAdapter(new BaseAdapter_Livepost());
+        setBaseAdapter(new BaseAdapter_Standard());
     }
     
     @Override

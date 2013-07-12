@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import eu.dime.mobile.R;
@@ -19,36 +18,38 @@ import eu.dime.model.displayable.ServiceAdapterItem;
 
 public class BaseAdapter_ServiceAdapter extends BaseAdapterDisplayableItem {
 	
-	private ServiceAdapterItem selectedServiceAdapter;
-
-	public ServiceAdapterItem getSelectedServiceAdapter() {
-		return selectedServiceAdapter;
-	}
-	
 	@Override
-	public void init(Context context, ModelRequestContext mrContext, ListView parent, List<DisplayableItem> items) {
-		super.init(context, mrContext, parent, items);
-		if(items.size()>0 && items.get(0) !=null) {
+	public void init(Context context, ModelRequestContext mrContext, List<DisplayableItem> items) {
+		super.init(context, mrContext, items);
+		if(items.size()>0 && items.get(0) != null) {
 			selection.add(items.get(0).getGuid());
-			selectedServiceAdapter = (ServiceAdapterItem) items.get(0);
 		}
 	}
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-    	convertView = mInflater.inflate(R.layout.adapter_serviceadapter_item, null);
-        TextView name = (TextView) convertView.findViewById(R.service.name);
-        TextView description = (TextView) convertView.findViewById(R.service.description);
-        ImageView image = (ImageView) convertView.findViewById(R.service.image);
-        RadioButton selectedCB = (RadioButton) convertView.findViewById(R.service.radioButton);
-        ServiceAdapterItem ai = (ServiceAdapterItem) mItems.get(position);
-        name.setText(ai.getName());
-        description.setText(ai.getDescription());
-        ImageHelper.loadImageAsynchronously(image, ai, context);
-        if (selection.contains(ai.getGuid())) {
-            selectedCB.setChecked(true);
-        }
-        selectedCB.setOnCheckedChangeListener(new CheckListener<DisplayableItem>(position, this));
+    	ServiceAdapterItem ai = (ServiceAdapterItem) mItems.get(position);
+    	// Keeps reference to avoid future findViewById()
+    	DimeViewHolder viewHolder;
+    	if (convertView == null) {
+			viewHolder = new DimeViewHolder();
+			convertView = mInflater.inflate(R.layout.adapter_serviceadapter_item, null);
+			viewHolder.name = (TextView) convertView.findViewById(R.service.name);
+			viewHolder.image = (ImageView) convertView.findViewById(R.service.image);
+			viewHolder.description = (TextView) convertView.findViewById(R.service.description);
+			viewHolder.selectedCB = (RadioButton) convertView.findViewById(R.service.radioButton);
+			viewHolder.isConfigurable = (ImageView) convertView.findViewById(R.service.isConfigurable);
+	    	convertView.setTag(viewHolder);
+		} else {
+			viewHolder = (DimeViewHolder) convertView.getTag();
+			viewHolder.selectedCB.setOnCheckedChangeListener(null);
+		}
+    	viewHolder.isConfigurable.setVisibility((ai.isConfigurable()) ? View.VISIBLE : View.GONE);
+    	viewHolder.name.setText(ai.getName());
+    	viewHolder.description.setText(ai.getDescription());
+        ImageHelper.loadImageAsynchronously(viewHolder.image, ai, context);
+        viewHolder.selectedCB.setChecked((selection.contains(ai.getGuid())));
+        viewHolder.selectedCB.setOnCheckedChangeListener(new CheckListener<DisplayableItem>(position, this));
         return convertView;
     }
     
@@ -58,11 +59,20 @@ public class BaseAdapter_ServiceAdapter extends BaseAdapterDisplayableItem {
         	selection.clear();
             DisplayableItem item = (DisplayableItem) mItems.get(position);
             selection.add(item.getGuid());
-            selectedServiceAdapter = (ServiceAdapterItem) item;
         } else {
             Log.e(TAG, "Checked Item changed on sth else than DisplayableItem: " + mItems.get(position).getClass());
         }
         notifyDataSetChanged();
     }
+    
+    static class DimeViewHolder {
+		
+		TextView name;
+		ImageView image;
+		TextView description;
+		RadioButton selectedCB;
+		ImageView isConfigurable;
+    	
+	}
     
 }

@@ -214,7 +214,7 @@ public class FileHelper implements sit.io.FileHelperI {
 
 					if (filePath != null) {
 						File file = new File(filePath);
-						MultiPartPostClient myClient = new MultiPartPostClient(DimeClient.getModelConfiguration());
+						MultiPartPostClient myClient = new MultiPartPostClient(DimeClient.getSettings().getModelConfiguration());
 						try {
 							myClient.uploadFile(file);
 						} catch (IOException ex) {

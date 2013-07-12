@@ -31,13 +31,13 @@ public final class ProfileAttributeItem extends DisplayableItem {
 	};
 
 	public static final StrictSITEnumMap<VALUE_CATEGORIES, ProfileAttributeCategoriesEntry> ValueCategoriesMap = new StrictSITEnumMap(VALUE_CATEGORIES.class, new ProfileAttributeCategoriesEntry[] {
-			new ProfileAttributeCategoriesEntry(VALUE_CATEGORIES.PERSON_NAME, "PersonName", "Name", new String[] { "nameHonorificSuffix", "nameFamily", "nameHonorificPrefix", "nameAdditional","nameGiven", "nickname","fullname" }),
-			new ProfileAttributeCategoriesEntry(VALUE_CATEGORIES.BIRTH_DATE, "BirthDate", "Birthday", new String[] { "birthDate" }),
-			new ProfileAttributeCategoriesEntry(VALUE_CATEGORIES.EMAIL_ADDRESS, "EmailAddress", "Email", new String[] { "emailAddress" }),
-			new ProfileAttributeCategoriesEntry(VALUE_CATEGORIES.PHONE_NUMBER, "PhoneNumber", "Phone", new String[] { "phoneNumber" }),
-			new ProfileAttributeCategoriesEntry(VALUE_CATEGORIES.POSTAL_CODE, "PostalAddress", "Address", new String[] { "region", "country", "extendedAddress", "addressLocation", "streetAddress", "postalcode", "locality", "pobox" }),
-			new ProfileAttributeCategoriesEntry(VALUE_CATEGORIES.AFFILIATION, "Affiliation", "Affiliation", new String[] { "department", "org", "title", "role" }),
-			new ProfileAttributeCategoriesEntry(VALUE_CATEGORIES.HOBBY, "Hobby", "Hobby", new String[] { "hobby" }) });
+			new ProfileAttributeCategoriesEntry(VALUE_CATEGORIES.PERSON_NAME, "PersonName", "Name", new String[] { "nameHonorificSuffix", "nameFamily", "nameHonorificPrefix", "nameAdditional","nameGiven", "nickname","fullname" }, new String[] { "suffix", "family name", "title", "middle name","first name", "nickname","full name" }),
+			new ProfileAttributeCategoriesEntry(VALUE_CATEGORIES.BIRTH_DATE, "BirthDate", "Birthday", new String[] { "birthDate" }, new String[] { "date" }),
+			new ProfileAttributeCategoriesEntry(VALUE_CATEGORIES.EMAIL_ADDRESS, "EmailAddress", "Email", new String[] { "emailAddress" }, new String[] { "email address" }),
+			new ProfileAttributeCategoriesEntry(VALUE_CATEGORIES.PHONE_NUMBER, "PhoneNumber", "Phone", new String[] { "phoneNumber" }, new String[] { "number" }),
+			new ProfileAttributeCategoriesEntry(VALUE_CATEGORIES.POSTAL_CODE, "PostalAddress", "Address", new String[] { "region", "country", "extendedAddress", "addressLocation", "streetAddress", "postalcode", "locality", "pobox" }, new String[] { "region", "country", "addition to address", "location", "street", "postal code", "locality", "PO box" }),
+			new ProfileAttributeCategoriesEntry(VALUE_CATEGORIES.AFFILIATION, "Affiliation", "Affiliation", new String[] { "department", "org", "title", "role" }, new String[] { "department", "organistaion", "job description", "role" }),
+			new ProfileAttributeCategoriesEntry(VALUE_CATEGORIES.HOBBY, "Hobby", "Hobby", new String[] { "hobby" }, new String[] { "hobby" }) });
 
 	private String category = "";
 	private Map<String, String> value = new HashMap();
@@ -113,7 +113,7 @@ public final class ProfileAttributeItem extends DisplayableItem {
 	}
 
 	/**
-	 * value entries will be put to the map in th profile attribute item it is
+	 * value entries will be put to the map in the profile attribute item it is
 	 * due to the caller to make sure the keys fit to the category set
 	 * 
 	 * @param key
@@ -169,6 +169,17 @@ public final class ProfileAttributeItem extends DisplayableItem {
 
 	public static String getCategoryNameOfType(VALUE_CATEGORIES categoryType) {
 		return ProfileAttributeItem.ValueCategoriesMap.get(categoryType).name;
+	}
+	
+	public String getLabelForValueKey(String key) {
+		String label = "";
+		ProfileAttributeCategoriesEntry entry = getProfileCategoryEntry();
+		for (int i = 0; i < entry.keys.length; i++) {
+			if(entry.keys[i].equals(key)) {
+				label = entry.labels[i];
+			}
+		}
+		return label;
 	}
 
 }

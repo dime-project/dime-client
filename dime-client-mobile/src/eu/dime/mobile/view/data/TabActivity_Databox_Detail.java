@@ -9,21 +9,22 @@ import eu.dime.mobile.R;
 import eu.dime.mobile.helper.AndroidModelHelper;
 import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.handler.LoadingViewHandlerFactory;
-import eu.dime.mobile.helper.interfaces.ResultsOfStandardDialogInterface;
 import eu.dime.mobile.helper.objects.DimeTabObject;
 import eu.dime.mobile.helper.objects.ResultObject;
 import eu.dime.mobile.helper.objects.ResultObjectDisplayable;
+import eu.dime.mobile.helper.objects.IResultOfStandardDialog;
 import eu.dime.mobile.view.abstr.TabActivityDime;
 import eu.dime.mobile.view.adapter.BaseAdapter_Standard;
 import eu.dime.model.GenItem;
 import eu.dime.model.ModelHelper;
 import eu.dime.model.displayable.DataboxItem;
 import eu.dime.model.displayable.DisplayableItem;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TabActivity_Databox_Detail extends TabActivityDime implements ResultsOfStandardDialogInterface {
+public class TabActivity_Databox_Detail extends TabActivityDime implements IResultOfStandardDialog {
 
 	private DataboxItem selectedDB;
 

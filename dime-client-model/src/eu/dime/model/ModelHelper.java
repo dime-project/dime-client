@@ -8,8 +8,6 @@
 package eu.dime.model;
 
 import eu.dime.model.acl.ACL;
-import eu.dime.model.auth.AuthException;
-import eu.dime.model.auth.WrongPasswordException;
 import eu.dime.model.displayable.AccountItem;
 import eu.dime.model.displayable.AgentItem;
 import eu.dime.model.displayable.DataboxItem;
@@ -24,7 +22,6 @@ import eu.dime.model.displayable.ProfileAttributeItem;
 import eu.dime.model.displayable.ProfileItem;
 import eu.dime.model.displayable.ResourceItem;
 import eu.dime.model.displayable.ServiceAdapterItem;
-import eu.dime.model.specialitem.AuthItem;
 import eu.dime.model.specialitem.SearchResultItem;
 import eu.dime.model.specialitem.advisory.AdvisoryItem;
 import eu.dime.model.specialitem.advisory.AdvisoryRequestItem;
@@ -166,7 +163,7 @@ public class ModelHelper {
             return result.toString();
         
         }//else
-        if (callType.equals(CALLTYPES.AUTH_ALL_GET)) {
+        if (callType.equals(CALLTYPES.AUTH_GET)) {
             result.append(DimeHelper.DIME_BASIC_PATH).append(HttpHelper.encodeString(hoster))
                     .append("/").append(ctEntry.functionName);
             return result.toString();
@@ -174,8 +171,7 @@ public class ModelHelper {
         if (callType.equals(CALLTYPES.AUTH_POST)) {
             result.append(DimeHelper.DIME_BASIC_PATH).append(HttpHelper.encodeString(hoster))
                     .append("/").append(ctEntry.functionName)
-                    .append("/").append(guid)
-                    .append(ctEntry.functionName);
+                    .append("/@me");
             return result.toString();
         }//else
         if (callType.equals(CALLTYPES.AT_GLOBAL_ALL_GET)) {
@@ -194,7 +190,6 @@ public class ModelHelper {
                     + "\ntype:" + type
                     + "\nguid:" + guid);
         }
-
         result.append(DimeHelper.DIME_BASIC_PATH).append(HttpHelper.encodeString(hoster)).append("/").append(getPathNameOfType(type)).append("/").append(owner.equals("@me") ? "@me" : HttpHelper.encodeString(owner)).append("/");
         if (callType.equals(CALLTYPES.AT_ALL_GET)) {
             result.append(ctEntry.functionName);
@@ -241,6 +236,22 @@ public class ModelHelper {
             Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, null, ex);
         }
         return new Vector<PersonItem>();
+    }
+    
+    public static boolean isPersonValidForSharing(PersonItem personItem) {
+    	return personItem.getDefaultProfileGuid() != null && personItem.getDefaultProfileGuid().length() > 0;
+    }
+    
+    public static List<PersonItem> getAllPersonsValidForSharing(ModelRequestContext mrContext) {
+        List<PersonItem> persons = getAllPersons(mrContext);
+        Iterator<PersonItem> iter = persons.iterator();
+        while (iter.hasNext()){
+            PersonItem personItem = iter.next();
+            if(!isPersonValidForSharing(personItem)) {
+				iter.remove();
+			}
+        }
+        return persons;
     }
 
     public static List<GroupItem> getAllGroups(ModelRequestContext mrContext) {
@@ -290,7 +301,15 @@ public class ModelHelper {
 
     public static List<ProfileItem> getAllProfiles(ModelRequestContext mrContext) {
         try {
-            return (List<ProfileItem>) (Object) Model.getInstance().getAllItems(mrContext, TYPES.PROFILE); //HACK free cast
+        	List<ProfileItem> profiles = (List<ProfileItem>) (Object) Model.getInstance().getAllItems(mrContext, TYPES.PROFILE);
+        	Iterator<ProfileItem> iter = profiles.iterator();
+            while (iter.hasNext()){
+                ProfileItem profile = iter.next();
+	        	if(profile.getServiceAccountId() == null || profile.getServiceAccountId().length() == 0) {
+	        		iter.remove();
+	        	}
+            }
+            return profiles;
         } catch (ClassCastException ex) {
             Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -359,7 +378,6 @@ public class ModelHelper {
             Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, null, ex);
         }
         return new Vector<ServiceAdapterItem>();
-
     }
 
     public static List<GroupItem> getGroupsOfPerson(ModelRequestContext mrContext, String personGUID) {
@@ -401,23 +419,22 @@ public class ModelHelper {
     }
     
     public static List<PersonItem> getPersonsOfGroup(ModelRequestContext mrContext, GroupItem group) {
-        return (List<PersonItem>)(Object) getChildsOfDisplayableItem(mrContext, group);
+        return (List<PersonItem>)(Object) getChildrenOfDisplayableItem(mrContext, group);
     }
     
     public static List<ResourceItem> getResourcesOfDatabox(ModelRequestContext mrContext, DataboxItem databox) {
-        return (List<ResourceItem>)(Object) getChildsOfDisplayableItem(mrContext, databox);
+        return (List<ResourceItem>)(Object) getChildrenOfDisplayableItem(mrContext, databox);
     }
 
     public static List<ProfileAttributeItem> getProfileAttributesOfProfile(ModelRequestContext mrContext, ProfileItem profile) {
-        return (List<ProfileAttributeItem>)(Object) getChildsOfDisplayableItem(mrContext, profile);
+        return (List<ProfileAttributeItem>)(Object) getChildrenOfDisplayableItem(mrContext, profile);
     }
 
     public static List<LivePostItem> getLivePostsOfLivestream(ModelRequestContext mrContext, LiveStreamItem liveStream) {
-        return (List<LivePostItem>)(Object) getChildsOfDisplayableItem(mrContext, liveStream);
+        return (List<LivePostItem>)(Object) getChildrenOfDisplayableItem(mrContext, liveStream);
     }
-
     
-    public static List<DisplayableItem> getChildsOfDisplayableItem(ModelRequestContext mrContext, DisplayableItem item) {
+    public static List<DisplayableItem> getChildrenOfDisplayableItem(ModelRequestContext mrContext, DisplayableItem item) {
         PSMapEntry typeEntry = Model.TypeMap.get(item.getMType());
         TYPES childType = typeEntry.childType;
         if (childType == null) {
@@ -426,7 +443,6 @@ public class ModelHelper {
         Vector<DisplayableItem> result = new Vector();
         try {
             for (String guid : item.getItems()) {
-
                 DisplayableItem myItem = (DisplayableItem) Model.getInstance().getItem(mrContext, childType, guid);
                 if (myItem != null) {
                     result.add(myItem);
@@ -437,25 +453,19 @@ public class ModelHelper {
                             + ")\nItem:" + guid + "(" + childType + ")");
                 }
             }
-
         } catch (ClassCastException ex) {
             Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
-
         return result;
     }
 
     public static List<DisplayableItem> getParentsOfDisplayableItem(ModelRequestContext mrContext, String guid, TYPES type) {
-          
         TYPES parentType = Model.TypeMap.get(type).parentType;
-        
         if (parentType == null) {
             return new Vector(); //TODO throw exception instead?
         }
-        
         //we can safely use the list returned from that function, since it's only a copy of the actual objects
         List<DisplayableItem> parents = (List<DisplayableItem>) (Object) Model.getInstance().getAllItems(mrContext, parentType);
-        
         Iterator<DisplayableItem> iter = parents.iterator();
         while (iter.hasNext()){
             DisplayableItem myItem = iter.next();
@@ -475,23 +485,20 @@ public class ModelHelper {
             throw new SharingNotSupportedForSAIDException("Cannot share with said:"+senderSAID); 
         }
         item.addAccessingAgent(senderSAID, agent.getGuid(), agent.getMType(), null);
-        
         Model.getInstance().updateItem(mrContext, item);
     }
 
     public static AgentItem getAgent(ModelRequestContext mrContext, String agentGuid) {
         try {
             AgentItem result = (AgentItem) Model.getInstance().getItem(mrContext, TYPES.PERSON, agentGuid);
-
             if (result == null) { // person was not found - maybe its a group
                 result = (AgentItem) Model.getInstance().getItem(mrContext, TYPES.GROUP, agentGuid);
             }
             return result;
-
         } catch (ClassCastException ex) {
             Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
-       return null;
+        return null;
     }
 
     
@@ -523,7 +530,6 @@ public class ModelHelper {
     public static ArrayList<String> getAgentAndGroupGuids(ModelRequestContext mrContext, AgentItem agent) {
         ArrayList<String> agentGuids = new ArrayList();
         agentGuids.add(agent.getGuid());
-        
         if (agent.getMType()==TYPES.PERSON){
             //add groups for persons
             for (GroupItem group : getGroupsOfPerson(mrContext, agent.getGuid())){
@@ -536,7 +542,6 @@ public class ModelHelper {
     public static ArrayList<ACL> getAclsOfItemAndContainers(ModelRequestContext mrContext, GenItem item) {
         ArrayList<ACL> result = new ArrayList();
         result.add(item.getAccessingAgents());
-        
         //add containers for resources and liveposts        
         if (getParentType(item.getMType()) != null) { 
             //parent is only working for DisplayableItems !!!
@@ -545,13 +550,11 @@ public class ModelHelper {
                     getParentType(item.getMType()));
             for (DisplayableItem pItem : parents) {
                 if (pItem.containsItem(item.getGuid())) { //e.g. databox contains resource (item) as child
-
                     result.add(pItem.getAccessingAgents());
                 }
             }
         }
         return result;
-        
     }
     
     /**
@@ -572,7 +575,6 @@ public class ModelHelper {
             }
         }
         return false;
-        
     }
     
     public static List<GenItem> getItemsDirectlySharedToAgent(ModelRequestContext mrContext, String agentGuid, TYPES type) {
@@ -633,51 +635,18 @@ public class ModelHelper {
         } //we probably have a relative URL
         return DimeHelper.getAbsoluteUrlString(urlString, Model.getInstance().getRestApiConfiguration());
     }
-    
-    /**
-     * IMPLEMENTATION BROKEN
-     * @param oldPwd
-     * @param newPwd
-     * @param mrContext
-     * @return
-     * @throws WrongPasswordException
-     * @throws AuthException 
-     */
-    public static boolean changePassword(String oldPwd, String newPwd, ModelRequestContext mrContext) throws WrongPasswordException, AuthException{
-        //TODO adapt to new server behaviour
-        // create a new authItem (with role="OWNER" and the new password)
-        // the configuration contains the old password to be checked before doing the post (which will only succeed in case the password was correct anyway)
-        AuthItem ownerItem = null;
-        List<AuthItem> auths = RestApiAccess.getAllAuthItems(mrContext.hoster, Model.getInstance().getRestApiConfiguration());
-        for (AuthItem item:auths){
-            if (item.getRole().equals("owner")){
-                if (!item.getPassword().equals(oldPwd)){
-                    throw new WrongPasswordException("old password incorrect!");
-                }
-                ownerItem = item;
-                break;
-            }
-        }
-        if (ownerItem == null){
-            throw new AuthException("user with role owner not found in user list!");
-        }
-        ownerItem.setPassword(newPwd);
-        return RestApiAccess.postAuthItem(mrContext.hoster,ownerItem, Model.getInstance().getRestApiConfiguration());
-    }
 
     public static void addPersonToGroup(ModelRequestContext mrContext, PersonItem personItem, GroupItem groupItem) {
         groupItem.addItem(personItem.getGuid());
         Model.getInstance().updateItem(mrContext, groupItem);
     }
     
-    public static void addResourceToDatabox(ModelRequestContext mrContext, 
-            ResourceItem resourceItem, DataboxItem dbItem) {
+    public static void addResourceToDatabox(ModelRequestContext mrContext, ResourceItem resourceItem, DataboxItem dbItem) {
         dbItem.addItem(resourceItem.getGuid());
         Model.getInstance().updateItem(mrContext, dbItem);
     }
 
-    public static void addProfileAttributeToProfile(ModelRequestContext mrContext, 
-            ProfileAttributeItem profileAttributeItem, ProfileItem profileItem) {
+    public static void addProfileAttributeToProfile(ModelRequestContext mrContext, ProfileAttributeItem profileAttributeItem, ProfileItem profileItem) {
         profileItem.addItem(profileAttributeItem.getGuid());
         Model.getInstance().updateItem(mrContext, profileItem);
     }
@@ -686,7 +655,6 @@ public class ModelHelper {
         if (name==null){
             return null;
         }
-        
         List<DisplayableItem> dItems = getAllDisplayableItems(mrc, type);
         for (DisplayableItem dItem : dItems){
             if (name.equals(dItem.getName())){
@@ -706,33 +674,26 @@ public class ModelHelper {
     }
 
     public static List<AgentItem> getAllAgents(ModelRequestContext mrC) {
-        
         List<AgentItem> result = new Vector<AgentItem>();
-        
         for (PersonItem person : getAllPersons(mrC)){
             result.add(person);
         }
         for (GroupItem group: getAllGroups(mrC)){
             result.add(group);
         }
-        
         return result;
     }
 
     public static List<DisplayableItem> getDisplayableItemsFromAndForPerson(ModelRequestContext mrC, String personGuid, TYPES itemType) {
         ModelRequestContext mrC_person = new ModelRequestContext(mrC.hoster, personGuid, mrC.lvHandler);
-        
         // items coming from that person        
         List<DisplayableItem> itemsFromPerson = getAllDisplayableItems(mrC_person, itemType);
-        try{
+        try {
             //items the user is sharing to the person
             List<DisplayableItem> itemsToPerson = (List<DisplayableItem>) (Object) getItemsDirectlySharedToAgent(mrC, personGuid, itemType);
             itemsFromPerson.addAll(itemsToPerson);
-            
             return itemsFromPerson;
-            
-            
-        }catch(ClassCastException ex){
+        } catch(ClassCastException ex){
             Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
         return new Vector<DisplayableItem>();
@@ -747,19 +708,12 @@ public class ModelHelper {
         return null;
     }
     
-    public static boolean profileIsValidForSharing(ProfileItem profile){
-        return (profile.getServiceAccountId() != null 
-                && profile.getServiceAccountId().length() > 0 
-                && profile.isEditable()); // FIXME TODO check relevance!!!
-    }
-    
     public static List<ProfileItem> getAllValidProfilesForSharing(ModelRequestContext mrContext){        
         List<ProfileItem> result = getAllProfiles(mrContext);
         Iterator<ProfileItem> iter = result.iterator();
-        
         while (iter.hasNext()){
             ProfileItem profile = iter.next();
-            if (!profileIsValidForSharing(profile)){
+            if (!profile.supportsSharing()){
                 iter.remove();
             }
         }
@@ -767,7 +721,6 @@ public class ModelHelper {
     }
     
     public static ProfileItem getDefaultProfileForSharing(ModelRequestContext mrContext, List<AgentItem> receivers){
-        
         for (AgentItem agent : receivers){
             List<String> agentGuids = getAgentAndGroupGuids(mrContext, agent);
             for (String agentGuid:agentGuids){
@@ -776,16 +729,13 @@ public class ModelHelper {
                     return result.get(0);
                 }
             }
-            
         }       
         //return default otherwise
         return getDefaultProfileForSharing(mrContext);
     }
     
     public static ProfileItem getDefaultProfileForSharing(ModelRequestContext mrContext){
-        
         List<ProfileItem> allProfiles = getAllValidProfilesForSharing(mrContext);
-        
         for (ProfileItem profile: allProfiles){  //TODO FIXME to be removed? HACK we search for a public profile 
             if (profile.getName().toLowerCase().contains("public")){
                 return profile;
@@ -795,29 +745,22 @@ public class ModelHelper {
         if (allProfiles.size()>0){
             return allProfiles.get(0);            
         }
-        
         return null;
     }
     
     public static String getDefaultSenderSaid(ModelRequestContext mrContext){
-              
        ProfileItem profile = getDefaultProfileForSharing(mrContext);
-       if (profile!=null){
+       if (profile != null){
            return profile.getServiceAccountId();
        }
        return null;
-
     }
     
     public static String getDefaultReceiverSaidForPerson(ModelRequestContext mrc, PersonItem person) {
-        
         if (person.getDefaultProfileGuid()==null){
             return null;
         }
-        
-        ProfileItem profile = (ProfileItem) Model.getInstance().getItem(
-                new ModelRequestContext(mrc.hoster, person.getGuid(), mrc.lvHandler), 
-                TYPES.PROFILE, person.getDefaultProfileGuid());
+        ProfileItem profile = (ProfileItem) Model.getInstance().getItem(new ModelRequestContext(mrc.hoster, person.getGuid(), mrc.lvHandler), TYPES.PROFILE, person.getDefaultProfileGuid());
         if (profile!=null){
             return profile.getServiceAccountId();
         }
@@ -825,15 +768,12 @@ public class ModelHelper {
     }
   
     public static String getDefaultReceiverSaidForPerson(ModelRequestContext mrc, String personGuid) {
-        PersonItem person = (PersonItem) Model.getInstance().getItem(
-                new ModelRequestContext(mrc.hoster, Model.ME_OWNER, mrc.lvHandler),
-                    TYPES.PERSON, personGuid);
+        PersonItem person = (PersonItem) Model.getInstance().getItem(new ModelRequestContext(mrc.hoster, Model.ME_OWNER, mrc.lvHandler), TYPES.PERSON, personGuid);
         return getDefaultReceiverSaidForPerson(mrc, person);
     }
 
     public static String findPersonGuidByServiceAccount(ModelRequestContext personContext, String serviceAccountId) {
         List<ProfileItem> allProfiles = getAllAllProfiles(personContext);
-        
         for (ProfileItem profile: allProfiles){
             if (profile.getServiceAccountId().equals(serviceAccountId)){
                 return profile.getUserId();

@@ -2,12 +2,12 @@ package eu.dime.mobile.crawler.sensors;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import eu.dime.model.context.constants.Scopes;
 import eu.dime.mobile.crawler.Constants;
 import eu.dime.mobile.crawler.ContextCrawler;
 import eu.dime.mobile.crawler.Defaults;
 import eu.dime.mobile.helper.ContextHelper;
-import eu.dime.mobile.helper.interfaces.IContextSensor;
 import eu.dime.model.context.ContextItem;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;

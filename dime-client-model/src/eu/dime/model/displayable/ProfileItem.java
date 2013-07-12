@@ -7,19 +7,24 @@
  */
 package eu.dime.model.displayable;
 
+import eu.dime.restapi.DimeHelper;
 import sit.json.JSONObject;
 
 /**
  *
  * @author Simon Thiel
  */
-public final class ProfileItem extends DisplayableItem{
+public final class ProfileItem extends DisplayableItem implements ShareableItem {
 
     public static final String SERVICE_ACCOUNT_ID_TAG = "said";
     public static final String IS_EDITABLE_TAG = "editable";
+    public static final String PRIVACY_VALUE_TAG = "nao:privacyLevel";
+    public static final String SUPPORTS_SHARING_TAG = "supportsSharing";
     
+    private Double privacyLevel;
     private String serviceAccountId = "";
     private boolean editable = true;
+    private boolean supportsSharing = false;
 
     public ProfileItem() {
     }
@@ -30,32 +35,40 @@ public final class ProfileItem extends DisplayableItem{
     
     @Override
     protected void wipeItemForDisplayItem() {
+    	privacyLevel = DimeHelper.DEFAULT_INITIAL_PRIVACY_LEVEL;
         serviceAccountId = "";
         editable = false;
+        supportsSharing = true;
     }
 
     @Override
     protected DisplayableItem getCloneForDisplayItem() {
         ProfileItem result = new ProfileItem();
+        result.privacyLevel = this.privacyLevel;
         result.serviceAccountId = this.serviceAccountId;
         result.editable = this.editable;
+        result.supportsSharing = this.supportsSharing;
         return result;
     }
 
     @Override
     public void readJSONObjectForDisplayItem(JSONObject jsonObject) {
+    	this.privacyLevel = getDoubleValueOfJSONO(jsonObject, PRIVACY_VALUE_TAG);
         this.serviceAccountId = getStringValueOfJSONO(jsonObject, SERVICE_ACCOUNT_ID_TAG);
         this.editable = getBooleanValueOfJSONO(jsonObject, IS_EDITABLE_TAG);
+        this.supportsSharing = getBooleanValueOfJSONO(jsonObject, SUPPORTS_SHARING_TAG);
     }
 
     @Override
     protected JSONObject createJSONObjectForDisplayItem(JSONObject newJSONObject) {
+    	newJSONObject.addChild(getJSONValue(privacyLevel, PRIVACY_VALUE_TAG)); 
         newJSONObject.addChild(getJSONValue(serviceAccountId, SERVICE_ACCOUNT_ID_TAG));
         newJSONObject.addChild(getJSONValue(editable, IS_EDITABLE_TAG));
+        newJSONObject.addChild(getJSONValue(supportsSharing, SUPPORTS_SHARING_TAG));
         return newJSONObject;
     }
 
-    /**
+	/**
      * @return the serviceAccountId
      */
     public String getServiceAccountId() {
@@ -78,10 +91,26 @@ public final class ProfileItem extends DisplayableItem{
         this.serviceAccountId = serviceAccountId;
     }
 
-
     public boolean isEditable() {
         return editable;
     }
 
+	@Override
+	public Double getPrivacyLevel() {
+		return privacyLevel;
+	}
+
+	@Override
+	public void setPrivacyLevel(Double privacyLevel) {
+		this.privacyLevel = privacyLevel;
+	}
+	
+	public boolean supportsSharing() {
+		return supportsSharing;
+	}
+
+	public void setSupportsSharing(boolean supportsSharing) {
+		this.supportsSharing = supportsSharing;
+	}
 
 }

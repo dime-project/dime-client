@@ -4,15 +4,11 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,19 +16,16 @@ import eu.dime.control.LoadingViewHandler;
 import eu.dime.control.NotificationListener;
 import eu.dime.control.NotificationManager;
 import eu.dime.mobile.DimeClient;
-import eu.dime.mobile.R;
 import eu.dime.mobile.helper.DimeIntentObjectHelper;
 import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.objects.DimeIntentObject;
-import eu.dime.mobile.view.dialog.Activity_Edit_Item_Dialog;
 import eu.dime.model.GenItem;
 import eu.dime.model.LoadingAbortedRuntimeException;
-import eu.dime.model.Model;
 import eu.dime.model.ModelRequestContext;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ListActivityDime<ITEM_TYPE extends GenItem> extends ListActivity implements OnClickListener, OnItemClickListener, OnItemLongClickListener, NotificationListener {
+public abstract class ListActivityDime<ITEM_TYPE extends GenItem> extends ListActivity implements OnItemClickListener, OnItemLongClickListener, NotificationListener {
 
 	protected static String TAG = "not set";
     protected DimeIntentObject dio = null;
@@ -41,7 +34,6 @@ public abstract class ListActivityDime<ITEM_TYPE extends GenItem> extends ListAc
     protected ListView listView;
 	protected BaseAdapterDime<ITEM_TYPE> baseAdapter = null;
 	protected LoadingViewHandler lvHandler = null;
-	protected LinearLayout header = null;
 
     /**
      * Called when the activity is first created.
@@ -55,13 +47,7 @@ public abstract class ListActivityDime<ITEM_TYPE extends GenItem> extends ListAc
         listView.setOnItemClickListener(this);
         // longClick on overall something item in ListView
         listView.setOnItemLongClickListener(this);
-        TextView emptyText = new TextView(this);
-        emptyText.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        emptyText.setText("No items in list");
-        emptyText.setVisibility(View.GONE);
-        emptyText.setId(android.R.id.empty);
-        emptyText.setGravity(Gravity.CENTER_HORIZONTAL);
-        emptyText.setPadding(0, 20, 0, 20);
+        TextView emptyText = UIHelper.createEmptyListWidget(this);
         ((ViewGroup) listView.getParent()).addView(emptyText);
         listView.setEmptyView(emptyText);
         init(this.getIntent());
@@ -134,10 +120,8 @@ public abstract class ListActivityDime<ITEM_TYPE extends GenItem> extends ListAc
 		                initializeHeader();
 		                getListView().setOnItemClickListener(ListActivityDime.this);
 		        		getListView().setOnItemLongClickListener(ListActivityDime.this);
-		                header = (LinearLayout) findViewById(R.id.header);
-		                if(header != null && dio.getOwnerId().equals(Model.ME_OWNER)) header.setOnClickListener(ListActivityDime.this);
 		                if(getListAdapter() == null) {
-		                	baseAdapter.init(ListActivityDime.this, mrContext, listView, result);
+		                	baseAdapter.init(ListActivityDime.this, mrContext, result);
 		                	setListAdapter(baseAdapter);
 		                } else {
 		                	baseAdapter.reinit(ListActivityDime.this, result);
@@ -170,23 +154,8 @@ public abstract class ListActivityDime<ITEM_TYPE extends GenItem> extends ListAc
     @Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
     	ITEM_TYPE item = getListItems().get(position);
-    	UIHelper.showItemActionDialog(this, new DimeIntentObject(item));
+    	UIHelper.showItemActionDialog(this, item);
 		return false;
-    }
-    
-    @Override
-	public void onClick(View view) {
-    	if(view instanceof LinearLayout){
-    		switch (view.getId()) {
-			case R.id.header:
-				Intent intent = new Intent(ListActivityDime.this, Activity_Edit_Item_Dialog.class);
-				startActivity(DimeIntentObjectHelper.populateIntent(intent, dio));
-				break;
-
-			default:
-				break;
-			}
-    	}
     }
     
     protected abstract LoadingViewHandler createLoadingViewHandler();

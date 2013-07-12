@@ -2,29 +2,23 @@ package eu.dime.mobile.view.settings;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.CheckBox;
+import android.view.View.OnClickListener;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import eu.dime.control.LoadingViewHandler;
 import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
-import eu.dime.mobile.helper.AndroidModelHelper;
+import eu.dime.mobile.Settings;
 import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.handler.LoadingViewHandlerFactory;
-import eu.dime.mobile.settings.Settings;
 import eu.dime.mobile.view.abstr.ActivityDime;
-import eu.dime.model.ModelHelper;
-import eu.dime.model.auth.AuthException;
-import eu.dime.model.auth.WrongPasswordException;
 import eu.dime.model.specialitem.NotificationItem;
-import eu.dime.restapi.DimeHelper;
+import eu.dime.restapi.RestApiAccess;
 
-public class Activity_Settings_General extends ActivityDime {
+public class Activity_Settings_General extends ActivityDime implements OnClickListener {
 	
 	private Settings settings = null;
 	private ToggleButton contextCrawler;
@@ -66,38 +60,17 @@ public class Activity_Settings_General extends ActivityDime {
 	        settings.setCrawlingContext(contextCrawler.isChecked());
 	        DimeClient.toggleContextCrawler();
         }
-        settings.setSetPrefAccepted(setButton.isChecked());
+    	if(setButton.isChecked() != settings.isSetPrefAccepted()) {
+    		settings.getAuthItem().setEvaluationDataCapturingEnabled(setButton.isChecked());
+    	}
+    	RestApiAccess.postAuthItem(mrContext.hoster, settings.getAuthItem(), settings.getRestApiConfiguration());
     }
 
-    public void clickHandler(View v) {
+    @Override
+    public void onClick(View v) {
         switch (v.getId()) {
-        case R.id.settings_view_info:
-        	View infoDialog = getLayoutInflater().inflate(R.layout.dialog_client_info, null);
-        	EditText hostName = (EditText) infoDialog.findViewById(R.id.settings_view_ip_address);
-        	EditText port = (EditText) infoDialog.findViewById(R.id.settings_view_port);
-        	TextView version = (TextView) infoDialog.findViewById(R.id.settings_view_client_version);
-        	CheckBox isHttps = (CheckBox) infoDialog.findViewById(R.id.settings_view_is_https);
-        	hostName.setText(settings.getHostname());
-            port.setText(settings.getPort() + "");
-            isHttps.setChecked(settings.isUseHTTPS());
-            version.setText(AndroidModelHelper.getVersion(new DimeHelper().dimeServerIsAlive(DimeClient.getUserMainSaid(), DimeClient.getModelConfiguration().restApiConfiguration)));
-            AlertDialog.Builder builderInfo = UIHelper.createCustomAlertDialogBuilder(this, "Di.me info", false, infoDialog);
-            builderInfo.setPositiveButton("Ok", new OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.dismiss();
-				}
-            });
-            UIHelper.displayAlertDialog(builderInfo, false);
-        	break;
-        case R.id.settings_view_terms:
-        	//TODO open terms and conditions
-        	break;
-        case R.id.settings_view_howto:
-        	//TODO open how to page
-        	break;
         case R.id.clearCredentialsBtn:
-            settings.setPassword("");
+            settings.setLoginPrefRemembered(false);
             break;
         case R.id.settings_view_change_pw_btn:
             View layout = getLayoutInflater().inflate(R.layout.dialog_change_pass, null);
@@ -105,35 +78,34 @@ public class Activity_Settings_General extends ActivityDime {
             final EditText new_pw = (EditText) layout.findViewById(R.changePass.editText_newpw);
             final EditText new_pw_re = (EditText) layout.findViewById(R.changePass.editText_newpw_retype);
             AlertDialog.Builder builderPassword = UIHelper.createCustomAlertDialogBuilder(this, "Change password for " + settings.getUsername(), true, layout);
-            builderPassword.setPositiveButton("Ok", new OnClickListener() {
+            builderPassword.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					if (!new_pw.getText().toString().equals(new_pw_re.getText().toString())) {
-                        Toast.makeText(Activity_Settings_General.this, "new passwords are different: please try again!", Toast.LENGTH_LONG).show();
+					if (!settings.getPassword().equals(old_pw.getText().toString())) {
+						Toast.makeText(Activity_Settings_General.this, "old password is wrong, please try again", Toast.LENGTH_LONG).show();
+                    } else if(!new_pw.getText().toString().equals(new_pw_re.getText().toString())) {
+                    	Toast.makeText(Activity_Settings_General.this, "new passwords are different: please try again!", Toast.LENGTH_LONG).show();
                     } else {
-	                    try {
-	                        if (ModelHelper.changePassword(old_pw.getText() + "", new_pw.getText() + "", mrContext)) {
-	                            Toast.makeText(Activity_Settings_General.this, "success", Toast.LENGTH_LONG).show();
-	                            DimeClient.getSettings().setPassword(new_pw.getText() + "");
-	                            dialog.dismiss();
-	                        }
-	                    } catch (WrongPasswordException ex) {
-	                        Toast.makeText(Activity_Settings_General.this, "wrong old password: please try again", Toast.LENGTH_LONG).show();
-
-	                    } catch (AuthException ex) {
-	                        Toast.makeText(Activity_Settings_General.this, "cannot connect to server - abort", Toast.LENGTH_LONG).show();
-	                        dialog.dismiss();
-	                    }
+                        settings.getAuthItem().setPassword(new_pw.getText().toString());
                     }
 				}
 			});
             UIHelper.displayAlertDialog(builderPassword, true);
             break;
+        case R.settings.open_set_dialog:
+        	AlertDialog.Builder builder = UIHelper.createAlertDialogBuilder(this, getString(R.string.settings_view_set_dialog_label), true);
+        	builder.setMessage(R.string.settings_view_set_dialog_text);
+        	UIHelper.displayAlertDialog(builder, false);
+        	break;
         }
     }
 
 	@Override
-	public void notificationReceived(String fromHoster, NotificationItem item) { }
+	public void notificationReceived(String fromHoster, NotificationItem item) { 
+		if (item.getOperation().equals(NotificationItem.OPERATION_CREATE) && item.getElement().getType().equals("auth")) {
+			startTask("");
+		}
+	}
 
 	@Override
 	protected LoadingViewHandler createLoadingViewHandler() {

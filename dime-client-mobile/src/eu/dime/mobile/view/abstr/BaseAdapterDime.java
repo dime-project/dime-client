@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ListView;
 import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
 import eu.dime.model.GenItem;
@@ -29,25 +28,23 @@ public abstract class BaseAdapterDime<ITEM_TYPE extends GenItem> extends BaseAda
     protected List<ITEM_TYPE> mItems = new ArrayList<ITEM_TYPE>();
     protected List<ITEM_TYPE> allItems = new ArrayList<ITEM_TYPE>();
     protected int expandedListItemId = -1;
-    protected ListView mParent;
     protected List<String> selection = new ArrayList<String>();
     private Comparator<ITEM_TYPE> comparator;
     protected ModelRequestContext mrContext = null;
     protected Context context = null;
 
-    public void init(Context context, ModelRequestContext mrContext, ListView parent, List<ITEM_TYPE> items) {
+    public void init(Context context, ModelRequestContext mrContext, List<ITEM_TYPE> items) {
     	this.context = context;
         this.mrContext = mrContext;
         this.mItems = items;
         this.allItems = items;
         this.mInflater = LayoutInflater.from(context);
-        this.mParent = parent;
         this.comparator = createComparator();
         sortItems();
     }
     
-    public void reinit(Context activity, List<ITEM_TYPE> items) {
-    	this.context = activity;
+    public void reinit(Context context, List<ITEM_TYPE> items) {
+    	this.context = context;
     	this.mItems = items;
         this.allItems = items;
         sortItems();

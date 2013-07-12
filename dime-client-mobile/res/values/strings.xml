@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">di.me</string>
+    <string name="app_name">di.me mobile</string>
     
     <!-- tab -->
     <string name="tab_persons">Persons</string>
@@ -34,7 +34,7 @@
     <string name="dataBtnText">Data</string>
     <string name="situationsBtnText">Situations/Places</string>
     <string name="shareBtnText">Share</string>
-    <string name="clearCredentialsBtnText">Clear stored password</string>
+    <string name="clearCredentialsBtnText">Clear stored credentials</string>
     <string name="exitSystemBtnText">Exit di.me</string>
     <string name="autoDetectionBtnOn">turn crawling sensor data on</string>
     <string name="autoDetectionBtnOff">turn crawling sensor data off</string>
@@ -56,22 +56,37 @@
 	<string name="account_configuration_label">Settings</string>
 	
 	<!-- settings -->
-	<string name="settings_view_info_private_server">Private Server information</string>
-	<string name="settings_view_info_client">Client information</string>
-	<string name="settings_view_info_label">Informations</string>
-	<string name="settings_view_info">Di.me info</string>
-	<string name="settings_view_info_client_version">Di.me version</string>
 	<string name="settings_view_terms">Terms and conditions</string>
 	<string name="settings_view_howto">How-to</string>
 	<string name="settings_view_functionalities">Add-on functionalities</string>
 	<string name="settings_view_password">Password settings</string>
 	<string name="settings_view_toggleContextCrawlingBtn_label">Store Android sensor data:</string>
 	<string name="settings_view_toggleSet_label">Scientific Evaluation:</string>
-    <string name="settings_view_toggleContextCrawlingBtn">Send location and sensor data to your Private Server. Activitated services use this information, e.g. the ProximityService to show people nearby to you. </string>
-	<string name="settings_view_toggleSet">Send anonymous click data and statistic for the scientific evaluation of the prototype. Further Information: see link</string>
-    
+    <string name="settings_view_toggleContextCrawlingBtn">Send location and sensor data to your Private Server. Activated services use this information, e.g. the ProximityService to show people nearby to you. </string>
+	<string name="settings_view_toggleSet">Send anonymous click data and statistic for the scientific evaluation of the prototype. Further Information:</string>
+	<string name="settings_view_set_open_dialog">see link</string>
+	<string name="settings_view_set_dialog_label">Please contribute to the scientific evaluation</string>
+	<string name="settings_view_set_dialog_text">We kindly ask you to send us anonymous click data. These data cannot be traced back to your person. We use these data only to analyse how users use our prototype. The following data are collected: \n1. an anonymous identifyier which allows us to know what click data and questionaire answers come from the same account. No other identity information like your di.me username, nickname, real name, or email-address is sent. No location information is sent. \n2. statistics about how many contacts, files, messages, and connected systems you use in your system. Only the number and time when created, but no information about names, content, or anything else is sent. \n3. data about what type of pages you click in the system (e.g. a page „person“). This includes the time the page was clicked. No title, text, or other content of the pages are sent. We do not use other click analysis (like e.g. Google Analytics). You can switch this off at any time on the page “Settings“.</string>
+	
     <!-- dialog labels -->
-    
+    <string name="info_dialog_welcome_text">Welcome and many thanks for trying out di.me mobile!</string>
+    <string name="info_dialog_client">Client information</string>
+    <string name="info_dialog_about">About</string>
+	<string name="info_dialog_client_version">Client version:</string>
+	<string name="info_dialog_getting_started_label">Getting started with di.me</string>
+	<string name="info_dialog_getting_started_text">"Please follow our "</string>
+	<string name="info_dialog_getting_started_link">Tutorial</string>
+	<string name="info_dialog_feedback_label">Please give us feedback to the concept on:</string>
+	<string name="info_dialog_feeback_link">di.me Questionnaire (English)</string>
+    <string name="info_dialog_bugs_label">This is a demonstration prototype</string>
+    <string name="info_dialog_bugs_text">so you will find many bugs and issues. Please report them on: &lt;a href=\"https://github.com/dime-project/meta/issues\"&gt;Github&lt;/a&gt;</string>
+    <string name="info_dialog_about_label">About</string>
+    <string name="info_dialog_about_trial_homepage">The test trial &lt;a href=\"http://dimetrials.bdigital.org\"&gt;homepage&lt;/a&gt;.</string>
+    <string name="info_dialog_about_os_homepage">di.me open spurce: coming soon</string>
+    <string name="info_dialog_about_project_homepage">The research project &lt;a href=\"http://di.me-project.eu\"&gt;homepage&lt;/a&gt;.</string>
+    <string name="info_dialog_about_usage">Usage Conditions (EN)</string>
+    <string name="info_dialog_about_privacy">Privacy declaration (EN)</string>
+	
     <!-- items of action menu -->
     <string name="action_addPeopleToGroup">Add selected people to group</string>
     <string name="action_addPeopleToGroupDetail">Add people to group</string>
@@ -99,9 +114,9 @@
     <string name="action_newMessage">New livepost</string>
     <string name="action_newProfile">New profile</string>
     <string name="action_deleteSelectedProfiles">Delete selected profile(s)</string>
-    <string name="action_addExistingAttribute">Add existing attribute</string>
-    <string name="action_addNewAttribute">Add new attribute</string>
-    <string name="action_deleteSelectedAttributeCategories">Delete selected attribute(s)</string>
+    <string name="action_addExistingAttribute">Add existing profile detail</string>
+    <string name="action_addNewAttribute">Add new profile detail</string>
+    <string name="action_deleteSelectedAttributeCategories">Delete selected profile detail(s)</string>
     <string name="action_exit">Exit</string>
     <string name="action_logout">Logout</string>
     <string name="action_newSituation">New situation</string>
@@ -122,15 +137,22 @@
     <string name="action_homeButtonPressed">homePressed</string>
     
     <!--  other -->
-    <string name="sharing_warningLevel_low">It is not recommended to share </string>
-    <string name="sharing_warningLevel_high">Warning: you better do not share </string>
-    <string name="sharing_warning_not_possible">Sharing not possible because not all items selected!</string>
     <string name="sharing_no_receiver">no receiver(s) selected</string>
     <string name="sharing_no_items">no item(s) selected</string>
     <string name="sharing_no_warnings">Sharing possible without warnings!</string>
     <string name="sharing_label_receivers">Recipients:</string>
     <string name="sharing_label_items">Items:</string>
     <string name="sharing_label_warnings">Warnings:</string>
+    <string name="sharing_warning_untrusted">Privacy risk</string>
+    <string name="sharing_warning_disjunct_groups">Sharing outside usual group</string>
+    <string name="sharing_warning_unshared_profile">Revealing profile</string>
+    <string name="sharing_warning_too_many_resources">Many items shared</string>
+    <string name="sharing_warning_too_many_receivers">Many recipients selected</string>
+    <string name="sharing_warning_agent_not_valid_for_sharing">Not supported for recipients</string>
+    <string name="sharing_warning_not_possible">Sharing not possible</string>
+    <string name="sharing_warning_not_possible_detailed">Please select your identity you want to use for sharing and at least one recipient and item!</string>
+    <string name="edit_trust_value_hint">Determines the number of warnings when sharing private items.</string>
+    <string name="edit_privacy_value_hint">Determines the number of warnings when sharing to untrusted persons.</string>
     
     <string name="sharing_dialog_select_profile_info">The selected profile will be used for sharing. If you chose a different profile than the one people know, they may become linkable!</string>
     <string name="sharing_dialog_select_group_info">All containing persons of the selected group(s) will get access to the shared items, even those persons you probably add to the group after the initial sharing process!</string>

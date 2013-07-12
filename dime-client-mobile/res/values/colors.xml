@@ -3,6 +3,7 @@
     <!-- text -->
     <color name="dm_text">#303030</color>
     <color name="dm_back">#ffffff</color>
+    <color name="text_url">#5c5cff</color>
     <!-- backgrounds -->
     <color name="dm_col1">#9cc4e4</color>
     <color name="dm_col1_low">#60a0d4</color>

@@ -12,7 +12,6 @@ import eu.dime.model.ModelRequestContext;
 import eu.dime.model.ModelTypeNotFoundException;
 import eu.dime.model.TYPES;
 import eu.dime.restapi.DimeHelper;
-import eu.dime.restapi.RestApiAccess;
 import sit.sstl.StrictSITEnumMap;
 import sit.web.WebRequest;
 
@@ -20,9 +19,10 @@ import sit.web.WebRequest;
  *
  * @author simon
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class CallHandler {
     
-    public static final StrictSITEnumMap<DIME_HANDLER_PARAMS, DimeHandleParamsEntry> DIME_HANDLE_PARAMS_MAP 
+	public static final StrictSITEnumMap<DIME_HANDLER_PARAMS, DimeHandleParamsEntry> DIME_HANDLE_PARAMS_MAP 
             = new StrictSITEnumMap(DIME_HANDLER_PARAMS.class, new DimeHandleParamsEntry[]{
             new DimeHandleParamsEntry(DIME_HANDLER_PARAMS.HOSTER, DimeHandleParamsEntry.SIG_PATTERN_WILDCARD),
             new DimeHandleParamsEntry(DIME_HANDLER_PARAMS.TYPE, DimeHandleParamsEntry.SIG_PATTERN_WILDCARD),
@@ -36,7 +36,7 @@ public abstract class CallHandler {
             new DimeHandleParamsEntry(DIME_HANDLER_PARAMS.AT_ALL, ModelHelper.getRestFunctionName(CALLTYPES.AT_ALL_GET)),
             new DimeHandleParamsEntry(DIME_HANDLER_PARAMS.DUMP, ModelHelper.getRestFunctionName(CALLTYPES.DUMP)),
             new DimeHandleParamsEntry(DIME_HANDLER_PARAMS.DUMMY, "dummy"),
-            new DimeHandleParamsEntry(DIME_HANDLER_PARAMS.AUTH, "auth"),
+            new DimeHandleParamsEntry(DIME_HANDLER_PARAMS.AUTH, "user"),
             new DimeHandleParamsEntry(DIME_HANDLER_PARAMS.CRAWLER, ModelHelper.getRestFunctionName(CALLTYPES.CRAWLER)),
             new DimeHandleParamsEntry(DIME_HANDLER_PARAMS.AGENTID, DimeHandleParamsEntry.SIG_PATTERN_WILDCARD),
             new DimeHandleParamsEntry(DIME_HANDLER_PARAMS.CREATE_AD_HOC, "@createAdHoc"),
@@ -47,11 +47,9 @@ public abstract class CallHandler {
             new DimeHandleParamsEntry(DIME_HANDLER_PARAMS.ADVISORY, DimeHelper.ADVISORY_PATH ),
             new DimeHandleParamsEntry(DIME_HANDLER_PARAMS.ADVISORY_ENDPOINT, DimeHelper.ADVISORY_REQUEST_ENDPOINT ),
             new DimeHandleParamsEntry(DIME_HANDLER_PARAMS.DEBUG, "@debug" )
-            
             });
             
 
-    
     //protected final String [] SIGNATURE;
 
     
@@ -61,8 +59,6 @@ public abstract class CallHandler {
     //    }
     
     protected final DummyLoadingViewHandler lvh = new DummyLoadingViewHandler();
-    
-    
     
     protected ModelRequestContext getMRC(String hoster, String owner){
         return new ModelRequestContext(hoster, owner, lvh);
@@ -85,10 +81,8 @@ public abstract class CallHandler {
     }
     
     protected TYPES getMType(ParamsMap params) throws ModelTypeNotFoundException{
-        return ModelHelper.getMTypeFromString(                
-                params.get(DIME_HANDLER_PARAMS.TYPE));
+        return ModelHelper.getMTypeFromString(params.get(DIME_HANDLER_PARAMS.TYPE));
     }
-    
     
     protected String getUserId(ParamsMap params){
         return params.get(DIME_HANDLER_PARAMS.USERID);
@@ -125,27 +119,24 @@ public abstract class CallHandler {
 
     public String getSignatureString() {
         StringBuilder result = new StringBuilder();
-        
         DIME_HANDLER_PARAMS [] signature = this.getSignature();
         for (DIME_HANDLER_PARAMS sig : signature){
             DimeHandleParamsEntry sigEntry =DIME_HANDLE_PARAMS_MAP.get(sig);
             result.append(sigEntry.getSigPattern()).append("/");
         }
-        
         return result.toString();        
     }
     
     public ParamsMap createParamsMap(String[] pathParts){
         ParamsMap result = new ParamsMap();
         DIME_HANDLER_PARAMS [] signature = this.getSignature();
-        
         if (signature.length!=pathParts.length){
             throw new RuntimeException("lenght of pathParts does not fit to signature lenght!");
         }
-        
         for (int i=0;i<pathParts.length;i++){            
             result.put(signature[i], pathParts[i]);
         }
         return result;
     }
+    
 }

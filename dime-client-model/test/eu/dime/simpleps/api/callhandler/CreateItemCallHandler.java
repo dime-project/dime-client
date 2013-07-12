@@ -35,30 +35,20 @@ public class CreateItemCallHandler extends CallHandler {
 
     @Override
     public String handleCall(WebRequest wr, ParamsMap params) {
-
         ModelRequestContext mrc = getMRC(params);
         TYPES type = null;
-
         try {
-
             type = getMType(params);
-
             if (wr.httpCommand.equalsIgnoreCase(HttpConstants.HTTP_COMMAND_POST)) {
                 try {
-                    String result = DatabaseAccess.createItem(mrc, type,
-                            parser.parseJSON(wr.getBodyAsString())).toJson();
-
+                    String result = DatabaseAccess.createItem(mrc, type, parser.parseJSON(wr.getBodyAsString())).toJson();
                     Logger.getLogger(CreateItemCallHandler.class.getName()).log(Level.INFO, "response:\n" + result);
                     return result;
-
                 } catch (JSONParseException ex) {
                     return EndpointHelper.logAccessExceptionAndPrepareErrorMessage(CreateItemCallHandler.class, ex, wr, type, "unknown");
-
                 }
             }//else                
-            return EndpointHelper.logAccessErrorAndPrepareErrorMessage(CreateItemCallHandler.class,
-                    "unsupported HTTP command for create calls:" + wr.httpCommand, "unknown", type);
-
+            return EndpointHelper.logAccessErrorAndPrepareErrorMessage(CreateItemCallHandler.class, "unsupported HTTP command for create calls:" + wr.httpCommand, "unknown", type);
         } catch (Exception ex) {
             return EndpointHelper.logAccessExceptionAndPrepareErrorMessage(CreateItemCallHandler.class, ex, wr, type, "unknown");
         }
@@ -68,4 +58,5 @@ public class CreateItemCallHandler extends CallHandler {
     public String getName() {
         return this.getClass().toString();
     }
+    
 }

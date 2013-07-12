@@ -29,32 +29,36 @@ public class EvaluationInvolvedItem extends JSONItem<EvaluationInvolvedItem> {
 	}
 	
 	public EvaluationInvolvedItem(List<GenItem> items) {
-		for (GenItem genItem : items) {
-			switch (genItem.getMType()) {
-			case PROFILE:
-				profile++;
-				break;
-			case PROFILEATTRIBUTE:
-				profileattribute++;
-				break;
-			case PERSON:
-				person++;
-				break;
-			case GROUP:
-				group++;
-				break;
-			case DATABOX:
-				databox++;
-				break;
-			case LIVEPOST:
-				livepost++;
-				break;
-			case ACCOUNT:
-				account++;
-				break;
-			default:
-				break;
+		if(items != null && items.size() > 0) {
+			for (GenItem genItem : items) {
+				switch (genItem.getMType()) {
+				case PROFILE:
+					profile++;
+					break;
+				case PROFILEATTRIBUTE:
+					profileattribute++;
+					break;
+				case PERSON:
+					person++;
+					break;
+				case GROUP:
+					group++;
+					break;
+				case DATABOX:
+					databox++;
+					break;
+				case LIVEPOST:
+					livepost++;
+					break;
+				case ACCOUNT:
+					account++;
+					break;
+				default:
+					break;
+				}
 			}
+		} else {
+			wipeItem();
 		}
 	}
 

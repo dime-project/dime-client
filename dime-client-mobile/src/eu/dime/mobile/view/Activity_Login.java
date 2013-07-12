@@ -29,21 +29,27 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import eu.dime.control.DummyLoadingViewHandler;
 import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
+import eu.dime.mobile.Settings;
 import eu.dime.mobile.helper.AndroidModelHelper;
 import eu.dime.mobile.helper.DimeIntentObjectHelper;
 import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.objects.DimeIntentObject;
-import eu.dime.mobile.settings.Settings;
+import eu.dime.model.Model;
+import eu.dime.model.specialitem.AuthItem;
+import eu.dime.model.storage.InitStorageFailedException;
 import eu.dime.restapi.DimeHelper;
-import eu.dime.restapi.RestApiConfiguration;
+import eu.dime.restapi.RestApiAccess;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import sit.web.client.HttpHelper;
 
 public class Activity_Login extends Activity implements OnClickListener, OnEditorActionListener, TextWatcher, OnCheckedChangeListener {
@@ -63,6 +69,7 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
     private TextView portLabel;
     private TextView isHttpsLabel;
     protected ProgressDialog dialog;
+    boolean overwriteDNS = false;
 
     /**
      * Called when the activity is first created.
@@ -102,8 +109,7 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
         portEditText.setOnEditorActionListener(this); 
         dimeLogo.setOnLongClickListener(new OnLongClickListener() {
             public boolean onLongClick(View v) {
-                settings = DimeClient.getSettings();
-                settings.setOverrideDNS(!settings.getOverrideDNS());
+            	overwriteDNS = !overwriteDNS;
                 updateHiddenFields();
                 return true;
             }
@@ -115,13 +121,14 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
         super.onResume();
         // Restore preferences
         settings = DimeClient.getSettings();
+        overwriteDNS = settings.getOverrideDNS();
         accept.setChecked(settings.isLoginPrefAccepted());
         remember.setChecked(settings.isLoginPrefRemembered());
         user.setText(settings.getUsername());
-        pass.setText(settings.getPassword());
         serverIP.setText(settings.getHostname());
         updateHiddenFields();
         if (settings.isLoginPrefRemembered()) {
+        	pass.setText(settings.getPassword());
             login();
          }
     }
@@ -150,21 +157,15 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
     }
     
     private void login() {
+    	final AsyncTask<Void, Void, String> loginTask = new MyAsyncTak(serverIP.getText().toString(), 
+				user.getText().toString(), 
+				pass.getText().toString(),
+				(overwriteDNS) ? Integer.parseInt(portEditText.getText().toString()) : DimeHelper.DEFAULT_PORT,
+				(overwriteDNS) ? isHttpsCheckBox.isChecked() : DimeHelper.DEFAULT_USE_HTTPS,
+				accept.isChecked(),
+				remember.isChecked(),
+				overwriteDNS).execute();
     	dialog = ProgressDialog.show(this, null, "Trying to login...", true, true);
-    	if(settings.getOverrideDNS()) {
-            settings.setHostname(serverIP.getText().toString());
-            try {
-                settings.setPort(Integer.parseInt(portEditText.getText().toString()));
-            } catch (NumberFormatException ex){
-                Logger.getLogger(Activity_Login.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
-            }
-            settings.setUseHTTPS(isHttpsCheckBox.isChecked());
-        } else {
-            settings.setPort(DimeHelper.DEFAULT_PORT);
-            settings.setUseHTTPS(DimeHelper.DEFAULT_USE_HTTPS);
-        }
-        settings.setUserNamePassword(user.getText().toString(), pass.getText().toString(), accept.isChecked(), remember.isChecked());
-    	final AsyncTask<Void, Void, String> loginTask = new MyAsyncTak().execute();
     	dialog.setOnCancelListener(new OnCancelListener() {
 			@Override
 			public void onCancel(DialogInterface dialog) {
@@ -176,18 +177,55 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
     }
     
     private class MyAsyncTak extends AsyncTask<Void, Void, String> {
+    	
+        private String hostname;
+        private String username; //== mainSAID
+        private String password="";
+        private int port;
+        private boolean useHTTPS;
+        private boolean loginPrefAccepted;
+        private boolean loginPrefRemembered;
+        private boolean overrideDNS;
+        
+        public MyAsyncTak(String hostname, String username, String password, int port, boolean useHTTPS, boolean loginPrefAccepted, boolean loginPrefRemembered, boolean overrideDNS) {
+            this.hostname = hostname;
+            this.username = username; //== mainSAID
+            this.password = password;
+            this.port = port;
+            this.useHTTPS = useHTTPS;
+            this.loginPrefAccepted = loginPrefAccepted;
+            this.loginPrefRemembered = loginPrefRemembered;
+            this.overrideDNS = overrideDNS;
+        }
 		
 		@Override
         protected String doInBackground(Void... params) {
 			String result = "";
 			try {
-		        if(!new DimeHelper().dimeServerIsAuthenticated(settings.getMainSAID(), new RestApiConfiguration(settings.getHostname(), settings.getPort(), settings.isUseHTTPS(), settings.getAuthToken()))) {
+				String myHostName = (overrideDNS) ? hostname : DimeHelper.resolveIPOfPS(username);
+	        	settings.updateSettingsBeforeLogin(myHostName, username, password, port, useHTTPS, loginPrefAccepted, loginPrefRemembered, overrideDNS);
+		        if(!new DimeHelper().dimeServerIsAuthenticated(username, settings.getRestApiConfiguration())) {
 		            result = "Could not login because the password was incorrect!";
 		        } else {
-		        	AndroidModelHelper.updateClientConfiguration(settings);
-		        	DimeClient.toggleContextCrawler();
+		        	String clientVersion = DimeClient.getClientVersion();
+		        	String serverVersion = new DimeHelper().getServerVersion(settings.getRestApiConfiguration());
+		        	AuthItem auth = RestApiAccess.getAuthItem(username, settings.getRestApiConfiguration());
+		        	if(auth != null) {
+			        	settings.updateSettingsAfterLogin(clientVersion, serverVersion, auth);
+			        	Logger.getLogger(DimeClient.class.getName()).log(Level.INFO, "updateClientConfiguration - start" + settings.getModelConfiguration().toString());
+			        	Model.getInstance().updateSettings(settings.getModelConfiguration());
+			        	Logger.getLogger(DimeClient.class.getName()).log(Level.INFO, "updateClientConfiguration - finished");
+			        	DimeClient.toggleContextCrawler();
+			        	AndroidModelHelper.sendEvaluationDataAsynchronously(null, DimeClient.getMRC(new DummyLoadingViewHandler()), "action_login");
+		        	} else {
+		        		result = "Could not load auth item!";
+		        	}
 		        }
-		    } catch (MalformedURLException ex) {
+		    } catch (UnknownHostException ex) {
+		    	settings.updateSettingsBeforeLogin(hostname, username, password, port, useHTTPS, loginPrefAccepted, loginPrefRemembered, overrideDNS);
+                Logger.getLogger(DimeClient.class.getName()).log(Level.SEVERE, "Unable to resolve hostname for said:" + username);
+                result = "Unable to resolve hostname for said:" + settings.getMainSAID();
+            } catch (MalformedURLException ex) {
 		        Logger.getLogger(HttpHelper.class.getName()).log(Level.SEVERE, "MalformedURLException:" + ex.getMessage());
 		        result = "Private service not reachable! Url seems not to be valid!";
 		    } catch (ProtocolException ex) {
@@ -196,7 +234,10 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
 		    } catch (IOException ex) {
 		        Logger.getLogger(HttpHelper.class.getName()).log(Level.SEVERE, "IOException:" + ex.getMessage());
 		        result = "Private service not reachable! Timeout reached!";
-		    }
+		    } catch (InitStorageFailedException ex) {
+		    	Logger.getLogger(DimeClient.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+		    	result = "Could not update model configuration. Login aborted!";
+			}
             return result;
         }
 
@@ -236,7 +277,7 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
     }
 
     private void updateHiddenFields() {
-        int viewState = settings.getOverrideDNS() ? View.VISIBLE : View.GONE;
+        int viewState = overwriteDNS ? View.VISIBLE : View.GONE;
         serverIP.setVisibility(viewState);
         serverLabel.setVisibility(viewState);
         portLabel.setVisibility(viewState);

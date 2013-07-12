@@ -6,7 +6,9 @@ package eu.dime.model.specialitem.advisory;
 
 import eu.dime.model.InvalidJSONItemException;
 import eu.dime.model.JSONItem;
+
 import java.util.Map;
+
 import sit.json.JSONObject;
 
 /**
@@ -18,7 +20,7 @@ public class AdvisoryItem extends JSONItem<AdvisoryItem> {
     public static final String WARNING_LEVEL = "warningLevel";
     public static final String WARNING_TYPE = "type";
     public static final String ATTRIBUTES = "attributes";
-    public static final String[] WARNING_TYPES = new String[]{"untrusted", "disjunct_groups", "unshared_profile", "too_many_resources", "too_many_receivers"};
+    public static final String[] WARNING_TYPES = new String[]{"untrusted", "disjunct_groups", "unshared_profile", "too_many_resources", "too_many_receivers", "agent_not_valid_for_sharing", "sharing_not_possible"};
 
     protected double warningLevel;
     protected String warningType;
@@ -97,6 +99,10 @@ public class AdvisoryItem extends JSONItem<AdvisoryItem> {
         	return new WarningTooManyResources();
         } else if(myWarningType.equals(WARNING_TYPES[4])) {
         	return new WarningTooManyReceivers();
+        } else if (myWarningType.equals(WARNING_TYPES[5])) {
+        	return new WarningAgentNotValidForSharing();
+        } else if (myWarningType.equals(WARNING_TYPES[6])) {
+        	return new WarningSharingNotPossible();
         }
         return null;
     }

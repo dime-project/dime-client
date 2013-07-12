@@ -39,7 +39,7 @@ public class UploadPictureToPS extends Activity {
                     File file = new File(filename);
                     Toast.makeText(this, "Uploading picture to Personal Server", Toast.LENGTH_LONG).show();
                     
-                    MultiPartPostClient myClient = new MultiPartPostClient(DimeClient.getModelConfiguration());
+                    MultiPartPostClient myClient = new MultiPartPostClient(DimeClient.getSettings().getModelConfiguration());
                     try {
                         myClient.uploadFile(file);
                     } catch (IOException ex) {

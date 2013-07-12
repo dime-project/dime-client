@@ -3,44 +3,63 @@ package eu.dime.mobile.view.adapter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import eu.dime.mobile.R;
 import eu.dime.mobile.helper.ImageHelper;
 import eu.dime.mobile.helper.listener.CheckListener;
-import eu.dime.mobile.helper.listener.ExpandClickListener;
 import eu.dime.mobile.view.abstr.BaseAdapterDisplayableItem;
+import eu.dime.model.Model;
+import eu.dime.model.TYPES;
 import eu.dime.model.displayable.AccountItem;
 import eu.dime.model.displayable.DisplayableItem;
+import eu.dime.model.displayable.ServiceAdapterItem;
 
 public class BaseAdapter_Accounts extends BaseAdapterDisplayableItem {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        convertView = mInflater.inflate(R.layout.adapter_account_item, null);
-        TextView name = (TextView) convertView.findViewById(R.account.name);
-        ImageView image = (ImageView) convertView.findViewById(R.account.image);
-        CheckBox selectedCB = (CheckBox) convertView.findViewById(R.account.checkBox);
-        ImageButton expander = (ImageButton) convertView.findViewById(R.id.buttonExp);
-    	LinearLayout layout = (LinearLayout) convertView.findViewById(R.id.expanded_adapter);
-        AccountItem ai = (AccountItem) mItems.get(position);
-        name.setText(ai.getName());
-        image.setImageDrawable(ImageHelper.getDefaultImageDrawable(ai, context));
-        if (selection.contains(ai.getGuid())) {
-            selectedCB.setChecked(true);
-        }
-        if (expandedListItemId == position) {
-        	layout.setVisibility(View.VISIBLE);
-    		expander.setBackgroundResource(R.drawable.button_collapse);
+    	AccountItem ai = (AccountItem) mItems.get(position);
+    	// Keeps reference to avoid future findViewById()
+    	DimeViewHolder viewHolder;
+    	if (convertView == null) {
+			viewHolder = new DimeViewHolder();
+			convertView = mInflater.inflate(R.layout.adapter_account_item, null);
+			viewHolder.name = (TextView) convertView.findViewById(R.account.name);
+			viewHolder.image = (ImageView) convertView.findViewById(R.account.image);
+			viewHolder.isActive = (TextView) convertView.findViewById(R.account.isActive);
+			viewHolder.selectedCB = (CheckBox) convertView.findViewById(R.account.checkBox);
+			viewHolder.isConfigurable = (ImageView) convertView.findViewById(R.account.isConfigurable);
+	    	convertView.setTag(viewHolder);
+		} else {
+			viewHolder = (DimeViewHolder) convertView.getTag();
+			viewHolder.selectedCB.setOnCheckedChangeListener(null);
+		}
+        viewHolder.isConfigurable.setVisibility((ai.getSettings() != null && ai.getSettings().size() > 0) ? View.VISIBLE : View.GONE);
+        viewHolder.isActive.setVisibility((ai.isActive()) ? View.VISIBLE : View.GONE);
+        viewHolder.name.setText(ai.getName());
+        //FIXME as soon as imageUrl is set correctly
+        if(ai.getImageUrl() != null && ai.getImageUrl().length() > 0) {
+        	ImageHelper.loadImageAsynchronously(viewHolder.image, ai, context);
+        } else if (ai.getServiceAdapterGUID() != null && ai.getServiceAdapterGUID().length() > 0) {
+        	ServiceAdapterItem service = (ServiceAdapterItem) Model.getInstance().getItem(mrContext, TYPES.SERVICEADAPTER, ai.getServiceAdapterGUID());
+        	ImageHelper.loadImageAsynchronously(viewHolder.image, service, context);
         } else {
-        	layout.setVisibility(View.GONE);
-    		expander.setBackgroundResource(R.drawable.button_expand);
+        	viewHolder.image.setImageDrawable(ImageHelper.getDefaultImageDrawable(ai, context));
         }
-        selectedCB.setOnCheckedChangeListener(new CheckListener<DisplayableItem>(position, this));
-        expander.setOnClickListener(new ExpandClickListener<DisplayableItem>(position, this));
+        viewHolder.selectedCB.setChecked((selection.contains(ai.getGuid())));
+        viewHolder.selectedCB.setOnCheckedChangeListener(new CheckListener<DisplayableItem>(position, this));
         return convertView;
     }
+    
+    static class DimeViewHolder {
+		
+		TextView name;
+		ImageView image;
+		TextView isActive;
+		CheckBox selectedCB;
+		ImageView isConfigurable;
+    	
+	}
     
 }

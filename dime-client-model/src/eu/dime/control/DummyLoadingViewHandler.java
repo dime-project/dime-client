@@ -16,7 +16,6 @@ public class DummyLoadingViewHandler extends AbstractLoadingViewHandler {
 	private int retries = 0;
 
     public void showLoadingView() {
-        retries = 0;
     	try {
             waitForLoading();
         } catch (TimeOutWhileLoadingException ex) {
@@ -31,7 +30,7 @@ public class DummyLoadingViewHandler extends AbstractLoadingViewHandler {
     @Override
     protected void handleTimeOutNotified() {
     	try {
-            Thread.sleep(100);
+            Thread.sleep(200);
         } catch (InterruptedException ex) {
             
         }
@@ -39,7 +38,7 @@ public class DummyLoadingViewHandler extends AbstractLoadingViewHandler {
 
     public boolean doContinueAfterTimeOut() {
     	boolean continueAfterTimeOut = false;
-    	if(retries < 3) {
+    	if(retries < 4) {
     		retries++;
     		continueAfterTimeOut = true;
     	}

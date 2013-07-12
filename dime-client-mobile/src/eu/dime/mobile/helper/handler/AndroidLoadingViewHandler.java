@@ -8,9 +8,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import eu.dime.control.AbstractLoadingViewHandler;
 import eu.dime.control.TimeOutWhileLoadingException;
 import eu.dime.model.GenItem;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -100,6 +102,12 @@ public class AndroidLoadingViewHandler<T extends Activity> extends AbstractLoadi
                     Dialog dialog = null;
                     if (dialogType == DIALOG_TYPE_LOADING) {
                         dialog = createProgressDialog(AndroidLoadingViewHandler.this);
+                        dialog.setOnCancelListener(new OnCancelListener() {
+							@Override
+							public void onCancel(DialogInterface dialog) {
+								
+							}
+						});
                     } else if (dialogType == DIALOG_TYPE_CONFIRM) {
                         dialog = createTimeoutConfirmationDialog(AndroidLoadingViewHandler.this);
                     }

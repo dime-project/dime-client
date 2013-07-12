@@ -40,7 +40,11 @@ public class DimeHelper {
     public final static String DIME_NOTIFICATION_PUSH_PARM_STARTING_FROM = "startingFrom";
     public final static String DIME_TEST_FUNCTION = "ping";    
     public final static String DIME_TEST_PATH = DIME_ROOT_PATH+"api/dime/system/"+DIME_TEST_FUNCTION; ///dime-communications/web/access/auth/@me
-    public final static String DIME_AUTH_USER_REQUEST_PATH = DIME_ROOT_PATH+"web/access/auth/@me";    
+    public final static String DIME_AUTH_USER_REQUEST_PATH = DIME_ROOT_PATH+"web/access/auth/@me";
+    public final static String DIME_QUESTIONAIRE_PATH = DIME_ROOT_PATH + "web/access/questionaire?lang=en";
+    public final static String DIME_USAGE_TERMS_PATH = DIME_ROOT_PATH + "web/access/conditions";
+    public final static String DIME_PRIVACY_POLICY_PATH = DIME_ROOT_PATH + "web/access/privacypolicy";
+    public final static String DIME_HOWTO_PATH = DIME_ROOT_PATH + "static/ui/dime/howto.html";
     public static final String ADVISORY_PATH = "advisory";
     public static final String ADVISORY_REQUEST_ENDPOINT = "@request";    
     public static final String ADVISORY_REQUEST_SUBPATH = "/"+ADVISORY_PATH+"/"+ADVISORY_REQUEST_ENDPOINT;
@@ -48,17 +52,13 @@ public class DimeHelper {
     public final static String JSON_MIME_TYPE = JSONObject.JSON_MIME_TYPE;    
     public final static String DIME_OWNER_AUTH_TOKEN = "b3duZXI6ZGltZXBhc3M0b3duZXI=";
     public final static String DIME_SSL_CERT_TYPE = "TLS";
-    public final static String DEFAULT_HOSTNAME = "localhost"; //127.0.0.1
+    public final static String DEFAULT_HOSTNAME = "dime.hci.iao.fraunhofer.de"; //127.0.0.1, 10.36.52.159
     public final static int DEFAULT_PORT = 8443;
     public final static boolean DEFAULT_USE_HTTPS = true;
     public final static String clientId = UUID.randomUUID().toString();
     public final static long systemStartTime = System.currentTimeMillis();
     public final static double DEFAULT_INITIAL_TRUST_LEVEL = 0.5;
     public final static double DEFAULT_INITIAL_PRIVACY_LEVEL = 0.5;
-
-    public static String getDimeTestPath(String hoster){
-        return DIME_TEST_PATH;
-    }
     
     //"e.g. ps43"
     public static String resolveIPOfPS(String said) throws UnknownHostException{
@@ -151,10 +151,10 @@ public class DimeHelper {
         return createErrorResponse(HttpConstants.HTTP_COMMAND_DELETE, myPath, "", errorMessage);
     }
 
-    public HTTPResponse dimeServerIsAlive(String hoster, RestApiConfiguration conf) {
+    public boolean dimeServerIsAlive(RestApiConfiguration conf) {
         try {
-            HTTPResponse response = httpHelper.doHTTPRequest(HttpConstants.HTTP_COMMAND_GET, conf.hostName, conf.port, getDimeTestPath(hoster), "", JSON_MIME_TYPE, conf.isHttps, conf.authToken);
-            return response;
+            HTTPResponse response = httpHelper.doHTTPRequest(HttpConstants.HTTP_COMMAND_GET, conf.hostName, conf.port, DIME_TEST_PATH, "", JSON_MIME_TYPE, conf.isHttps, conf.authToken);
+            return response != null && response.code == 200;
         } catch (MalformedURLException ex) {
             Logger.getLogger(HttpHelper.class.getName()).log(Level.SEVERE, "MalformedURLException:" + ex.getMessage());
         } catch (ProtocolException ex) {
@@ -162,7 +162,17 @@ public class DimeHelper {
         } catch (IOException ex) {
             Logger.getLogger(HttpHelper.class.getName()).log(Level.SEVERE, "IOException:" + ex.getMessage());
         }
-        return null;
+        return false;
+    }
+    
+    public String getServerVersion(RestApiConfiguration conf) {
+        JSONResponse response = doDIMEJSONGET(DIME_TEST_PATH, "", conf);
+        RestApiAccess.handleResponse(response);
+        if ((response == null) || (response.hasError())) {
+            //we have not been able to fetch something
+            return "error";
+        }
+        return response.getApiVersion();
     }
 
     public boolean dimeServerIsAuthenticated(String hoster, RestApiConfiguration conf) throws MalformedURLException, ProtocolException, IOException {

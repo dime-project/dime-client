@@ -25,6 +25,13 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="dime_hint" parent="@android:style/Widget.TextView">
+        <item name="android:padding">10dp</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textColor">@color/dm_text</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
     
     <!--
         <item name="android:paddingLeft"></item>

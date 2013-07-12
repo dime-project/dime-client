@@ -91,8 +91,8 @@ public class Model implements NotificationListener{
                 new CallTypeEntry(CALLTYPES.COMET, "COMET", "@comet"),
                 new CallTypeEntry(CALLTYPES.DUMP, "DUMP", "@dump"),
                 new CallTypeEntry(CALLTYPES.MERGE, "MERGE","@merge"),
-                new CallTypeEntry(CALLTYPES.AUTH_ALL_GET, "AUTH_ALL_GET","auth/@all"),
-                new CallTypeEntry(CALLTYPES.AUTH_POST, "AUTH_POST","auth"),
+                new CallTypeEntry(CALLTYPES.AUTH_GET, "AUTH_GET","user/@me"),
+                new CallTypeEntry(CALLTYPES.AUTH_POST, "AUTH_POST", "user"),
                 new CallTypeEntry(CALLTYPES.CRAWLER, "CRAWLER","crawler"),
                 new CallTypeEntry(CALLTYPES.USER_ALL_GET, "USER_ALL_GET","@all"),
                 new CallTypeEntry(CALLTYPES.REGISTER_USER, "REGISTER_USER", "")

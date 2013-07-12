@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,11 +16,16 @@ import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.Vector;
+
 import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
 import eu.dime.model.ModelHelper;
+import eu.dime.model.TYPES;
 import eu.dime.model.displayable.DataboxItem;
 import eu.dime.model.displayable.DisplayableItem;
 import eu.dime.model.displayable.GroupItem;
@@ -32,63 +38,86 @@ import sit.sstl.LRUCache;
 
 public class ImageHelper {
 
-	private static final int MAX_CACHE_ENTRIES = 50;	//TODO define good value
+	private static final int MAX_CACHE_ENTRIES = 50;
 
     private static sit.sstl.LRUCache<String, Bitmap> imageCache = null;
     private static final Object imageCacheLock = new Object();
     private static Set<String> bad = Collections.synchronizedSet(new HashSet<String>());
+    private static HashMap<String, List<WeakReference<ImageView>>> ivsToBeUpdated = new HashMap<String, List<WeakReference<ImageView>>>();
     
-    public static void loadImageAsynchronously(ImageView iv, DisplayableItem di, Context context) {
-		Bitmap bitmap = null;
+    public static synchronized void loadImageAsynchronously(ImageView iv, DisplayableItem di, Context context) {
+    	iv.setImageDrawable(ImageHelper.getDefaultImageDrawable(di, context));
 		if (di != null && di.getImageUrl() != null && di.getImageUrl().length() > 0 && !bad.contains(di.getImageUrl())) {
-			String url = ModelHelper.guessURLString(di.getImageUrl());
-			try {
-				bitmap = ImageHelper.getCachedImageBitmap(url, context);
-			} catch (IOException e) {
-				Log.d(context.getClass().getName(), "setImageBitmap failed");
+			String imageUrl = di.getImageUrl();
+	    	if(di.getMType().equals(TYPES.ACCOUNT) || di.getMType().equals(TYPES.SERVICEADAPTER)) {
+	    		imageUrl = "/dime-communications/static/ui/images" + imageUrl;
+	    	}
+			String url = ModelHelper.guessURLString(imageUrl);
+	    	boolean containsKey = false;
+	    	boolean isEmpty = false;
+	    	synchronized (ivsToBeUpdated) {
+	    		containsKey = ivsToBeUpdated.containsKey(url);
+	    		isEmpty = containsKey && ivsToBeUpdated.get(url).size() == 0;
 			}
-			if (bitmap == null) {
-				iv.setImageDrawable(ImageHelper.getDefaultImageDrawable(di, context));
-				final WeakReference<Context> mContext = new WeakReference<Context>(context);
-				final WeakReference<ImageView> mImageView = new WeakReference<ImageView>(iv);
-				final String diUrl = di.getImageUrl();
+			if(!containsKey) {
+				synchronized (ivsToBeUpdated) {
+					ivsToBeUpdated.put(url, new Vector<WeakReference<ImageView>>());
+					List<WeakReference<ImageView>> ivs = ivsToBeUpdated.get(url);
+					ivs.add(new WeakReference<ImageView>(iv));
+				}
 				AsyncTask<String, Void, Bitmap> task = new AsyncTask<String, Void, Bitmap>() {
+					
+					private String imageUrl = "";
 					
 					@Override
 					protected Bitmap doInBackground(String... url) {
 						Bitmap bitmap = null;
+						imageUrl = url[0];
 						try {
-							bitmap = ImageHelper.getImageBitmap(url[0], mContext.get());
+							bitmap = ImageHelper.getImageBitmap(url[0]);
 						} catch(OutOfMemoryError e){
-							Log.d(mContext.getClass().getName(), "outOfMemoryException");
+							Log.d(ImageHelper.class.getName(), "outOfMemoryException");
 							clearCache();
 						} catch (Exception e) {
-							Log.d(mContext.getClass().getName(), "Exception when loading image for url: \"" + url + "\" (" + e.getMessage() + ")");
+							Log.d(ImageHelper.class.getName(), "Exception when loading image for url: \"" + url + "\" (" + e.getMessage() + ")");
 						}
 						return bitmap;
 					}
 		
 					@Override
 					protected void onPostExecute(Bitmap bitmap) {
-						if(mImageView.get() != null) {
-							if (bitmap != null) {
-								mImageView.get().setImageBitmap(bitmap);
-							} else {
-								bad.add(diUrl);
+						if (bitmap != null) {
+							synchronized (ivsToBeUpdated) {
+								for (WeakReference<ImageView> iv: ivsToBeUpdated.get(imageUrl)){
+									if(iv.get() != null) iv.get().setImageBitmap(bitmap);
+								}
 							}
+						} else {
+							bad.add(imageUrl);
 						}
+						synchronized (ivsToBeUpdated) {
+							ivsToBeUpdated.get(imageUrl).clear();
+						}	
 					}
 				};
 				task.execute(url);
+			} else if(isEmpty) {
+				Bitmap bitmap = ImageHelper.getCachedImageBitmap(url);
+				if(bitmap != null) { 
+					iv.setImageBitmap(bitmap);
+				} else {
+					iv.setImageDrawable(ImageHelper.getDefaultImageDrawable(di, context));
+				}
 			} else {
-				iv.setImageBitmap(bitmap);
+				synchronized (ivsToBeUpdated) {
+					List<WeakReference<ImageView>> ivs = ivsToBeUpdated.get(url);
+					ivs.add(new WeakReference<ImageView>(iv));
+				}
 			}
-		} else {
-			iv.setImageDrawable(ImageHelper.getDefaultImageDrawable(di, context));
 		}
 	}
 
-    public static Bitmap getImageBitmap(final String url, final Context activityContext) throws IOException, OutOfMemoryError {
+    public static Bitmap getImageBitmap(String url) throws IOException, OutOfMemoryError, NullPointerException {
         Bitmap bm = null;
         URL aURL = new URL(url);
         URLConnection conn = aURL.openConnection();
@@ -109,13 +138,16 @@ public class ImageHelper {
         }
         if (bm != null) {
         	synchronized (imageCacheLock) {
-        		 imageCache.put(url, bm);
+        		if (imageCache == null) { //lazy creation
+                    imageCache = new LRUCache<String, Bitmap>(MAX_CACHE_ENTRIES);
+                }
+        		imageCache.put(url, bm);
         	}
         }
         return bm;
     }
 
-    public static Bitmap getCachedImageBitmap(String url, Context activityContext) throws IOException {
+    public static Bitmap getCachedImageBitmap(String url) {
         synchronized (imageCacheLock) {
             if (imageCache == null) { //lazy creation
                 imageCache = new LRUCache<String, Bitmap>(MAX_CACHE_ENTRIES);
@@ -133,15 +165,15 @@ public class ImageHelper {
     }
     
     public static Bitmap getDefaultImageBitmap(DisplayableItem di, Context mContext) {
-    	return BitmapFactory.decodeResource(mContext.getResources(), getDefaultimageDrawableId(di, mContext));
+    	return BitmapFactory.decodeResource(mContext.getResources(), getDefaultimageDrawableId(di));
     }
     
     public static Drawable getDefaultImageDrawable(DisplayableItem di, Context mContext){
-    	return mContext.getResources().getDrawable(getDefaultimageDrawableId(di, mContext));
+    	return mContext.getResources().getDrawable(getDefaultimageDrawableId(di));
     }
     
     @SuppressLint("DefaultLocale")
-    public static int getDefaultimageDrawableId(DisplayableItem di, Context mContext) {
+    public static int getDefaultimageDrawableId(DisplayableItem di) {
     	int icon = 0;
     	if(di instanceof ResourceItem) {
 	        String lower = di.getName().toLowerCase();

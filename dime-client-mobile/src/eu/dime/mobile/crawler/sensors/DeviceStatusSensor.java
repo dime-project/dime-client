@@ -8,12 +8,10 @@ import android.content.Context;
 import android.os.PowerManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-
 import eu.dime.mobile.crawler.Constants;
 import eu.dime.mobile.crawler.ContextCrawler;
 import eu.dime.mobile.crawler.Defaults;
 import eu.dime.mobile.helper.ContextHelper;
-import eu.dime.mobile.helper.interfaces.IContextSensor;
 import eu.dime.model.context.ContextItem;
 import eu.dime.model.context.constants.Scopes;
 

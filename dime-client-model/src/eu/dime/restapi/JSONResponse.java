@@ -22,6 +22,7 @@ public class JSONResponse {
     public static final String[] dataPath = {"response", "data"};
     public static final String[] entryPath = {"response", "data", "entry"};
     public static final String[] statusPath = {"response", "meta", "status"};
+    public static final String[] versionsPath = {"response", "meta", "v"};
     public boolean isErrorMessage = false;
     public boolean callFailed = false;
     public boolean noDataEntryFound = false;
@@ -134,6 +135,18 @@ public class JSONResponse {
 
     String getPayload() {
         return httpResponse.getPayloadAsString();
+    }
+    
+    public String getApiVersion() {
+    	String version = "error";
+    	if(entryObject != null) {
+    		try {
+				version = entryObject.getChild(versionsPath).getValue();
+			} catch (JSONPathAccessException e) {
+				//silently catch exception
+			}
+    	}
+    	return version;
     }
 
     @Override

@@ -125,6 +125,10 @@
                     android:text="medium"
                     android:textStyle="bold" />
             </LinearLayout>
+            
+            <TextView
+                android:id="@+edit/bar_hint"
+                style="@style/dime_hint" />
         </LinearLayout>
 
         <View

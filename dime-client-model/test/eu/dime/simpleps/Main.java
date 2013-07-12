@@ -104,7 +104,7 @@ public class Main {
 
         WebServer.getInstance().setRoot(new File("resources/www"));
         WebServer.getInstance().setPermitDirectoryListing(true);
-        WebServer.getInstance().setPort(8080);
+        WebServer.getInstance().setPort(8081);
         Thread webThread = new Thread(WebServer.getInstance());
         webThread.start();
         

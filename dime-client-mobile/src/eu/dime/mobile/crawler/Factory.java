@@ -1,6 +1,5 @@
 package eu.dime.mobile.crawler;
 
-import eu.dime.mobile.helper.interfaces.IContextCrawler;
 
 public class Factory {
 	

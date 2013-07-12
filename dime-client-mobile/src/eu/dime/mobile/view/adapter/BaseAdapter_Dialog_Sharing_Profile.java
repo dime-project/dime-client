@@ -10,7 +10,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import eu.dime.mobile.R;
@@ -23,22 +22,16 @@ import eu.dime.model.ModelRequestContext;
 import eu.dime.model.displayable.DisplayableItem;
 import eu.dime.model.displayable.ProfileAttributeItem;
 import eu.dime.model.displayable.ProfileItem;
+
 import java.util.List;
 
 public class BaseAdapter_Dialog_Sharing_Profile extends BaseAdapterDisplayableItem {
 	
-	private ProfileItem selectedProfile;
-
-	public ProfileItem getSelectedProfile() {
-		return selectedProfile;
-	}
-	
 	@Override
-	public void init(Context context, ModelRequestContext mrContext, ListView parent, List<DisplayableItem> items) {
-		super.init(context, mrContext, parent, items);
+	public void init(Context context, ModelRequestContext mrContext, List<DisplayableItem> items) {
+		super.init(context, mrContext, items);
 		if(items.size()>0 && items.get(0) != null) {
 			selection.add(items.get(0).getGuid());
-			selectedProfile = (ProfileItem) items.get(0);
 		}
 	}
 
@@ -127,7 +120,6 @@ public class BaseAdapter_Dialog_Sharing_Profile extends BaseAdapterDisplayableIt
         	selection.clear();
             DisplayableItem item = (DisplayableItem) mItems.get(position);
             selection.add(item.getGuid());
-            selectedProfile = (ProfileItem) item;
         } else {
             Log.e(TAG, "Checked Item changed on sth else than DisplayableItem: " + mItems.get(position).getClass());
         }

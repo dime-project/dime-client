@@ -1,4 +1,4 @@
-package eu.dime.mobile.helper.interfaces;
+package eu.dime.mobile.crawler;
 
 import android.content.Context;
 import eu.dime.model.context.ContextItem;

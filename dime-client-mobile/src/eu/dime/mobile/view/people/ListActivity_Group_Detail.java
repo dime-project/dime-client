@@ -37,7 +37,7 @@ public class ListActivity_Group_Detail extends ListActivityDisplayableItem {
     @Override
     protected List<DisplayableItem> loadListData() {
     	selectedGroup = (GroupItem) Model.getInstance().getItem(mrContext, dio.getItemType(), dio.getItemId());
-        return ModelHelper.getChildsOfDisplayableItem(mrContext, selectedGroup);
+        return ModelHelper.getChildrenOfDisplayableItem(mrContext, selectedGroup);
     }
 
     @Override

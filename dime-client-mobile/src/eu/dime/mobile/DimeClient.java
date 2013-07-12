@@ -13,26 +13,28 @@ import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.util.Log;
 import eu.dime.control.LoadingViewHandler;
 import eu.dime.control.NotificationListener;
 import eu.dime.control.NotificationManager;
 import eu.dime.mobile.crawler.Factory;
+import eu.dime.mobile.crawler.IContextCrawler;
 import eu.dime.mobile.helper.AndroidModelHelper;
 import eu.dime.mobile.helper.UIHelper;
-import eu.dime.mobile.helper.interfaces.IContextCrawler;
 import eu.dime.mobile.helper.objects.DimeIntentObject;
 import eu.dime.mobile.helper.objects.NotificationProperties;
-import eu.dime.mobile.settings.Settings;
 import eu.dime.mobile.view.Activity_Main;
 import eu.dime.model.Model;
-import eu.dime.model.ModelConfiguration;
 import eu.dime.model.ModelRequestContext;
 import eu.dime.model.TYPES;
 import eu.dime.model.context.constants.Scopes;
 import eu.dime.model.specialitem.NotificationItem;
 import eu.dime.model.specialitem.usernotification.UserNotificationItem;
+import eu.dime.restapi.RestApiAccess;
+
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -143,6 +145,8 @@ public class DimeClient extends Application implements NotificationListener {
                 }
             }).execute();
 
+        } else if (item.getOperation().equals(NotificationItem.OPERATION_CREATE) && item.getElement().getType().equals("auth")) {
+        	settings.setAuthItem(RestApiAccess.getAuthItem(getUserMainSaid(), settings.getRestApiConfiguration()));
         }
     }
     
@@ -171,16 +175,6 @@ public class DimeClient extends Application implements NotificationListener {
     public static String getUserMainSaid() {
         return settings.getMainSAID();
     }
-
-    /**
-     * be careful: this function returns the actual model configuration changes
-     * might lead to reseting the model
-     *
-     * @return
-     */
-    public static ModelConfiguration getModelConfiguration() {
-        return Model.getInstance().getSettings();
-    }
 	
 	public static List<String> getViewStack() {
 		List<String> tmp = new Vector<String>(viewStack);
@@ -193,6 +187,17 @@ public class DimeClient extends Application implements NotificationListener {
 			viewStack.add(view);
 			Log.i(TAG, viewStack.toString());
 		}
+	}
+
+	public static String getClientVersion() {
+		String clientVersion = "unknown";
+		try {
+			PackageInfo info = appContext.getPackageManager().getPackageInfo(appContext.getPackageName(), 0);
+			clientVersion = info.versionName + info.versionCode;
+		} catch (NameNotFoundException e) {	
+			//silently catch exception
+		}
+		return clientVersion;
 	}
 	
 }

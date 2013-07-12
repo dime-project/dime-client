@@ -78,7 +78,6 @@ public final class ServiceAdapterItem extends DisplayableItem {
 				e.printStackTrace();
 			}
 		}
-        this.imageUrl = "/dime-communications/static/ui/images" + imageUrl;
     }
 
     @Override

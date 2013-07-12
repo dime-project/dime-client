@@ -7,32 +7,50 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@drawable/gradient_dime_top"
-        android:gravity="right" >
+        android:background="@drawable/gradient_dime_top" >
 
-            <TextView
-                android:id="@+main/dime_user"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textColor="@android:color/white"
-                android:gravity="center_vertical"
-                android:layout_gravity="right"
-                android:paddingRight="10dp"
-                android:textSize="11sp" />
+        <View
+            android:layout_width="96dp"
+            android:layout_height="match_parent"/>
 
-            <View
-                android:layout_width="2px"
-                android:layout_height="fill_parent"
-                android:layout_gravity="right"
-                android:background="@drawable/gradient_double_line" />
+        <TextView
+            android:id="@+main/dime_user"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical|right"
+            android:paddingRight="6dp"
+            android:textColor="@android:color/white"
+            android:textSize="9sp" />
 
-            <ImageButton
-                android:id="@+main/logout"
-                android:layout_width="60dp"
-                android:layout_height="48dp"
-                android:background="@drawable/button_transp_bar"
-                android:padding="4dp"
-                android:src="@drawable/icon_white_logout" />
+        <View
+            android:layout_width="2px"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:background="@drawable/gradient_double_line" />
+
+        <ImageButton
+            android:id="@+main/info"
+            android:layout_width="54dp"
+            android:layout_height="48dp"
+            android:background="@drawable/button_transp_bar"
+            android:onClick="onClick"
+            android:padding="4dp"
+            android:src="@drawable/icon_white_info" />
+
+        <View
+            android:layout_width="2px"
+            android:layout_height="match_parent"
+            android:background="@drawable/gradient_double_line" />
+
+        <ImageButton
+            android:id="@+main/logout"
+            android:layout_width="54dp"
+            android:layout_height="48dp"
+            android:background="@drawable/button_transp_bar"
+            android:onClick="onClick"
+            android:padding="4dp"
+            android:src="@drawable/icon_white_logout" />
     </LinearLayout>
 
     <View
@@ -64,7 +82,7 @@
             android:layout_marginLeft="32dp"
             android:layout_marginTop="32dp"
             android:textColor="@android:color/white"
-            android:textSize="6sp"
+            android:textSize="9sp"
             android:textStyle="bold" />
     </RelativeLayout>
 
@@ -75,114 +93,120 @@
         android:orientation="vertical" >
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
             android:layout_weight="1" >
 
             <Button
                 android:id="@+main/button_people"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:background="@drawable/button_transp"
                 android:drawableTop="@drawable/icon_black_people"
                 android:focusable="true"
+                android:onClick="onClick"
                 android:paddingBottom="8dp"
                 android:paddingTop="8dp"
                 android:text="People" />
 
             <View
                 android:layout_width="6dp"
-                android:layout_height="fill_parent" />
+                android:layout_height="match_parent" />
 
             <Button
                 android:id="@+main/button_communication"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:background="@drawable/button_transp"
                 android:drawableTop="@drawable/icon_black_communication"
                 android:focusable="true"
+                android:onClick="onClick"
                 android:paddingBottom="8dp"
                 android:paddingTop="8dp"
                 android:text="Communication" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
             android:layout_weight="1" >
 
             <Button
                 android:id="@+main/button_mydata"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:background="@drawable/button_transp"
                 android:drawableTop="@drawable/icon_black_mydata"
                 android:focusable="true"
+                android:onClick="onClick"
                 android:paddingBottom="8dp"
                 android:paddingTop="8dp"
                 android:text="My Data" />
 
             <View
                 android:layout_width="6dp"
-                android:layout_height="fill_parent" />
+                android:layout_height="match_parent" />
 
             <Button
                 android:id="@+main/button_myprofile"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:background="@drawable/button_transp"
                 android:drawableTop="@drawable/icon_black_myprofile"
                 android:focusable="true"
+                android:onClick="onClick"
                 android:paddingBottom="8dp"
                 android:paddingTop="8dp"
                 android:text="My Profile Cards" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
             android:layout_weight="1" >
 
             <Button
                 android:id="@+main/button_calendar"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:background="@drawable/button_transp"
                 android:drawableTop="@drawable/icon_black_calendar"
                 android:focusable="true"
+                android:onClick="onClick"
                 android:paddingBottom="8dp"
                 android:paddingTop="8dp"
                 android:text="Calendar" />
 
             <View
                 android:layout_width="6dp"
-                android:layout_height="fill_parent" />
+                android:layout_height="match_parent" />
 
             <Button
                 android:id="@+main/button_settings"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:background="@drawable/button_transp"
                 android:drawableTop="@drawable/icon_black_settings"
                 android:focusable="true"
+                android:onClick="onClick"
                 android:paddingBottom="8dp"
                 android:paddingTop="8dp"
                 android:text="Settings" />
@@ -192,13 +216,13 @@
     <requestFocus />
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:orientation="vertical" >
 
         <LinearLayout
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="6dp" >
@@ -241,7 +265,7 @@
 
         <Button
             android:id="@+main/button_notification"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginBottom="6dp"
             android:layout_marginLeft="6dp"

@@ -18,14 +18,14 @@ import sit.sstl.StringEnumMap;
 public final class ResourceItem extends DisplayableItem implements ShareableItem {
 
     public static enum RESOURCE_ITEM_FIELDS {
-
         PRIVACY_LEVEL_TAG, DOWNLOAD_URL, MIME_TYPE, ORIGIN_ID, ORIGINAL_PATH, 
         FILE_SIZE, WORD_COUNT, LINE_COUNT, PAGE_NUMBER, FILE_OWNER
     };
     public static final StringEnumMap<RESOURCE_ITEM_FIELDS> ResourceItemFieldMap =
-            new StringEnumMap(RESOURCE_ITEM_FIELDS.class, RESOURCE_ITEM_FIELDS.values(),
+            new StringEnumMap<RESOURCE_ITEM_FIELDS>(RESOURCE_ITEM_FIELDS.class, RESOURCE_ITEM_FIELDS.values(),
             new String[]{"nao:privacyLevel", "downloadUrl", "nie:mimeType", "originId", "originalPath", 
                         "nfo:fileSize", "nfo:lineCount", "nfo:wordCount", "nfo:pageNumber", "nfo:fileOwner"});
+   
     private Double privacyLevel;
     private String downloadUrl;
     private String mimeType;
@@ -48,7 +48,7 @@ public final class ResourceItem extends DisplayableItem implements ShareableItem
 
     @Override
     protected void wipeItemForDisplayItem() {
-        privacyLevel = DimeHelper.DEFAULT_INITIAL_PRIVACY_LEVEL;;
+        privacyLevel = DimeHelper.DEFAULT_INITIAL_PRIVACY_LEVEL;
         downloadUrl = "";
         mimeType = "";
         originId = "";
@@ -63,7 +63,7 @@ public final class ResourceItem extends DisplayableItem implements ShareableItem
     @Override
     protected DisplayableItem getCloneForDisplayItem() {
         ResourceItem result = new ResourceItem();
-        result.privacyLevel = this.privacyLevel;        
+        result.privacyLevel = this.privacyLevel;
         result.downloadUrl = this.downloadUrl;
         result.mimeType = this.mimeType;
         result.originId = this.originId;
@@ -78,7 +78,6 @@ public final class ResourceItem extends DisplayableItem implements ShareableItem
 
     @Override
     public void readJSONObjectForDisplayItem(JSONObject jsonObject) {
-        
         this.privacyLevel = getDoubleValueOfJSONO(jsonObject, ResourceItemFieldMap.get(RESOURCE_ITEM_FIELDS.PRIVACY_LEVEL_TAG));
         this.downloadUrl =  getStringValueOfJSONO(jsonObject, ResourceItemFieldMap.get(RESOURCE_ITEM_FIELDS.DOWNLOAD_URL));
         this.mimeType =  getStringValueOfJSONO(jsonObject, ResourceItemFieldMap.get(RESOURCE_ITEM_FIELDS.MIME_TYPE));
@@ -89,14 +88,11 @@ public final class ResourceItem extends DisplayableItem implements ShareableItem
         this.lineCount =  getIntegerValueOfJSONO(jsonObject, ResourceItemFieldMap.get(RESOURCE_ITEM_FIELDS.LINE_COUNT));
         this.pageNumber =  getIntegerValueOfJSONO(jsonObject, ResourceItemFieldMap.get(RESOURCE_ITEM_FIELDS.PAGE_NUMBER));
         this.fileOwner =  getStringValueOfJSONO(jsonObject, ResourceItemFieldMap.get(RESOURCE_ITEM_FIELDS.FILE_OWNER));
-
     }
 
     @Override
     protected JSONObject createJSONObjectForDisplayItem(JSONObject newJSONObject) {
-        
-        newJSONObject.addChild(getJSONValue(privacyLevel, ResourceItemFieldMap.get(RESOURCE_ITEM_FIELDS.PRIVACY_LEVEL_TAG)));
-             
+        newJSONObject.addChild(getJSONValue(privacyLevel, ResourceItemFieldMap.get(RESOURCE_ITEM_FIELDS.PRIVACY_LEVEL_TAG)));   
         newJSONObject.addChild(getJSONValue(downloadUrl, ResourceItemFieldMap.get(RESOURCE_ITEM_FIELDS.DOWNLOAD_URL)));        
         newJSONObject.addChild(getJSONValue(mimeType, ResourceItemFieldMap.get(RESOURCE_ITEM_FIELDS.MIME_TYPE)));        
         newJSONObject.addChild(getJSONValue(originId, ResourceItemFieldMap.get(RESOURCE_ITEM_FIELDS.ORIGIN_ID)));        
@@ -106,7 +102,6 @@ public final class ResourceItem extends DisplayableItem implements ShareableItem
         newJSONObject.addChild(getJSONValue(lineCount, ResourceItemFieldMap.get(RESOURCE_ITEM_FIELDS.LINE_COUNT)));
         newJSONObject.addChild(getJSONValue(pageNumber, ResourceItemFieldMap.get(RESOURCE_ITEM_FIELDS.PAGE_NUMBER)));
         newJSONObject.addChild(getJSONValue(fileOwner, ResourceItemFieldMap.get(RESOURCE_ITEM_FIELDS.FILE_OWNER)));        
-        
         return newJSONObject;
     }
 

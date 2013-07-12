@@ -1,6 +1,7 @@
 package eu.dime.mobile.view.dialog;
 
 import java.util.Arrays;
+
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Gravity;
@@ -26,6 +27,7 @@ import eu.dime.mobile.view.abstr.ActivityDime;
 import eu.dime.model.GenItem;
 import eu.dime.model.Model;
 import eu.dime.model.ModelHelper;
+import eu.dime.model.TYPES;
 import eu.dime.model.displayable.AgentItem;
 import eu.dime.model.displayable.DisplayableItem;
 import eu.dime.model.displayable.LivePostItem;
@@ -45,6 +47,7 @@ public class Activity_Edit_Item_Dialog extends ActivityDime implements OnClickLi
 	private TextView headerName;
 	private TextView headerModified;
 	private TextView headerChangesMade;
+	private TextView seekHint;
 	private Button saveButton;
 
 	@Override
@@ -62,6 +65,7 @@ public class Activity_Edit_Item_Dialog extends ActivityDime implements OnClickLi
 		seekLabel = (TextView) findViewById(R.edit.bar_label);
 		seek = (SeekBar) findViewById(R.edit.bar);
 		seekText = (TextView) findViewById(R.edit.bar_text);
+		seekHint = (TextView) findViewById(R.edit.bar_hint);
 		Button uploadImage = (Button) findViewById(R.edit.button_upload_picture);
 		Button cancelButton = (Button) findViewById(R.edit.button_cancel);
 		saveButton = (Button) findViewById(R.edit.button_save);
@@ -91,11 +95,11 @@ public class Activity_Edit_Item_Dialog extends ActivityDime implements OnClickLi
 		headerModified.setText(UIHelper.formatDateByMillis(item.getLastUpdated()));
 		UIHelper.updateTrustOrPrivacyLevelTextView(this, seekText, item);
 		Integer level = AndroidModelHelper.getTrustOrPrivacyLevelForDisplayableItem(item);
-		if(level != null) { 
+		if(!item.getMType().equals(TYPES.GROUP) && level != null) { 
 			seek.setProgress(level); 
 			seekLabel.setText(UIHelper.getTrustOrPrivacyLabelOfProgressBar(item));
-		}
-		else { 
+			seekHint.setText(UIHelper.updateEditTrustOrPrivacyLevelHint(this, item));
+		} else { 
 			seekLayout.setVisibility(View.GONE); 
 		}
 		switch (item.getMType()) {

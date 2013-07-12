@@ -3,7 +3,6 @@ package eu.dime.mobile.helper;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,8 +10,6 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.json.JSONException;
-import sit.web.client.HTTPResponse;
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
@@ -33,7 +30,6 @@ import eu.dime.control.DummyLoadingViewHandler;
 import eu.dime.mobile.helper.listener.ClickListenerUserNotifications;
 import eu.dime.mobile.helper.objects.DimeIntentObject;
 import eu.dime.mobile.helper.objects.NotificationProperties;
-import eu.dime.mobile.settings.Settings;
 import eu.dime.mobile.view.Activity_Main;
 import eu.dime.mobile.view.abstr.ListActivityDime;
 import eu.dime.mobile.view.dialog.Activity_Share_Dialog;
@@ -62,7 +58,6 @@ import eu.dime.model.specialitem.EvaluationInvolvedItem;
 import eu.dime.model.specialitem.EvaluationItem;
 import eu.dime.model.specialitem.usernotification.UserNotificationItem;
 import eu.dime.model.storage.InitStorageFailedException;
-import eu.dime.restapi.DimeHelper;
 import eu.dime.restapi.MultiPartPostClient;
 import eu.dime.restapi.RestApiAccess;
 
@@ -76,26 +71,6 @@ public class AndroidModelHelper {
      */
     public static ModelConfiguration getModelConfiguration() {
         return Model.getInstance().getSettings();
-    }
-    
-    public static void updateClientConfiguration(Settings settings) {
-        Logger.getLogger(DimeClient.class.getName()).log(Level.INFO, "updateClientConfiguration - start" + settings.toString());
-        if (!settings.getOverrideDNS()) {
-            try {
-                String myHostName = DimeHelper.resolveIPOfPS(settings.getMainSAID());
-                settings.setHostname(myHostName);
-            } catch (UnknownHostException ex) {
-                Logger.getLogger(DimeClient.class.getName()).log(Level.SEVERE, "Unable to resolve hostname for said:" + settings.getMainSAID());
-            } catch (Exception ex) {
-                Logger.getLogger(DimeClient.class.getName()).log(Level.SEVERE, "Unable to resolve hostname for said:" + settings.getMainSAID(), ex);
-            }
-        }
-        try {
-            Model.getInstance().updateSettings(settings.getModelConfiguration());
-        } catch (InitStorageFailedException ex) {
-            Logger.getLogger(DimeClient.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
-        }
-        Logger.getLogger(DimeClient.class.getName()).log(Level.INFO, "updateClientConfiguration - finished");
     }
     
     public static void resetModel() {
@@ -172,6 +147,14 @@ public class AndroidModelHelper {
     	return listOfGuids;
     }
     
+    public static List<String> getListOfGuidsOfGenItemList(List<GenItem> items) {
+    	List<String> listOfGuids = new ArrayList<String>();
+    	for(GenItem item : items) {
+    		listOfGuids.add(item.getGuid());
+    	}
+    	return listOfGuids;
+    }
+    
     public static List<String> getListOfNamesOfDisplayableList(List<DisplayableItem> displayables) {
     	List<String> listOfNames = new ArrayList<String>();
     	Collections.sort(displayables, new ComparatorHelper.NameComparator());
@@ -186,7 +169,7 @@ public class AndroidModelHelper {
 		for (String guid : guids) {
 			GenItem item = null;
 			try {
-				if(isShareableItem) {
+				if(!isShareableItem) {
 					item = getGenItemSynchronously(context, new DimeIntentObject(guid, TYPES.PERSON));
 					if(item == null) item = getGenItemSynchronously(context, new DimeIntentObject(guid, TYPES.GROUP));
 				} else {
@@ -514,20 +497,25 @@ public class AndroidModelHelper {
 	 ** ------------------------------------------------------------------------------------------------------------------------------------------ */
     public static void sendEvaluationDataAsynchronously(final List<GenItem> items, final ModelRequestContext mrContext, final String action) {
     	if(action != null && DimeClient.getSettings().isSetPrefAccepted()) {
-    		(new AsyncTask<Void, Void, Void>() {
+    		(new AsyncTask<Void, Void, Boolean>() {
         		
     			@Override
-                protected Void doInBackground(Void... params) {
-					EvaluationItem ei = createEvaluationItemWithClientData();
-					ei.setInvolvedItems(new EvaluationInvolvedItem(items));
-					ei.setAction(action);
-					RestApiAccess.postItemNew(mrContext.hoster, mrContext.owner, ei.getMType(), ei, Model.getInstance().getSettings().restApiConfiguration);
-					return null;
+                protected Boolean doInBackground(Void... params) {
+    				boolean result = true;
+    				try {
+    					EvaluationItem ei = createEvaluationItemWithClientData();
+    					ei.setInvolvedItems(new EvaluationInvolvedItem(items));
+    					ei.setAction(action);
+    					RestApiAccess.postItemNew(mrContext.hoster, mrContext.owner, ei.getMType(), ei, DimeClient.getSettings().getRestApiConfiguration());
+					} catch (Exception e) {
+						result = false;
+					}
+					return result;
                 }
 
     			@Override
-                protected void onPostExecute(Void result) {
-    				Log.d("DimeHelper", "Evaluation item sent to private server!");
+                protected void onPostExecute(Boolean result) {
+    				if(result) Log.d("DimeHelper", "Evaluation item sent to private server!");
                 }
             
     		}).execute();
@@ -535,9 +523,8 @@ public class AndroidModelHelper {
 	}
     
     public static EvaluationItem createEvaluationItemWithClientData() {
-    	//FIXME hash ids
-    	String version = getVersion(new DimeHelper().dimeServerIsAlive(DimeClient.getUserMainSaid(), Model.getInstance().getRestApiConfiguration()));
-    	String hashedTenantId = DimeClient.getUserMainSaid() + "@dime";
+    	String version = DimeClient.getSettings().getClientVersion();
+    	String hashedTenantId = DimeClient.getSettings().getEvaluationId();
     	String currentPlace = (ContextHelper.getCurrentPlace() != null) ? ContextHelper.getCurrentPlace().getPlaceId() : "not set";
     	String currentSituation = (ContextHelper.getCurrentSituationGuid() != null) ? ContextHelper.getCurrentSituationGuid() : "not set";
     	return ItemFactory.createNewEvaluationItem(version, hashedTenantId, currentPlace, currentSituation, DimeClient.getViewStack());
@@ -608,7 +595,7 @@ public class AndroidModelHelper {
 			protected List<DisplayableItem> doInBackground(Void... params) {
 				List<DisplayableItem> items; 
 				try {
-					items = ModelHelper.getChildsOfDisplayableItem(DimeClient.getMRC(owner, new DummyLoadingViewHandler()), item);
+					items = ModelHelper.getChildrenOfDisplayableItem(DimeClient.getMRC(owner, new DummyLoadingViewHandler()), item);
 				} catch (Exception e) {
 					items = new ArrayList<DisplayableItem>();
 				}
@@ -686,18 +673,6 @@ public class AndroidModelHelper {
 	/** ------------------------------------------------------------------------------------------------------------------------------------------
 	 ** other functions
 	 ** ------------------------------------------------------------------------------------------------------------------------------------------ */
-	public static String getVersion(HTTPResponse result) {
-		String version = "unknown";
-    	try {
-    		org.json.JSONObject json = new org.json.JSONObject(result.reply);
-			version = "v" + json.getJSONObject("response").getJSONObject("meta").getString("v");
-		} catch (JSONException e) {
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return version;
-	}
-	
 	public static Integer getTrustOrPrivacyLevelForDisplayableItem(DisplayableItem di) {
 		Integer level = null;
 		if (ModelHelper.isAgent(di.getMType())) {

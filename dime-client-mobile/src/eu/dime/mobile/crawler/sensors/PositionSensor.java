@@ -1,7 +1,6 @@
 package eu.dime.mobile.crawler.sensors;
 
 import java.util.HashMap;
-
 import java.util.Map;
 
 import android.content.Context;
@@ -11,14 +10,11 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
-
 import eu.dime.model.context.constants.Scopes;
-
 import eu.dime.mobile.crawler.Constants;
 import eu.dime.mobile.crawler.ContextCrawler;
 import eu.dime.mobile.crawler.Defaults;
 import eu.dime.mobile.helper.ContextHelper;
-import eu.dime.mobile.helper.interfaces.IContextSensor;
 import eu.dime.model.context.ContextItem;
 
 public class PositionSensor implements IContextSensor, LocationListener {

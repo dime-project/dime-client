@@ -44,8 +44,12 @@ public class TabActivity_Profile_Detail extends TabActivityDime {
 		super.onCreate(savedInstanceState);
 		TAG = TabActivity_Profile_Detail.class.getSimpleName();
     	selectedProfile = (ProfileItem) AndroidModelHelper.getGenItemSynchronously(this, dio);
-    	if(selectedProfile != null) tabs.add(new DimeTabObject(getResources().getString(R.string.tab_profileDetail) + selectedProfile.getName(), ListActivity_Profile_Detail.class, dio));
-    	TabActivity_Profile_Detail.this.init(true, false, selectedProfile.isEditable());
+    	boolean isEditable = false;
+    	if(selectedProfile != null) {
+    		tabs.add(new DimeTabObject(getResources().getString(R.string.tab_profileDetail) + selectedProfile.getName(), ListActivity_Profile_Detail.class, dio));
+    		isEditable = selectedProfile.isEditable() && selectedProfile.getUserId().equals(Model.ME_OWNER);
+    	}
+    	TabActivity_Profile_Detail.this.init(true, false, isEditable);
 	}
 	
 	@Override
@@ -113,7 +117,7 @@ public class TabActivity_Profile_Detail extends TabActivityDime {
             				for (Map.Entry<String, String> entry : pai.getValue().entrySet()){
             					if(!pai.getCategory().equals(entry.getKey())){
             						TextView label = UIHelper.createTextView(TabActivity_Profile_Detail.this, R.style.dime_labelTV, -1, -1, null, false);
-            						label.setText(entry.getKey());
+            						label.setText(pai.getLabelForValueKey(entry.getKey()));
             						ll.addView(label);
             					}
             					LinearLayout.LayoutParams lpms2 = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1f);

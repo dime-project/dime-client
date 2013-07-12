@@ -11,7 +11,7 @@ import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.handler.LoadingViewHandlerFactory;
 import eu.dime.mobile.helper.objects.DimeIntentObject;
 import eu.dime.mobile.view.abstr.ListActivityDisplayableItem;
-import eu.dime.mobile.view.adapter.BaseAdapter_Livepost;
+import eu.dime.mobile.view.adapter.BaseAdapter_Standard;
 import eu.dime.mobile.view.communication.TabActivity_Livepost_Detail;
 import eu.dime.model.Model;
 import eu.dime.model.ModelHelper;
@@ -31,7 +31,7 @@ public class ListActivity_Person_Livepost extends ListActivityDisplayableItem {
     	super.onCreate(savedInstanceState);
     	TAG = ListActivity_Person_Livepost.class.getSimpleName();
     	setContentView(R.layout.list_standard_detail);
-        setBaseAdapter(new BaseAdapter_Livepost());
+        setBaseAdapter(new BaseAdapter_Standard());
     }
 
     @SuppressWarnings("unchecked")

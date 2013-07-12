@@ -1,4 +1,4 @@
-package eu.dime.mobile.helper.interfaces;
+package eu.dime.mobile.crawler.sensors;
 
 import java.util.Map;
 

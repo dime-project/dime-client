@@ -39,7 +39,6 @@ public class SingleItemCallHandler  extends CallHandler{
     @Override
     public DIME_HANDLER_PARAMS[] getSignature() {
          // dime-communications/api/dime/rest/9702325/group/0653332e-a16a-43b6-ab2e-23890612c492/0653332e-a16a-43b6-ab2e-23890612c492
-
         return new DIME_HANDLER_PARAMS[]{
                 DIME_HANDLER_PARAMS.HOSTER, 
                 DIME_HANDLER_PARAMS.TYPE, 
@@ -50,22 +49,15 @@ public class SingleItemCallHandler  extends CallHandler{
 
     @Override
     public String handleCall(WebRequest wr, ParamsMap params) {
-        
         ModelRequestContext mrc = getMRC(params);
         TYPES type = null;
-        
         try {
-            
             type = getMType(params);
-            
             if (wr.httpCommand.equals(HttpConstants.HTTP_COMMAND_GET)) {
-                
                 //HACK for current place
-                if ((type==TYPES.CONTEXT) && 
-                        (getItemId(params).equals(Scopes.SCOPE_CURRENT_PLACE))) {
+                if ((type==TYPES.CONTEXT) && (getItemId(params).equals(Scopes.SCOPE_CURRENT_PLACE))) {
                     //return EndpointHelper.logAccessErrorAndPrepareErrorMessage(SingleItemCallHandler.class,
                     //        "unable to handle call:" + wr.fname, Scopes.SCOPE_CURRENT_PLACE, type);
-                	
                 	ContextItem item = (ContextItem) ItemFactory.createNewItemByType(TYPES.CONTEXT);
         			item.setScope("currentPlace");
         			ContextEntity e = new ContextEntity();
@@ -75,26 +67,20 @@ public class SingleItemCallHandler  extends CallHandler{
         			ContextDataString pname = new ContextDataString("placeName");
         			pname.setValue(places[nextPlaceIndex]);
         			item.addDataPart("placeName",pname);
-        			
         			ContextDataString pid = new ContextDataString("placeId");
         			pid.setValue(ids[nextPlaceIndex]);
         			item.addDataPart("placeId",pid);
-        			
         			nextPlaceIndex++;
         			if (nextPlaceIndex == places.length) nextPlaceIndex = 0;
-        			
-        			GenItem newItem = Model.getInstance().createItem(mrc, item);
-        			
+        			GenItem newItem = Model.getInstance().createItem(mrc, item);			
         			return dimeHelper.packResponse(newItem).toString();
                 }
                 //END HACK for current place
-                
                 return DatabaseAccess.getJSONItem(mrc, type, getItemId(params)).toJson();
             }//else
             if (wr.httpCommand.equals(HttpConstants.HTTP_COMMAND_POST)) {
                 try {
-                    return DatabaseAccess.updateItem(mrc, type, getItemId(params),
-                            parser.parseJSON(wr.getBodyAsString())).toJson();
+                    return DatabaseAccess.updateItem(mrc, type, getItemId(params), parser.parseJSON(wr.getBodyAsString())).toJson();
                 } catch (JSONParseException ex) {
                     return EndpointHelper.logAccessExceptionAndPrepareErrorMessage(SingleItemCallHandler.class, ex, wr, type, getItemId(params));
                 }

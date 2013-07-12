@@ -117,10 +117,19 @@ public class Activity_Account_Configuration_Dialog extends ActivityDime implemen
 				view = new Spinner(this);
 				Spinner spinner = (Spinner) view;
 				spinner.setLayoutParams(new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1.0f));
+				List<ProfileItem> profileItems = ModelHelper.getAllValidProfilesForSharing(mrContext);
+				String selectedName = "";
+				for (ProfileItem profileItem : profileItems) {
+					if(profileItem.getServiceAccountId().equals(setting.getValue())) {
+						selectedName = profileItem.getName();
+					}
+				}
 				List<String> stringProfiles = AndroidModelHelper.getListOfNamesOfDisplayableList((List<DisplayableItem>)(Object) ModelHelper.getAllValidProfilesForSharing(mrContext));
 				CharSequence[] cs = stringProfiles.toArray(new CharSequence[stringProfiles.size()]);
 				ArrayAdapter<CharSequence> profiles = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, cs);
+				profiles.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 				spinner.setAdapter(profiles);
+				if( selectedName.length() > 0) spinner.setSelection(profiles.getPosition(selectedName));
 			}
 			if(view != null ) {
 				view.setTag(setting);

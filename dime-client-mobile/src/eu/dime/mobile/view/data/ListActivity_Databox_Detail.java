@@ -39,7 +39,7 @@ public class ListActivity_Databox_Detail extends ListActivityDisplayableItem {
     @Override
     protected List<DisplayableItem> loadListData() {
         selectedDatabox = (DataboxItem) Model.getInstance().getItem(mrContext, dio.getItemType(), dio.getItemId());
-        return ModelHelper.getChildsOfDisplayableItem(mrContext, selectedDatabox);
+        return ModelHelper.getChildrenOfDisplayableItem(mrContext, selectedDatabox);
     }
 
     @Override
@@ -64,4 +64,5 @@ public class ListActivity_Databox_Detail extends ListActivityDisplayableItem {
 	protected LoadingViewHandler createLoadingViewHandler() {
 		return LoadingViewHandlerFactory.<ListActivity_Databox_Detail>createLVH(ListActivity_Databox_Detail.this);
 	}
+	
 }

@@ -10,58 +10,42 @@ import eu.dime.simpleps.database.DatabaseAccess;
 import sit.web.WebRequest;
 
 /**
- *
+ * 
  * @author simon
  */
-public class GlobalCollectionCallHandler extends CallHandler{
-    
-    
-    
-    
-    
-      
+public class GlobalCollectionCallHandler extends CallHandler {
 
-    @Override
-    public DIME_HANDLER_PARAMS[] getSignature() {
-        // dime-communications/api/dime/rest/9702325/group/@all
-        return new DIME_HANDLER_PARAMS[]{
-                DIME_HANDLER_PARAMS.HOSTER, 
-                DIME_HANDLER_PARAMS.TYPE, 
-                DIME_HANDLER_PARAMS.AT_ALL
-        };
-    }
-    
-    
+	@Override
+	public DIME_HANDLER_PARAMS[] getSignature() {
+		// dime-communications/api/dime/rest/9702325/group/@all
+		return new DIME_HANDLER_PARAMS[] { DIME_HANDLER_PARAMS.HOSTER,
+				DIME_HANDLER_PARAMS.TYPE, DIME_HANDLER_PARAMS.AT_ALL };
+	}
 
-    @Override
-    public String handleCall(WebRequest wr, ParamsMap params) {
-        TYPES type=null;
-        String endpointName = this.getName();
-        try {
-            ModelRequestContext mrc = getMRC(params);
-            mrc = new ModelRequestContext(mrc.hoster, Model.ME_OWNER, mrc.lvHandler);
-            type = getMType(params);
-            
+	@Override
+	public String handleCall(WebRequest wr, ParamsMap params) {
+		TYPES type = null;
+		String endpointName = this.getName();
+		try {
+			ModelRequestContext mrc = getMRC(params);
+			mrc = new ModelRequestContext(mrc.hoster, Model.ME_OWNER, mrc.lvHandler);
+			type = getMType(params);
+			if (wr.httpCommand.equals("GET")) {
+				String result = DatabaseAccess.getAllAllJSONItems(mrc, type).toJson();
+				return result;
+			}// else
+			DimeHelper dimeHelper = new DimeHelper();
+			return dimeHelper.createAccessErrorResponse(type, endpointName, "Error while handling request...\n" + wr.toString()).toJson();
+		} catch (ModelTypeNotFoundException ex) {
+			return EndpointHelper.logAccessExceptionAndPrepareErrorMessage(this.getClass(), ex, wr, type, endpointName);
+		} catch (Exception ex) {
+			return EndpointHelper.logAccessExceptionAndPrepareErrorMessage(this.getClass(), ex, wr, type, endpointName);
+		}
+	}
 
-            if (wr.httpCommand.equals("GET")){
-                String result = DatabaseAccess.getAllAllJSONItems(mrc, type).toJson();
-                return result;
-            }//else
-            DimeHelper dimeHelper = new DimeHelper();
-            return dimeHelper.createAccessErrorResponse(type, endpointName,  "Error while handling request...\n" + wr.toString()).toJson();
-        } catch (ModelTypeNotFoundException ex) {
-            return EndpointHelper.logAccessExceptionAndPrepareErrorMessage(this.getClass(), ex, wr, type, endpointName);
-        }catch (Exception ex){
-            return EndpointHelper.logAccessExceptionAndPrepareErrorMessage(this.getClass(), ex, wr, type, endpointName);
+	@Override
+	public String getName() {
+		return this.getClass().toString();
+	}
 
-        }
-  
-    }
-
-    @Override
-    public String getName() {
-        return this.getClass().toString();
-    }
-
-    
 }
