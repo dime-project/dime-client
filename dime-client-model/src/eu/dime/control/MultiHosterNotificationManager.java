@@ -96,7 +96,6 @@ public class MultiHosterNotificationManager {
         private SortedMap<Integer, Set<NotificationListener>> listeners = new TreeMap();
         private final Thread thread;
         private NotificationUpdater updater;
-//        private final List<NotificationItem> notifications = new ArrayList();
 
         public HosterEntry(String hoster, RestApiConfiguration configuration) {
             this.hoster = hoster;
