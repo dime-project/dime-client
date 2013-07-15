@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,6 +42,7 @@ public class MultiHosterNotificationManager {
         private double sleepFactor = 1;
         private String hoster;
         private RestApiConfiguration configuration;
+        private final String clientId = UUID.randomUUID().toString();
 
         public NotificationUpdater(HosterEntry hosterEntry, String hoster, RestApiConfiguration configuration) {
             this.hosterEntry = hosterEntry;
@@ -68,7 +70,7 @@ public class MultiHosterNotificationManager {
         private void manageNotifications() throws InterruptedException, ConcurrentModificationException {
             long timeStamp = System.currentTimeMillis();
             //calling blocking call getCometCall
-            List<NotificationItem> notifications = RestApiAccess.getCometCall(hoster, configuration);
+            List<NotificationItem> notifications = RestApiAccess.getCometCall(hoster, configuration, clientId);
             if (notifications.isEmpty() && timeStamp + MINIMUM_NOTIFICATION_TIMEOUT > System.currentTimeMillis()) {
                 Thread.sleep(NOTIFICATION_MANAGER_SLEEP_EXTRA_DELAY_TIME * (int) sleepFactor);
                 if ((NOTIFICATION_MANAGER_SLEEP_EXTRA_DELAY_TIME * sleepFactor) < 3600 * 1000) { //keep sleep time beyond one hour

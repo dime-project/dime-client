@@ -37,8 +37,8 @@ public class MultiHosterNotificationManagerTest implements NotificationListener 
         try {
             MultiHosterNotificationManager.start();
 
-            registerUser("dummyuserwednesday03", "dummy");
-            registerUser("dummyusermoday10", "dummyusermoday10");
+            registerUser("dummyusermoday11", "dummyusermoday11");
+            registerUser("dummyusermoday12", "dummyusermoday12");
             
             Logger.getLogger(MultiHosterNotificationManagerTest.class.getName()).log(Level.INFO, "waiting for notifications ...");
 

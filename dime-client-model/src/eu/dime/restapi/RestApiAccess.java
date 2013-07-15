@@ -219,8 +219,16 @@ public class RestApiAccess {
     }
 
     public static List<NotificationItem> getCometCall(String hoster, JSONResponseContainer resultContainer, RestApiConfiguration conf) {
+        return getCometCall(hoster, resultContainer, conf, DimeHelper.clientId);
+    }
+
+    public static List<NotificationItem> getCometCall(String hoster, RestApiConfiguration conf, String clientId) {
+        return getCometCall(hoster, new JSONResponseContainer(), conf, clientId);
+    }
+
+    public static List<NotificationItem> getCometCall(String hoster, JSONResponseContainer resultContainer, RestApiConfiguration conf, String clientId) {
         List<NotificationItem> result = new Vector<NotificationItem>();
-        String subPath = ModelHelper.getPath(CALLTYPES.COMET, hoster, "", null, DimeHelper.clientId);
+        String subPath = ModelHelper.getPath(CALLTYPES.COMET, hoster, "", null, clientId);
         JSONResponse jResult = dimeHelper.doDIMEJSONGET(subPath, "", conf);
         jResult = handleResponse(jResult);
         resultContainer.jsonResponse = jResult; //save a copy (ref) for testing purposes
