@@ -10,8 +10,6 @@ package eu.dime.control;
 import eu.dime.model.specialitem.NotificationItem;
 import eu.dime.restapi.RestApiAccess;
 import eu.dime.restapi.RestApiConfiguration;
-import java.util.ArrayList;
-
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,7 +33,6 @@ public class MultiHosterNotificationManager {
     private static final long NOTIFICATION_MANAGER_SLEEP_EXTRA_DELAY_TIME = 5000;
     private static final Object singeltonMonitor = new Object();
     private static MultiHosterNotificationManager instance = null;
-    private static Thread notificationManagerThread = null;
 
     class NotificationUpdater implements Runnable {
 
@@ -99,7 +96,7 @@ public class MultiHosterNotificationManager {
         private SortedMap<Integer, Set<NotificationListener>> listeners = new TreeMap();
         private final Thread thread;
         private NotificationUpdater updater;
-        private final List<NotificationItem> notifications = new ArrayList();
+//        private final List<NotificationItem> notifications = new ArrayList();
 
         public HosterEntry(String hoster, RestApiConfiguration configuration) {
             this.hoster = hoster;
@@ -155,7 +152,13 @@ public class MultiHosterNotificationManager {
     }
     private Map<String, HosterEntry> entries = new HashMap();
 
-    private MultiHosterNotificationManager() {
+    public static void start() {
+        synchronized (singeltonMonitor) {
+            if (MultiHosterNotificationManager.instance != null) {
+                throw new RuntimeException("MultiHosterNotificationManager already running!");
+            }
+            MultiHosterNotificationManager.instance = new MultiHosterNotificationManager();
+        }
     }
 
     public static void stop() {
