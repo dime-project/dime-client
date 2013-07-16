@@ -6,10 +6,12 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
@@ -26,8 +28,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import eu.dime.mobile.DimeClient;
+import eu.dime.mobile.R;
 import eu.dime.control.DummyLoadingViewHandler;
 import eu.dime.mobile.helper.listener.ClickListenerUserNotifications;
+import eu.dime.mobile.helper.objects.AdvisoryProperties;
 import eu.dime.mobile.helper.objects.DimeIntentObject;
 import eu.dime.mobile.helper.objects.NotificationProperties;
 import eu.dime.mobile.view.Activity_Main;
@@ -56,6 +60,8 @@ import eu.dime.model.displayable.ProfileItem;
 import eu.dime.model.displayable.ShareableItem;
 import eu.dime.model.specialitem.EvaluationInvolvedItem;
 import eu.dime.model.specialitem.EvaluationItem;
+import eu.dime.model.specialitem.advisory.AdvisoryItem;
+import eu.dime.model.specialitem.advisory.AdvisoryRequestItem;
 import eu.dime.model.specialitem.usernotification.UserNotificationItem;
 import eu.dime.model.storage.InitStorageFailedException;
 import eu.dime.restapi.MultiPartPostClient;
@@ -164,20 +170,11 @@ public class AndroidModelHelper {
 		return listOfNames;
     }
     
-	public static List<String> getListOfNamesOfGuidList(Context context, List<String> guids, boolean isShareableItem) {
+	public static List<String> getListOfNamesOfGuidList(Context context, List<String> guids, boolean isShareable) {
     	List<String> listOfNames = new ArrayList<String>();
 		for (String guid : guids) {
-			GenItem item = null;
 			try {
-				if(!isShareableItem) {
-					item = getGenItemSynchronously(context, new DimeIntentObject(guid, TYPES.PERSON));
-					if(item == null) item = getGenItemSynchronously(context, new DimeIntentObject(guid, TYPES.GROUP));
-				} else {
-					item = getGenItemSynchronously(context, new DimeIntentObject(guid, TYPES.RESOURCE, guid));
-					if(item == null) item = getGenItemSynchronously(context, new DimeIntentObject(guid, TYPES.DATABOX));
-					if(item == null) item = getGenItemSynchronously(context, new DimeIntentObject(guid, TYPES.LIVEPOST));
-				}
-				listOfNames.add(((DisplayableItem)item).getName());
+				listOfNames.add(getOwnItemFromStorage(guid, isShareable).getName());
 			} catch (Exception e){
 				listOfNames.add("could not find item name");
 			}
@@ -228,6 +225,10 @@ public class AndroidModelHelper {
 			Log.d(AndroidModelHelper.class.getSimpleName(), ex.getMessage());
 		}
 		return item;
+	}
+	
+	public static DisplayableItem getOwnItemFromStorage(String guid, boolean isShareable) {
+		return ((DisplayableItem)Model.getInstance().getOwnItem(DimeClient.getUserMainSaid(), guid, isShareable));
 	}
 	
     public static void createGenItemAsyncronously(final GenItem item, final DialogInterface dialog, Activity activity, final ModelRequestContext mrContext, final String actionName) {
@@ -379,17 +380,19 @@ public class AndroidModelHelper {
 			@Override
             protected String doInBackground(Void... params) {
 				String result = "";
-				Uri photoUri = ContentUris.withAppendedId(ContactsContract.Data.CONTENT_URI, Long.parseLong(photoId));
-				String filePath;
-				byte[] photoBytes = null;
-				Cursor c2 = mActivity.get().getContentResolver().query(photoUri, new String[] { ContactsContract.CommonDataKinds.Photo.PHOTO }, null, null, null);
+				String filePath = null;
 				try {
+					Uri photoUri = ContentUris.withAppendedId(ContactsContract.Data.CONTENT_URI, Long.parseLong(photoId));
+					byte[] photoBytes = null;
+					Cursor c2 = mActivity.get().getContentResolver().query(photoUri, new String[] { ContactsContract.CommonDataKinds.Photo.PHOTO }, null, null, null);
 					filePath = FileHelper.parseUriToFilename(photoUri, mActivity.get());
 					if (c2.moveToFirst()) {
 						photoBytes = c2.getBlob(0);
 					}
-				} catch (Exception e) { 
-					filePath = null;
+				} catch(NumberFormatException e) {
+					
+				} catch(Exception e) {
+					
 				}
 				if (filePath != null) {
 					File file = new File(filePath);
@@ -451,6 +454,64 @@ public class AndroidModelHelper {
 		Intent intent = new Intent(context, Activity_Share_Dialog.class);
 		intent.putStringArrayListExtra(itemType.toString(), new ArrayList<String>(guids));
 		context.startActivity(DimeIntentObjectHelper.populateIntent(intent, new DimeIntentObject()));
+	}
+    
+    public static void shareResource(Context context, DisplayableItem item) {
+		Intent intent = new Intent(context, Activity_Share_Dialog.class);
+		intent.putStringArrayListExtra(item.getMType().toString(), new ArrayList<String>(Arrays.asList(item.getGuid())));
+		context.startActivity(DimeIntentObjectHelper.populateIntent(intent, new DimeIntentObject()));
+	}
+    
+    public static void shareResources(Context context, List<GenItem> items) {
+    	Intent intent = new Intent(context, Activity_Share_Dialog.class);
+    	HashMap<TYPES, ArrayList<String>> hashMap = new HashMap<TYPES, ArrayList<String>>();
+    	for (GenItem genItem : items) {
+			if(hashMap.containsKey(genItem.getMType())) {
+				hashMap.get(genItem.getMType()).add(genItem.getGuid());
+			} else {
+				ArrayList<String> guids = new ArrayList<String>();
+				guids.add(genItem.getGuid());
+				hashMap.put(genItem.getMType(), guids);
+			}
+		}
+    	for (TYPES key : hashMap.keySet()) {
+    		intent.putStringArrayListExtra(key.toString(), hashMap.get(key));
+		}
+		context.startActivity(DimeIntentObjectHelper.populateIntent(intent, new DimeIntentObject()));
+    }
+    
+    public static void loadAdvisoryPropertiesAsyncronously(final Context context, final AdvisoryRequestItem ari, final List<AdvisoryProperties> advisoryItemsNotValidAgentsForSharing, final TextView noWarnings, final TextView labelWarnings, final LinearLayout warningsContainer) {
+		new AsyncTask<Void, Void, List<AdvisoryProperties>>() {
+			@Override
+			protected List<AdvisoryProperties> doInBackground(Void... params) {
+				List<AdvisoryProperties> advisoryProperties = new ArrayList<AdvisoryProperties>();
+				try {
+                    List<AdvisoryItem> advisories = ModelHelper.getSharingAdvisories(DimeClient.getUserMainSaid(), ari);
+                    Collections.sort(advisories, new ComparatorHelper.WarningLevelComparator());
+                    for (AdvisoryItem ai : advisories) {
+						advisoryProperties.add(UIHelper.getAdvisoryProperties(context, ai));
+					}
+                } catch (Exception ex) {
+                    Logger.getLogger(Activity_Share_Dialog.class.getName()).log(Level.SEVERE, null, ex);
+                } 
+				advisoryProperties.addAll(advisoryItemsNotValidAgentsForSharing);
+				return advisoryProperties;
+			}
+
+			@Override
+			protected void onPostExecute(List<AdvisoryProperties> result) {
+            	if (result.size() == 0) {
+            		noWarnings.setText(context.getString(R.string.sharing_no_warnings));
+            		noWarnings.setVisibility(View.VISIBLE);
+            	} else {
+            		noWarnings.setVisibility(View.GONE);
+            	}
+            	labelWarnings.setText(String.valueOf(result.size()));
+            	for (AdvisoryProperties advisoryProperty : result) {
+            		warningsContainer.addView(UIHelper.createWarningWidget(context, advisoryProperty));
+				}
+			}
+		}.execute();
 	}
     
     public static void shareItemsAsynchronously(Activity activity, final ModelRequestContext mrContext, final List<AgentItem> listOfSelectedAgentsTmp, final List<GenItem> listOfSelectedItemsTmp, final ProfileItem selectedProfile){

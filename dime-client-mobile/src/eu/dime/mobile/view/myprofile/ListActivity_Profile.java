@@ -32,13 +32,7 @@ public class ListActivity_Profile extends ListActivityDisplayableItem {
     @Override
 	@SuppressWarnings("unchecked")
 	protected List<DisplayableItem> loadListData() {
-		// resources coming from that person
 		return (List<DisplayableItem>)(Object)ModelHelper.getAllProfiles(mrContext);
-	}
-
-	@Override
-	protected void initializeHeader() {
-
 	}
 	
 	@Override

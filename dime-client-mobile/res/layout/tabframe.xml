@@ -18,65 +18,80 @@
                 android:id="@+tabframe/button_home"
                 android:layout_width="60dp"
                 android:layout_height="match_parent"
-                android:layout_gravity="right"
                 android:background="@drawable/button_transp_bar"
                 android:drawableRight="@drawable/icon_white_home"
+                android:onClick="onClick"
                 android:paddingRight="8dp" />
 
             <View
                 android:layout_width="2px"
-                android:layout_height="fill_parent"
-                android:layout_gravity="right"
+                android:layout_height="match_parent"
                 android:background="@drawable/gradient_double_line" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <View
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:gravity="right"
-            android:orientation="horizontal" >
+            android:layout_weight="1" />
 
-            <LinearLayout
-                android:id="@+tabframe/view_search"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+        <LinearLayout
+            android:id="@+tabframe/view_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
 
-                <View
-                    android:layout_width="2px"
-                    android:layout_height="fill_parent"
-                    android:layout_gravity="right"
-                    android:background="@drawable/gradient_double_line" />
+            <View
+                android:layout_width="2px"
+                android:layout_height="match_parent"
+                android:background="@drawable/gradient_double_line" />
 
-                <Button
-                    android:id="@+tabframe/button_open_search"
-                    android:layout_width="60dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="right"
-                    android:background="@drawable/button_transp_bar"
-                    android:drawableRight="@drawable/icon_white_search"
-                    android:paddingRight="8dp" />
-            </LinearLayout>
+            <Button
+                android:id="@+tabframe/button_open_search"
+                android:layout_width="54dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/button_transp_bar"
+                android:drawableRight="@drawable/icon_white_search"
+                android:onClick="onClick"
+                android:paddingRight="4dp" />
+        </LinearLayout>
 
-            <LinearLayout
-                android:id="@+tabframe/view_action"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+        <LinearLayout
+            android:id="@+tabframe/view_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
 
-                <View
-                    android:layout_width="2px"
-                    android:layout_height="fill_parent"
-                    android:layout_gravity="right"
-                    android:background="@drawable/gradient_double_line" />
+            <View
+                android:layout_width="2px"
+                android:layout_height="match_parent"
+                android:background="@drawable/gradient_double_line" />
 
-                <Button
-                    android:id="@+tabframe/button_action"
-                    android:layout_width="60dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="right"
-                    android:background="@drawable/button_transp_bar"
-                    android:drawableRight="@drawable/icon_white_action"
-                    android:paddingRight="8dp" />
-            </LinearLayout>
+            <Button
+                android:id="@+tabframe/button_share"
+                android:layout_width="54dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/button_transp_bar"
+                android:drawableRight="@drawable/icon_white_share"
+                android:onClick="onClick"
+                android:paddingRight="4dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+tabframe/view_action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <View
+                android:layout_width="2px"
+                android:layout_height="match_parent"
+                android:background="@drawable/gradient_double_line" />
+
+            <Button
+                android:id="@+tabframe/button_action"
+                android:layout_width="54dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/button_transp_bar"
+                android:drawableRight="@drawable/icon_white_action"
+                android:onClick="onClick"
+                android:paddingRight="4dp" />
         </LinearLayout>
     </LinearLayout>
 
@@ -114,23 +129,29 @@
 
     <TabHost
         android:id="@android:id/tabhost"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="0dip"
         android:layout_weight="1" >
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+tabframe/header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
 
             <FrameLayout
                 android:id="@android:id/tabcontent"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="0dip"
                 android:layout_weight="1" />
 
             <View
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:background="@color/dm_col1_low" />
 
@@ -140,7 +161,7 @@
 
                 <TabWidget
                     android:id="@android:id/tabs"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="48dip" />
             </LinearLayout>
         </LinearLayout>

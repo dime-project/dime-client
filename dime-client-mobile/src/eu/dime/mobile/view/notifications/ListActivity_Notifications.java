@@ -32,11 +32,6 @@ public class ListActivity_Notifications extends ListActivityDime<GenItem> {
         return (List<GenItem>) (Object) Model.getInstance().getAllItems(mrContext, TYPES.USERNOTIFICATION);
     }
 
-    @Override
-    protected void initializeHeader() {
-        
-    }
-
 	@Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         //implemented in BaseAdapter_Notification because notificationProperties are loaded there to display the message correctly
@@ -53,4 +48,5 @@ public class ListActivity_Notifications extends ListActivityDime<GenItem> {
 	protected LoadingViewHandler createLoadingViewHandler() {
 		return LoadingViewHandlerFactory.<ListActivity_Notifications>createLVH(ListActivity_Notifications.this);
 	}
+	
 }

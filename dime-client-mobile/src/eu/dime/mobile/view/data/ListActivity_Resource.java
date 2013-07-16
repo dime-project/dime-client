@@ -34,11 +34,6 @@ public class ListActivity_Resource extends ListActivityDisplayableItem {
     protected List<DisplayableItem> loadListData() {
         return (List<DisplayableItem>) (Object) Model.getInstance().getAllItems(mrContext, dio.getItemType());
     }
-
-    @Override
-    protected void initializeHeader() {
-        
-    }
     
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -57,4 +52,5 @@ public class ListActivity_Resource extends ListActivityDisplayableItem {
 	protected LoadingViewHandler createLoadingViewHandler() {
 		return LoadingViewHandlerFactory.<ListActivity_Resource>createLVH(ListActivity_Resource.this);
 	}
+	
 }

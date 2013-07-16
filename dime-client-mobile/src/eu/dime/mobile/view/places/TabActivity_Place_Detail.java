@@ -33,7 +33,7 @@ public class TabActivity_Place_Detail extends TabActivityDime {
 		TAG = TabActivity_Place_Detail.class.getSimpleName();
     	selectedPlace = (PlaceItem) AndroidModelHelper.getGenItemSynchronously(this, dio);
     	if(selectedPlace != null) tabs.add(new DimeTabObject(getResources().getString(R.string.tab_placeDetail) + selectedPlace.getName(), Activity_Place_Detail.class, dio));
-    	TabActivity_Place_Detail.this.init(true, false, true);
+    	TabActivity_Place_Detail.this.init(true, false, false, true);
 	}
 
 	@Override
@@ -99,4 +99,5 @@ public class TabActivity_Place_Detail extends TabActivityDime {
 	protected LoadingViewHandler createLoadingViewHandler() {
 		return LoadingViewHandlerFactory.<TabActivity_Place_Detail>createLVH(TabActivity_Place_Detail.this);
 	}
+	
 }

@@ -36,8 +36,6 @@ import eu.dime.model.ModelHelper;
 import eu.dime.model.TYPES;
 import eu.dime.model.displayable.DisplayableItem;
 import eu.dime.model.displayable.GroupItem;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -51,7 +49,7 @@ public class TabActivity_People extends TabActivityDime implements IResultOfStan
 		TAG = TabActivity_People.class.getSimpleName();
 		tabs.add(new DimeTabObject(getResources().getString(R.string.tab_persons), ListActivity_Person.class, new DimeIntentObject(TYPES.PERSON)));
 		tabs.add(new DimeTabObject(getResources().getString(R.string.tab_groups), ListActivity_Group.class, new DimeIntentObject(TYPES.GROUP)));
-		super.init(true, true, true);
+		super.init(true, true, true, true);
 	}
 
 	@Override
@@ -60,14 +58,14 @@ public class TabActivity_People extends TabActivityDime implements IResultOfStan
 		//actions for ListActivity_People_All
 		if (currentActivity instanceof ListActivity_Person) {
 			selectedGUIDs = ((ListActivity_Person) currentActivity).getSelectionGUIDS();
-			String[] actionsForAll = { res.getString(R.string.action_searchPublicResolverService), res.getString(R.string.action_importSpecificContactFromPhoneBook), res.getString(R.string.action_addToNewGroup), res.getString(R.string.action_addPeopleToGroup), res.getString(R.string.action_removePerson), res.getString(R.string.action_mergeSelection), res.getString(R.string.action_shareSelectedItems) };
+			String[] actionsForAll = { res.getString(R.string.action_searchPublicResolverService), res.getString(R.string.action_importSpecificContactFromPhoneBook), res.getString(R.string.action_removePerson), res.getString(R.string.action_mergeSelection), res.getString(R.string.action_addToNewGroup), res.getString(R.string.action_addPeopleToGroup) };
 			actionDialog = UIHelper.createActionDialog(this, Arrays.asList(actionsForAll), this, selectedGUIDs);
 			actionDialog.show();
 		}
 		//actions for ListActivity_People_Group
 		else if (currentActivity instanceof ListActivity_Group) {
 			selectedGUIDs = ((ListActivity_Group) currentActivity).getSelectionGUIDS();
-			String[] actionsForGroup = { res.getString(R.string.action_addNewGroup), res.getString(R.string.action_deleteSelectedGroups), res.getString(R.string.action_shareSelectedItems) };
+			String[] actionsForGroup = { res.getString(R.string.action_addNewGroup), res.getString(R.string.action_deleteSelectedGroups) };
 			actionDialog = UIHelper.createActionDialog(this, Arrays.asList(actionsForGroup), this, selectedGUIDs);
 			actionDialog.show();
 		}
@@ -142,11 +140,6 @@ public class TabActivity_People extends TabActivityDime implements IResultOfStan
 						}
 					});
 					UIHelper.displayAlertDialog(builder, true);
-				}
-				//share
-				else if (button.getText().equals(res.getString(R.string.action_shareSelectedItems))) {
-					actionDialog.dismiss();
-					AndroidModelHelper.shareResources(TabActivity_People.this, new ArrayList<String>(selectedGUIDs), TYPES.PERSON);
 				}
 				//import specific contact from phone book
 				else if (button.getText().equals(res.getString(R.string.action_importSpecificContactFromPhoneBook))) {
@@ -227,11 +220,6 @@ public class TabActivity_People extends TabActivityDime implements IResultOfStan
 						}
 					});
 					UIHelper.displayAlertDialog(builder, true);
-				}
-				//share
-				else if (button.getText().equals(res.getString(R.string.action_shareSelectedItems))) {
-					actionDialog.dismiss();
-					AndroidModelHelper.shareResources(TabActivity_People.this, new ArrayList<String>(selectedGUIDs), TYPES.GROUP);
 				}
 			}
 		}

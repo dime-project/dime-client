@@ -30,13 +30,13 @@ public class TabActivity_Communication extends TabActivityDime {
 		super.onCreate(savedInstanceState);
 		TAG = TabActivity_Communication.class.getSimpleName();
 		tabs.add(new DimeTabObject(getResources().getString(R.string.tab_communication), ListActivity_Livepost.class, new DimeIntentObject(TYPES.LIVEPOST)));
-		init(true, true, true);
+		init(true, true, true, true);
 	}
 
 	@Override
 	protected void onClickActionButton() {
 		Resources res = getResources();
-		String[] actionsForResources = { res.getString(R.string.action_newMessage), res.getString(R.string.action_removeLivepost), res.getString(R.string.action_shareSelectedItems) };
+		String[] actionsForResources = { res.getString(R.string.action_newMessage), res.getString(R.string.action_removeLivepost) };
 		if (currentActivity instanceof ListActivity_Livepost) {
 			selectedGUIDs = new ArrayList<String>(((ListActivity_Livepost) currentActivity).getSelectionGUIDS());
 			actionDialog = UIHelper.createActionDialog(this, Arrays.asList(actionsForResources), this, selectedGUIDs);
@@ -83,11 +83,6 @@ public class TabActivity_Communication extends TabActivityDime {
 					actionDialog.dismiss();
 					AndroidModelHelper.deleteGenItemsAsynchronously(currentActivity, TYPES.LIVEPOST, mrContext, actionName);
 				}
-				//share
-			    else if (button.getText().equals(res.getString(R.string.action_shareSelectedItems))) {
-					actionDialog.dismiss();
-					AndroidModelHelper.shareResources(TabActivity_Communication.this, new ArrayList<String>(selectedGUIDs), TYPES.LIVEPOST);
-				} 
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 package eu.dime.mobile.view.situations;
 
 import java.util.Arrays;
+
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.res.Resources;
@@ -18,6 +19,7 @@ import eu.dime.mobile.helper.objects.DimeIntentObject;
 import eu.dime.mobile.helper.objects.DimeTabObject;
 import eu.dime.mobile.view.abstr.TabActivityDime;
 import eu.dime.model.ItemFactory;
+import eu.dime.model.ModelHelper;
 import eu.dime.model.TYPES;
 import eu.dime.model.displayable.SituationItem;
 
@@ -28,8 +30,8 @@ public class TabActivity_Situations extends TabActivityDime {
 		super.onCreate(savedInstanceState);
 		TAG = TabActivity_Situations.class.getSimpleName();
 		tabs.add(new DimeTabObject(getResources().getString(R.string.tab_situations), ListActivity_Situations.class, new DimeIntentObject(TYPES.SITUATION)));
-		tabs.add(new DimeTabObject(getResources().getString(R.string.tab_activities), ListActivity_Activities.class, new DimeIntentObject(TYPES.ACTIVITY)));
-		super.init(true, false, true);
+		if(ModelHelper.isFitbitAdapterConnected(mrContext)) tabs.add(new DimeTabObject(getResources().getString(R.string.tab_activities), ListActivity_Activities.class, new DimeIntentObject(TYPES.ACTIVITY)));
+		super.init(true, false, false, true);
 	}
 
 	@Override

@@ -36,11 +36,6 @@ public class ListActivity_Livepost extends ListActivityDisplayableItem {
     }
     
     @Override
-    protected void initializeHeader() {
-    	
-    }
-    
-    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) { 
     	Intent myIntent = new Intent(ListActivity_Livepost.this, TabActivity_Livepost_Detail.class);
         startActivity(DimeIntentObjectHelper.populateIntent(myIntent, new DimeIntentObject(getListItems().get(position))));

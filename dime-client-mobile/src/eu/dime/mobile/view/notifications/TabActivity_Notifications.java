@@ -22,7 +22,7 @@ public class TabActivity_Notifications extends TabActivityDime {
 		super.onCreate(savedInstanceState);
 		TAG = TabActivity_Notifications.class.getSimpleName();
 		tabs.add(new DimeTabObject(getResources().getString(R.string.tab_notifications), ListActivity_Notifications.class, new DimeIntentObject(TYPES.USERNOTIFICATION)));
-		super.init(true, false, false); //FIXME action menu not displayed until it is supported by the private server model
+		super.init(true, false, false, false); //FIXME action menu not displayed until it is supported by the private server model
 	}
 
 	@Override

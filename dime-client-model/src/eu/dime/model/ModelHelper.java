@@ -803,8 +803,8 @@ public class ModelHelper {
         return RestApiAccess.addPublicPerson(mrc.hoster, publicContact,  Model.getInstance().getRestApiConfiguration());
     }
 
-    public static List<AdvisoryItem> getSharingAdvisories(ModelRequestContext mrc, AdvisoryRequestItem ari) {
-            return RestApiAccess.requestSharingAdvisories(mrc.hoster, ari, Model.getInstance().getRestApiConfiguration());
+    public static List<AdvisoryItem> getSharingAdvisories(String hoster, AdvisoryRequestItem ari) {
+            return RestApiAccess.requestSharingAdvisories(hoster, ari, Model.getInstance().getRestApiConfiguration());
     }
     
     public static void updateLastUpdatedIfDisplayable(GenItem item) {
@@ -812,6 +812,17 @@ public class ModelHelper {
             ((DisplayableItem) item).setLastUpdated(System.currentTimeMillis());
         }
     }
+    
+    public static boolean isFitbitAdapterConnected(ModelRequestContext mrContext) {
+		boolean isConnected = false;
+		List<AccountItem> accounts = (List<AccountItem>) (Object) Model.getInstance().getAllItems(mrContext, TYPES.ACCOUNT);
+		for (AccountItem accountItem : accounts) {
+			if(accountItem.getName().toLowerCase().contains("fitbit")) {
+				isConnected = true;
+			}
+		}
+		return isConnected;
+	}
 
 	public static boolean isPlaceAdapterConnected(ModelRequestContext mrContext) {
 		boolean isConnected = false;

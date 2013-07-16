@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.widget.TextView;
 import eu.dime.control.LoadingViewHandler;
 import eu.dime.mobile.R;
-import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.handler.LoadingViewHandlerFactory;
 import eu.dime.mobile.view.abstr.ActivityDime;
 import eu.dime.model.Model;
@@ -34,8 +33,7 @@ public class Activity_Livepost_Detail extends ActivityDime {
 	}
 
 	@Override
-	protected void initializeData() { 
-		UIHelper.inflateStandardHeader(this, livepost, mrContext);
+	protected void initializeData() {
 		TextView subject = (TextView) findViewById(R.livepost.subject);
 		TextView message = (TextView) findViewById(R.livepost.message);
         subject.setText(livepost.getName());

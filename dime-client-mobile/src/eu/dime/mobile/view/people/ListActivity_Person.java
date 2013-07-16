@@ -34,11 +34,6 @@ public class ListActivity_Person extends ListActivityDisplayableItem {
     protected List<DisplayableItem> loadListData() {
         return (List<DisplayableItem>) (Object) ModelHelper.getAllPersons(mrContext);
     }
-
-    @Override
-    protected void initializeHeader() {
-        
-    }
     
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -57,4 +52,5 @@ public class ListActivity_Person extends ListActivityDisplayableItem {
 	protected LoadingViewHandler createLoadingViewHandler() {
 		return LoadingViewHandlerFactory.<ListActivity_Person>createLVH(ListActivity_Person.this);
 	}
+	
 }

@@ -145,7 +145,7 @@
     <string name="sharing_label_warnings">Warnings:</string>
     <string name="sharing_warning_untrusted">Privacy risk</string>
     <string name="sharing_warning_disjunct_groups">Sharing outside usual group</string>
-    <string name="sharing_warning_unshared_profile">Revealing profile</string>
+    <string name="sharing_warning_unshared_profile">Revealing profile card</string>
     <string name="sharing_warning_too_many_resources">Many items shared</string>
     <string name="sharing_warning_too_many_receivers">Many recipients selected</string>
     <string name="sharing_warning_agent_not_valid_for_sharing">Not supported for recipients</string>

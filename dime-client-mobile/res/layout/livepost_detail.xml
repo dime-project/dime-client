@@ -11,12 +11,6 @@
         android:fillViewport="true"
         android:orientation="vertical" >
 
-        <include
-            android:id="@+id/header"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            layout="@layout/header_standard" />
-
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"

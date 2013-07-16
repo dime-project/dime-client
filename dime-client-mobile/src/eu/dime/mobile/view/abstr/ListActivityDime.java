@@ -117,7 +117,7 @@ public abstract class ListActivityDime<ITEM_TYPE extends GenItem> extends ListAc
 	                if (result == null) {
 						Toast.makeText(ListActivityDime.this, "You are working in offline mode now!", Toast.LENGTH_LONG).show();
 	                } else {
-		                initializeHeader();
+	                	initializeHeader();
 		                getListView().setOnItemClickListener(ListActivityDime.this);
 		        		getListView().setOnItemLongClickListener(ListActivityDime.this);
 		                if(getListAdapter() == null) {
@@ -132,9 +132,9 @@ public abstract class ListActivityDime<ITEM_TYPE extends GenItem> extends ListAc
         }).execute();
     }
 
-    protected abstract List<ITEM_TYPE> loadListData();
+    protected void initializeHeader() {	}
     
-    protected abstract void initializeHeader();
+    protected abstract List<ITEM_TYPE> loadListData();
 
     public void setBaseAdapter(BaseAdapterDime<ITEM_TYPE> baseAdapter) {
         this.baseAdapter = baseAdapter;
@@ -142,6 +142,14 @@ public abstract class ListActivityDime<ITEM_TYPE extends GenItem> extends ListAc
 
     public List<String> getSelectionGUIDS() {
         return baseAdapter.getSelection();
+    }
+    
+    public List<ITEM_TYPE> getSelectedListItems() {
+    	List<ITEM_TYPE> items = new ArrayList<ITEM_TYPE>();
+    	if (baseAdapter != null) {
+    		items = baseAdapter.getSelectionItems();
+    	}
+    	return items;
     }
 
     public List<ITEM_TYPE> getListItems() {

@@ -31,11 +31,6 @@ public class ListActivity_Group extends ListActivityDisplayableItem {
     protected List<DisplayableItem> loadListData() {
         return (List<DisplayableItem>) (Object) ModelHelper.getAllGroups(mrContext);
     }
-
-    @Override
-    protected void initializeHeader() {
-        
-    }
     
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -54,4 +49,5 @@ public class ListActivity_Group extends ListActivityDisplayableItem {
 	protected LoadingViewHandler createLoadingViewHandler() {
 		return LoadingViewHandlerFactory.<ListActivity_Group>createLVH(ListActivity_Group.this);
 	}
+	
 }

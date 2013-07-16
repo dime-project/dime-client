@@ -4,22 +4,31 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import eu.dime.control.LoadingViewHandler;
 import eu.dime.mobile.R;
 import eu.dime.mobile.helper.AndroidModelHelper;
+import eu.dime.mobile.helper.DimeIntentObjectHelper;
+import eu.dime.mobile.helper.ImageHelper;
 import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.handler.LoadingViewHandlerFactory;
+import eu.dime.mobile.helper.objects.DimeIntentObject;
 import eu.dime.mobile.helper.objects.DimeTabObject;
-import eu.dime.mobile.view.abstr.TabActivityDime;
+import eu.dime.mobile.view.abstr.TabActivityDisplayableItemDetail;
+import eu.dime.mobile.view.dialog.Activity_Edit_Item_Dialog;
 import eu.dime.model.ItemFactory;
 import eu.dime.model.Model;
 import eu.dime.model.TYPES;
@@ -27,6 +36,7 @@ import eu.dime.model.displayable.ProfileAttributeCategoriesEntry;
 import eu.dime.model.displayable.ProfileAttributeItem;
 import eu.dime.model.displayable.ProfileAttributeItem.VALUE_CATEGORIES;
 import eu.dime.model.displayable.ProfileItem;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,33 +45,50 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TabActivity_Profile_Detail extends TabActivityDime {
+public class TabActivity_Profile_Detail extends TabActivityDisplayableItemDetail {
 	
-	private ProfileItem selectedProfile;
+	private boolean isEditable = false;
+	boolean isShareable = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		TAG = TabActivity_Profile_Detail.class.getSimpleName();
-    	selectedProfile = (ProfileItem) AndroidModelHelper.getGenItemSynchronously(this, dio);
-    	boolean isEditable = false;
-    	if(selectedProfile != null) {
-    		tabs.add(new DimeTabObject(getResources().getString(R.string.tab_profileDetail) + selectedProfile.getName(), ListActivity_Profile_Detail.class, dio));
-    		isEditable = selectedProfile.isEditable() && selectedProfile.getUserId().equals(Model.ME_OWNER);
+    	if(di.getMType().equals(TYPES.PROFILE)) {
+    		isEditable = ((ProfileItem) di).isEditable() && di.getUserId().equals(Model.ME_OWNER);
+    		isShareable = ((ProfileItem) di).supportsSharing() && di.getUserId().equals(Model.ME_OWNER);
     	}
-    	TabActivity_Profile_Detail.this.init(true, false, isEditable);
+    	tabs.add(new DimeTabObject(getResources().getString(R.string.tab_profileDetail) + di.getName(), ListActivity_Profile_Detail.class, dio));
+    	TabActivity_Profile_Detail.this.init(true, false, isShareable, isEditable);
 	}
 	
 	@Override
-    protected void onClickActionButton() {
-		Resources res = getResources();
-        String[] actionsForAttributesList = {res.getString(R.string.action_addExistingAttribute), res.getString(R.string.action_addNewAttribute), res.getString(R.string.action_deleteSelectedAttributeCategories)};
-        if (currentActivity instanceof ListActivity_Profile_Detail) {
-            selectedGUIDs = ((ListActivity_Profile_Detail) currentActivity).getSelectionGUIDS();
-            actionDialog = UIHelper.createActionDialog(this, Arrays.asList(actionsForAttributesList), this, selectedGUIDs);
-            actionDialog.show();
-        }
-    }
+	protected void initializeHeader() {
+		ViewGroup headerContainer = (ViewGroup) findViewById(R.tabframe.header);
+		LinearLayout header;
+		if(headerContainer.getChildCount() > 0) {
+			header = (LinearLayout) headerContainer.getChildAt(0);
+		} else {
+			header = (LinearLayout) getLayoutInflater().inflate(R.layout.header_profile_detail, headerContainer);
+		}
+		if(di.getUserId().equals(Model.ME_OWNER)) header.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(TabActivity_Profile_Detail.this, Activity_Edit_Item_Dialog.class);
+				startActivity(DimeIntentObjectHelper.populateIntent(intent, new DimeIntentObject(di)));
+			}
+		});
+		ImageView image = (ImageView) header.findViewById(R.id.imageView);
+		LinearLayout readOnly = (LinearLayout) header.findViewById(R.profile.read_only);
+		if(isEditable) readOnly.setVisibility(View.GONE);
+		TextView name = (TextView) header.findViewById(R.id.textView_name);
+		name.setText(di.getName());
+		TextView standard = (TextView) header.findViewById(R.profile.standard);
+//		if(!profile.isStandard()) { TODO implement standard profile
+			standard.setVisibility(View.GONE);
+//		}
+		ImageHelper.loadImageAsynchronously(image, di, this);
+	}
 
 	@SuppressWarnings("unchecked")
     @SuppressLint({ "SimpleDateFormat", "DefaultLocale" })
@@ -97,7 +124,7 @@ public class TabActivity_Profile_Detail extends TabActivityDime {
             		String[] tmpItems = new String[tmpItemsAL.size()];
             		tmpItems = tmpItemsAL.toArray(tmpItems);
             		final String[] items = tmpItems;
-            		Builder builder = UIHelper.createAlertDialogBuilder(this, "Select attribute category", true);
+            		Builder builder = UIHelper.createAlertDialogBuilder(this, "Select category", true);
             		builder.setItems(items, new DialogInterface.OnClickListener() {
             		    public void onClick(DialogInterface dialog, int item) {
             		    	VALUE_CATEGORIES category = null;
@@ -116,18 +143,15 @@ public class TabActivity_Profile_Detail extends TabActivityDime {
             				final LinkedHashMap<String, EditText> entriesStore = new LinkedHashMap<String, EditText>();
             				for (Map.Entry<String, String> entry : pai.getValue().entrySet()){
             					if(!pai.getCategory().equals(entry.getKey())){
-            						TextView label = UIHelper.createTextView(TabActivity_Profile_Detail.this, R.style.dime_labelTV, -1, -1, null, false);
+            						TextView label = UIHelper.createTextView(TabActivity_Profile_Detail.this, R.style.dime_labelTV, -1, 11, null, false);
             						label.setText(pai.getLabelForValueKey(entry.getKey()));
             						ll.addView(label);
             					}
-            					LinearLayout.LayoutParams lpms2 = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1f);
+            					LinearLayout.LayoutParams lpms2 = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
             					EditText value = new EditText(TabActivity_Profile_Detail.this);
             					value.setLayoutParams(lpms2);
-            					value.setTextSize(16);
-            					//TODO: Implement Datepicker,...
             					value.setInputType(UIHelper.switchInputType(entry.getKey()));
             					entriesStore.put(entry.getKey(), value);
-            					
             					ll.addView(value);
             				}
             				scrollView.addView(ll);
@@ -137,21 +161,24 @@ public class TabActivity_Profile_Detail extends TabActivityDime {
             					public void onClick(DialogInterface dialog, int which) {
             						for (Map.Entry<String, EditText> entry : entriesStore.entrySet()){
             							if (entry.getKey().toLowerCase().contains("date")) {
-            								SimpleDateFormat sdfToDate = new SimpleDateFormat("dd.MM.yyyy");
+            								List<String> formats = Arrays.asList("dd.MM.yyyy", "yyyy/MM/dd");
             								String text = "";
-            								try {
-            									sdfToDate.parse(entry.getValue().getText().toString());
-            									text = entry.getValue().getText().toString();
-            								} catch (ParseException e) {
-            									e.printStackTrace();
-            									text = "01.01.2000"; //FIXME
-            								}
+            								for (String string : formats) {
+            									SimpleDateFormat sdfToDate = new SimpleDateFormat(string);
+                								try {
+                									sdfToDate.parse(entry.getValue().getText().toString());
+                									text = entry.getValue().getText().toString();
+                									break;
+                								} catch (ParseException e) { 
+                									Log.d(TAG, "Could´t parse date!");
+                								}
+											}
             								pai.getValue().put(entry.getKey(), String.valueOf(text));
             							} else {
             								pai.getValue().put(entry.getKey(), entry.getValue().getText().toString());
             							}
             						}
-            						AndroidModelHelper.createAndAssignProfileAttributesAsyncronously(selectedProfile, pai, dialog, currentActivity, mrContext, actionName);
+            						AndroidModelHelper.createAndAssignProfileAttributesAsyncronously((ProfileItem) di, pai, dialog, currentActivity, mrContext, actionName);
             					}
             								
             				});
@@ -183,8 +210,8 @@ public class TabActivity_Profile_Detail extends TabActivityDime {
                 	Builder builder = UIHelper.createAlertDialogBuilder(this, "Select attribute category", true);
             		builder.setItems(items, new DialogInterface.OnClickListener() {
             		    public void onClick(DialogInterface dialog, final int item) {  
-            				selectedProfile.addItem(attributes.get(item).getGuid());
-            				AndroidModelHelper.updateGenItemAsyncronously(selectedProfile, dialog, currentActivity, mrContext, actionName);
+            				di.addItem(attributes.get(item).getGuid());
+            				AndroidModelHelper.updateGenItemAsyncronously(di, dialog, currentActivity, mrContext, actionName);
             		    }
             		});
             		UIHelper.displayAlertDialog(builder, false);
@@ -196,6 +223,15 @@ public class TabActivity_Profile_Detail extends TabActivityDime {
 	@Override
 	protected LoadingViewHandler createLoadingViewHandler() {
 		return LoadingViewHandlerFactory.<TabActivity_Profile_Detail>createLVH(TabActivity_Profile_Detail.this);
+	}
+
+	@Override
+	protected List<String> getActionsForDetailView() {
+		List<String> actions = new ArrayList<String>();
+		actions.add(getString(R.string.action_addExistingAttribute));
+		actions.add(getString(R.string.action_addNewAttribute));
+		actions.add(getString(R.string.action_deleteSelectedAttributeCategories));
+		return actions;
 	}
 	
 }

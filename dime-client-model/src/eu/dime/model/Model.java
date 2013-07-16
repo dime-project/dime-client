@@ -214,6 +214,31 @@ public class Model implements NotificationListener{
             }
         }        
     }
+    
+    public GenItem getOwnItem(String hoster, String guid, boolean isShareable) {
+    	GenItem result = null;
+        DimeMemory myStorage = context.getOwnerStorage(hoster, Model.ME_OWNER);
+        for (TYPES type : TYPES.values()) {
+			if(ModelHelper.isShareable(type) && isShareable) {
+				try {
+					for(GenItem item : myStorage.getAllItems(type)) {
+						if(item.getGuid().equals(guid)) {
+							result = item;
+						}
+					}
+				} catch (CacheFailException e) { }
+			} else if(ModelHelper.isAgent(type) && !isShareable) {
+				try {
+					for(GenItem item : myStorage.getAllItems(type)) {
+						if(item.getGuid().equals(guid)) {
+							result = item;
+						}
+					}
+				} catch (CacheFailException e) { }
+			}
+		}
+        return result;
+    }
 
     /**
      * Returns a copy of all of the given type for a specific hoster and owner.

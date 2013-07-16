@@ -21,7 +21,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ImageView;
@@ -29,7 +28,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.Toast;
 import eu.dime.control.LoadingViewHandler;
 import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
@@ -41,6 +39,7 @@ import eu.dime.mobile.helper.objects.DimeTabObject;
 import eu.dime.mobile.view.Activity_Main;
 import eu.dime.model.GenItem;
 import eu.dime.model.ModelRequestContext;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -64,12 +63,6 @@ public abstract class TabActivityDime extends TabActivity implements OnClickList
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.tabframe);
     	lvHandler = createLoadingViewHandler();
-        Button openSearchButton = (Button) findViewById(R.tabframe.button_open_search);
-        Button homeButton = (Button) findViewById(R.tabframe.button_home);
-        Button actionButton = (Button) findViewById(R.tabframe.button_action);
-        openSearchButton.setOnClickListener(this);
-        homeButton.setOnClickListener(this);
-        actionButton.setOnClickListener(this);
         getTabHost().setOnTabChangedListener(this);
         init(this.getIntent());
     }
@@ -79,22 +72,17 @@ public abstract class TabActivityDime extends TabActivity implements OnClickList
     	mrContext = DimeClient.getMRC(dio.getOwnerId(), lvHandler);
     }
     
-	protected void init(boolean showHomeButton, boolean showSearchButton, boolean showActionButton) {
+	protected void init(boolean showHomeButton, boolean showSearchButton, boolean showShareButton, boolean showActionButton) {
     	if(!showHomeButton) { UIHelper.hideView(findViewById(R.tabframe.view_home)); }
         if(!showSearchButton) { UIHelper.hideView(findViewById(R.tabframe.view_search)); }
+        if(!showShareButton) { UIHelper.hideView(findViewById(R.tabframe.view_share)); }
         if(!showActionButton) { UIHelper.hideView(findViewById(R.tabframe.view_action)); }
-        
-        if(tabs.size() >0) {
-	        //populate each intent
-	        for (DimeTabObject tab : tabs) {
-	            Intent intent = new Intent().setClass(this, tab.classObject);
-	            addTab(tab.label, DimeIntentObjectHelper.populateIntent(intent, tab.dio));
-	        }
-	        getTabHost().setCurrentTab(0);
-        } else {
-        	Toast.makeText(this, "Couldn´t load detail view of item!", Toast.LENGTH_LONG).show();
-        	finish();
+        //populate each intent
+        for (DimeTabObject tab : tabs) {
+            Intent intent = new Intent().setClass(this, tab.classObject);
+            addTab(tab.label, DimeIntentObjectHelper.populateIntent(intent, tab.dio));
         }
+        getTabHost().setCurrentTab(0);
     }
     
     @Override
@@ -121,21 +109,27 @@ public abstract class TabActivityDime extends TabActivity implements OnClickList
     	super.onResume();
     	currentActivity = getCurrentActivity();
     	DimeClient.addStringToViewStack(TAG.substring(12)); //remove TabActivity_
-    	UIHelper.hideView(findViewById(R.tabframe.view_search));
     }
 
     @Override
     public void onTabChanged(String tabId) {
         currentActivity = getCurrentActivity();
+        UIHelper.hideView(findViewById(R.tabframe.search_area));
     }
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+    protected void onClickHomeButton() {
+    	AndroidModelHelper.sendEvaluationDataAsynchronously(new ArrayList<GenItem>(), mrContext, getString(R.string.action_homeButtonPressed));
+        Intent myIntent = new Intent(TabActivityDime.this, Activity_Main.class);
+        this.startActivity(DimeIntentObjectHelper.populateIntent(myIntent, dio));
+    }
+    
+    @SuppressWarnings({ "rawtypes", "unchecked" })
 	protected void onClickOpenSearchButton() {
         LinearLayout searchArea = (LinearLayout) findViewById(R.tabframe.search_area);
         ListView listView = ((ListActivity) currentActivity).getListView();
         EditText searchField = (EditText) findViewById(R.tabframe.autocompleteTextView_searchfield);
         final TextView searchResults = (TextView) findViewById(R.tabframe.searchresults);
-        View header = ((View)listView.getParent()).findViewById(R.id.header);
+        View header = (View) findViewById(R.tabframe.header);
         if (searchArea.getVisibility() == View.GONE) {
         	DimeClient.addStringToViewStack(getResources().getString(R.string.self_evaluation_tool_search));
             UIHelper.showView(searchArea);
@@ -184,35 +178,34 @@ public abstract class TabActivityDime extends TabActivity implements OnClickList
             }
         });
     }
-
+    
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	protected void onClickShareButton() {
+    	AndroidModelHelper.shareResources(this, ((ListActivityDime) currentActivity).getSelectedListItems());
+	}
+    
     protected abstract void onClickActionButton();
-
-    protected void onClickHomeButton() {
-    	AndroidModelHelper.sendEvaluationDataAsynchronously(new ArrayList<GenItem>(), mrContext, getString(R.string.action_homeButtonPressed));
-        Intent myIntent = new Intent(TabActivityDime.this, Activity_Main.class);
-        this.startActivity(DimeIntentObjectHelper.populateIntent(myIntent, dio));
-    }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-
-            case R.tabframe.button_open_search:
-                onClickOpenSearchButton();
-                break;
-
-            case R.tabframe.button_action:
-                onClickActionButton();
-                DimeClient.addStringToViewStack(getResources().getString(R.string.self_evaluation_tool_actiondialog));
-                break;
-
-            case R.tabframe.button_home:
-                onClickHomeButton();
-                break;
+        case R.tabframe.button_home:
+            onClickHomeButton();
+            break;
+        case R.tabframe.button_open_search:
+            onClickOpenSearchButton();
+            break;
+        case R.tabframe.button_share:
+            onClickShareButton();
+            break;
+        case R.tabframe.button_action:
+            onClickActionButton();
+            DimeClient.addStringToViewStack(getResources().getString(R.string.self_evaluation_tool_actiondialog));
+            break;
         }
     }
 
-    // Can also be overridden by containded listactivities
+	// Can also be overridden by containded listactivities
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
     	onClickActionButton();

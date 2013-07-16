@@ -60,7 +60,9 @@ public class BaseAdapter_Standard extends BaseAdapterDisplayableItem {
 		}
     	//initialize values of all DisplayableItems
 		viewHolder.name.setText((ModelHelper.isParentable(di)) ? di.getName() + " ("+di.getItems().size()+")": di.getName());
-		ImageHelper.loadImageAsynchronously(viewHolder.image, di, context);
+		if (viewHolder.image != null) {
+			ImageHelper.loadImageAsynchronously(viewHolder.image, di, context);
+		}
 		viewHolder.selectedCB.setChecked(selection.contains(di.getGuid()));
 		viewHolder.lockedIcon.setVisibility(di.getUserId().equals(Model.ME_OWNER) ? View.GONE : View.VISIBLE);
 		boolean isValidForSharing = false;

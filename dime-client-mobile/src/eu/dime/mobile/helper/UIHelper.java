@@ -50,6 +50,7 @@ import eu.dime.mobile.helper.listener.ItemActionListener;
 import eu.dime.mobile.helper.objects.DimeIntentObject;
 import eu.dime.mobile.helper.objects.ResultObject;
 import eu.dime.mobile.helper.objects.ResultObject.RESULT_OBJECT_TYPES;
+import eu.dime.mobile.helper.objects.AdvisoryProperties;
 import eu.dime.mobile.helper.objects.NotificationProperties;
 import eu.dime.mobile.helper.objects.ResultObjectDisplayable;
 import eu.dime.mobile.helper.objects.ResultObjectProfileSharing;
@@ -424,24 +425,23 @@ public class UIHelper {
 	 ** header functions
 	 ** ------------------------------------------------------------------------------------------------------------------------------------------ */
 
-	public static void inflateStandardHeader(final Activity activity, final DisplayableItem di, ModelRequestContext mrContext) {
-		if (di != null) {
-			LinearLayout header = (LinearLayout) activity.findViewById(R.id.header);
-            if(header != null && di.getUserId().equals(Model.ME_OWNER)) header.setOnClickListener(new OnClickListener() {
+	public static void inflateStandardHeader(final Activity activity, final DisplayableItem di, ModelRequestContext mrContext, LinearLayout header) {
+		if (di != null && header != null) {
+            if(di.getUserId().equals(Model.ME_OWNER)) header.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					Intent intent = new Intent(activity, Activity_Edit_Item_Dialog.class);
 					activity.startActivity(DimeIntentObjectHelper.populateIntent(intent, new DimeIntentObject(di)));
 				}
 			});
-			ImageView image = (ImageView) activity.findViewById(R.header.image);
-			TextView nameText = (TextView) activity.findViewById(R.header.name_text);
-			TextView changedText = (TextView) activity.findViewById(R.header.changed_text);
-			TextView childrenText = (TextView) activity.findViewById(R.header.children_text);
-			TextView barText = (TextView) activity.findViewById(R.header.bar_text);
-			TextView levelText = (TextView) activity.findViewById(R.header.level_text);
-			ProgressBar progressBar = (ProgressBar) activity.findViewById(R.header.bar);
-			ImageView lock = (ImageView) activity.findViewById(R.id.locked);
+			ImageView image = (ImageView) header.findViewById(R.header.image);
+			TextView nameText = (TextView) header.findViewById(R.header.name_text);
+			TextView changedText = (TextView) header.findViewById(R.header.changed_text);
+			TextView childrenText = (TextView) header.findViewById(R.header.children_text);
+			TextView barText = (TextView) header.findViewById(R.header.bar_text);
+			TextView levelText = (TextView) header.findViewById(R.header.level_text);
+			ProgressBar progressBar = (ProgressBar) header.findViewById(R.header.bar);
+			ImageView lock = (ImageView) header.findViewById(R.id.locked);
 			String name = (ModelHelper.isParentable(di)) ? di.getName() + " (" + di.getItems().size() + ")" : di.getName();
 			nameText.setText(name);
 			changedText.setText(formatDateByMillis(di.getLastUpdated()));
@@ -591,7 +591,8 @@ public class UIHelper {
 			empty = "no attributes assigned to profile";
 			break;
 		case LIVEPOST:
-			TextView text = new TextView(context);
+			TextView text = createTextView(context, R.style.dimeTheme, Typeface.NORMAL, 11, null, false);
+			text.setPadding(10, 0, 10, 0);
 			text.setText(((LivePostItem) item).getText());
 			previewContainer.addView(text);
 			empty = "<empty>";
@@ -739,7 +740,7 @@ public class UIHelper {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static View createWarningWidget(final Context context, AdvisoryItem advisoryItem) {
+	public static View createWarningWidget(final Context context, AdvisoryProperties advisoryProperty) {
 		LinearLayout llparent = createLinearLayout(context, LinearLayout.VERTICAL);
 		LinearLayout llchild = new LinearLayout(context);
 		ImageView image = new ImageView(context);
@@ -747,13 +748,13 @@ public class UIHelper {
 		image.setPadding(0, 0, 10, 0);
 		final Button expand = new Button(context);
 		TextView headline = createTextView(context, -1, -1, 14, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1f), true);
-		headline.setText(getHeadlineForWarning(context, advisoryItem.getWarningType()));
+		headline.setText(advisoryProperty.getHeadline());
 		headline.setGravity(Gravity.CENTER_VERTICAL);
 		final TextView text = createTextView(context, R.style.dimeTheme, Typeface.NORMAL, 12, null, false);
-		text.setText(UIHelper.getTextForWarning(context, advisoryItem));
+		text.setText(advisoryProperty.getAdvisoryText());
 		text.setVisibility(View.GONE);
 		text.setPadding(40, -5, 40, 5);
-		image.setImageResource(UIHelper.getImageIdForWarning(advisoryItem.getWarningLevel()));
+		image.setImageResource(advisoryProperty.getDrawableId());
 		expand.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.button_expand_bar));
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(30, 30);
 		lp.setMargins(0, 5, 0, 5);
@@ -944,14 +945,14 @@ public class UIHelper {
 	
 	public static String formatStringList(List<String> strings) {
 		StringBuilder sb = new StringBuilder();
-		String delim = "";
+		String delim = " -";
 		if(strings.size() == 0) {
 			//should not occur
 			sb.append(delim).append("\'" + "empty" + "\'");
 		} else {
 			for (int i = 0; i < strings.size(); i++) {
 				sb.append(delim).append("\'" + strings.get(i) + "\'");
-				delim = (i != strings.size()-2) ? ", " : " and ";
+				delim = System.getProperty("line.separator") + " -";
 			}
 		}
 		return sb.toString();
@@ -984,6 +985,10 @@ public class UIHelper {
 	 ** resources functions
 	 ** ------------------------------------------------------------------------------------------------------------------------------------------ */
 	
+	public static AdvisoryProperties getAdvisoryProperties(Context context, AdvisoryItem ai) {
+		return new AdvisoryProperties(UIHelper.getHeadlineForWarning(context, ai.getWarningType()), UIHelper.getTextForWarning(context, ai), UIHelper.getImageIdForWarning(ai.getWarningLevel()));
+	}
+	
 	public static int getImageIdForWarning(double warningLevel) {
 		int imageId;
 		if (warningLevel <= 0.5) {
@@ -994,7 +999,7 @@ public class UIHelper {
 		return imageId;
 	}
 	
-	private static CharSequence getHeadlineForWarning(Context context, String warningType) {
+	public static String getHeadlineForWarning(Context context, String warningType) {
 		String headline = "";
 		if(warningType.equals(AdvisoryItem.WARNING_TYPES[0])) {
 			headline = context.getResources().getString(R.string.sharing_warning_untrusted);
@@ -1021,9 +1026,11 @@ public class UIHelper {
 		if (advisoryItem.getWarningType().equals(AdvisoryItem.WARNING_TYPES[0])) {
 			WarningAttributesUntrusted attributes = (WarningAttributesUntrusted) advisoryItem.getAttributes();
 			message += getWarningText(AndroidModelHelper.getTrustOrPrivacyLevelForDisplayableItem(attributes.getPrivacyValue())) + " privacy: " 
+					+ System.getProperty("line.separator")
 					+ formatStringList(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getPrivateResources(), true))
 					+ System.getProperty("line.separator")
 					+ getWarningText(AndroidModelHelper.getTrustOrPrivacyLevelForDisplayableItem(attributes.getTrustValue())) + " trust:"
+					+ System.getProperty("line.separator")
 					+ formatStringList(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getUntrustedAgents(), false));
 		}
 		// disjunct_groups
@@ -1039,29 +1046,30 @@ public class UIHelper {
 		else if (advisoryItem.getWarningType().equals(AdvisoryItem.WARNING_TYPES[2])) {
 			WarningAttributesProfileNotShared attributes = (WarningAttributesProfileNotShared) advisoryItem.getAttributes();
 			message += "the selected profile was never shared with:"
+					+ System.getProperty("line.separator")
 					+ formatStringList(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getPersonGuids(), false));
 		}
 		// too_many_resources
 		else if (advisoryItem.getWarningType().equals(AdvisoryItem.WARNING_TYPES[3])) {
 			WarningTooManyResources attributes = (WarningTooManyResources) advisoryItem.getAttributes();
-			message += "More than " 
-					+ attributes.getNumberOfResources() 
+			message += attributes.getNumberOfResources() 
 					+ " items selected!";
 		}
 		// too_many_receivers
 		else if (advisoryItem.getWarningType().equals(AdvisoryItem.WARNING_TYPES[4])) {
 			WarningTooManyReceivers attributes = (WarningTooManyReceivers) advisoryItem.getAttributes();
-			message += "More than " 
-					+ attributes.getNumberOfReceivers() +
+			message += attributes.getNumberOfReceivers() +
 					" receivers selected!";
 		}
 		// agent_not_valid_for_sharing
 		else if (advisoryItem.getWarningType().equals(AdvisoryItem.WARNING_TYPES[5])) {
 			WarningAgentNotValidForSharing attributes = (WarningAgentNotValidForSharing) advisoryItem.getAttributes();
 			message += "Cannot share to persons "
+					+ System.getProperty("line.separator")
 					+ formatStringList(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getAgentsNotValidForSharing(), false))
-					+ ((attributes.getParentGroup().length() > 0) ? " of group " + formatStringList(AndroidModelHelper.getListOfNamesOfGuidList(context, Arrays.asList(attributes.getParentGroup()), false)) : "")
-					+ ". Each requires to have a service account which supports sharing!";
+					+ System.getProperty("line.separator")
+					+ ((attributes.getParentGroup().length() > 0) ? "of group " + AndroidModelHelper.getOwnItemFromStorage(attributes.getParentGroup(), false).getName() + "." + System.getProperty("line.separator") : "")
+					+ "Each requires to have a service account which supports sharing!";
 		}
 		// sharing_not_possible
 		else if (advisoryItem.getWarningType().equals(AdvisoryItem.WARNING_TYPES[6])) {
@@ -1311,6 +1319,8 @@ public class UIHelper {
 			resId = R.drawable.action_delete_resource;
 		} else if (name.equals(res.getString(R.string.action_uploadFile))) {
 			resId = R.drawable.action_add_resources;
+		} else if (name.equals(res.getString(R.string.action_removePerson))) {
+			resId = R.drawable.action_remove_person;
 		}
 		// Tab icons
 		else if (name.equals("All people")) {

@@ -3,7 +3,6 @@ package eu.dime.mobile.view.dialog;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,6 +18,7 @@ import eu.dime.mobile.helper.AndroidModelHelper;
 import eu.dime.mobile.helper.ImageHelper;
 import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.handler.LoadingViewHandlerFactory;
+import eu.dime.mobile.helper.objects.AdvisoryProperties;
 import eu.dime.mobile.helper.objects.ResultObject;
 import eu.dime.mobile.helper.objects.ResultObjectDisplayable;
 import eu.dime.mobile.helper.objects.ResultObjectProfileSharing;
@@ -31,7 +31,6 @@ import eu.dime.model.specialitem.advisory.AdvisoryItem;
 import eu.dime.model.specialitem.advisory.AdvisoryRequestItem;
 import eu.dime.model.specialitem.advisory.WarningAgentNotValidForSharing;
 import eu.dime.model.specialitem.advisory.WarningSharingNotPossible;
-import eu.dime.model.ComparatorHelper;
 import eu.dime.model.GenItem;
 import eu.dime.model.ModelHelper;
 import eu.dime.model.TYPES;
@@ -44,14 +43,10 @@ import eu.dime.model.displayable.PersonItem;
 import eu.dime.model.displayable.ProfileAttributeItem;
 import eu.dime.model.displayable.ProfileItem;
 import eu.dime.model.displayable.ResourceItem;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Activity_Share_Dialog extends ActivityDime implements OnClickListener, IResultOfStandardDialog {
 
@@ -78,14 +73,13 @@ public class Activity_Share_Dialog extends ActivityDime implements OnClickListen
     private List<ProfileItem> allProfilesValidForSharing;
     private List<AgentItem> listOfSelectedAgents = new ArrayList<AgentItem>();
     private List<GenItem> listOfSelectedItems = new ArrayList<GenItem>();
-    private List<AdvisoryItem> advisoryItemsNotValidAgentsForSharing = new Vector<AdvisoryItem>();
+    private List<AdvisoryProperties> advisoryItemsNotValidAgentsForSharing = new Vector<AdvisoryProperties>();
     private List<GroupItem> selectedGroups = new ArrayList<GroupItem>();
     private List<PersonItem> selectedPersons = new ArrayList<PersonItem>();
     private List<DataboxItem> selectedDataboxes = new ArrayList<DataboxItem>();
     private List<ResourceItem> selectedResources = new ArrayList<ResourceItem>();
     private List<LivePostItem> selectedLiveposts = new ArrayList<LivePostItem>();
     private ProfileItem selectedProfile;
-    private boolean isShareWarning = false;
 
     /**
      * Called when the activity is first created.
@@ -145,7 +139,6 @@ public class Activity_Share_Dialog extends ActivityDime implements OnClickListen
 
     @SuppressWarnings("unchecked")
 	public void updateViewOnSelectionChanged() {
-    	isShareWarning = false;
         //update text fields
         recieverContainer.removeAllViews();
         dataContainer.removeAllViews();
@@ -166,49 +159,15 @@ public class Activity_Share_Dialog extends ActivityDime implements OnClickListen
         addWidgets(dataContainer,(List<DisplayableItem>) (Object) listOfSelectedItems, labelItems, noItems);
         if(isSharingPossible()) {
 	        //generate recommendation in the background
-	        (new AsyncTask<Object, Object, List<AdvisoryItem>>() {
-	
-				@Override
-	            protected List<AdvisoryItem> doInBackground(Object... paramss) {   
-	                try {
-	                    AdvisoryRequestItem ari = new AdvisoryRequestItem(selectedProfile.getGuid(), AndroidModelHelper.getListOfGuidsOfGenItemList((List<GenItem>) (Object) listOfSelectedAgents), AndroidModelHelper.getListOfGuidsOfGenItemList(listOfSelectedItems));
-	                    List<AdvisoryItem> advisories = ModelHelper.getSharingAdvisories(mrContext, ari);
-	                    Collections.sort(advisories, new ComparatorHelper.WarningLevelComparator());
-	                    return advisories;
-	                } catch (Exception ex) {
-	                    Logger.getLogger(Activity_Share_Dialog.class.getName()).log(Level.SEVERE, null, ex);
-	                } 
-	                return null;
-	            }
-	
-	            @Override
-	            protected void onPostExecute(List<AdvisoryItem> result) {
-	                super.onPostExecute(result);
-	                if (result != null) {
-	                	if(result.size() > 0) {
-	                		isShareWarning = true;
-	                	} else if (advisoryItemsNotValidAgentsForSharing.size() == 0) {
-	                		noWarnings.setVisibility(View.VISIBLE);
-	                	} else {
-	                		noWarnings.setVisibility(View.GONE);
-	                	}
-	                	labelWarnings.setText(String.valueOf(result.size() + advisoryItemsNotValidAgentsForSharing.size()));
-	                	for (AdvisoryItem advisoryItem : result) {
-	                		warningsContainer.addView(UIHelper.createWarningWidget(Activity_Share_Dialog.this, advisoryItem));
-						}
-	                }
-	                for (AdvisoryItem advisory : advisoryItemsNotValidAgentsForSharing) {
-	    				warningsContainer.addView(UIHelper.createWarningWidget(Activity_Share_Dialog.this, advisory));
-	    			}
-	            }
-	            
-	        }).execute(new Object());
+        	labelWarnings.setText(String.valueOf(0));
+        	noWarnings.setVisibility(View.VISIBLE);
+            noWarnings.setText("Loading...");
+	        AndroidModelHelper.loadAdvisoryPropertiesAsyncronously(this, new AdvisoryRequestItem(selectedProfile.getGuid(), AndroidModelHelper.getListOfGuidsOfGenItemList((List<GenItem>) (Object) listOfSelectedAgents), AndroidModelHelper.getListOfGuidsOfGenItemList(listOfSelectedItems)), advisoryItemsNotValidAgentsForSharing, noWarnings, labelWarnings, warningsContainer);
         } else {
-        	AdvisoryItem sharingNotPossible = new AdvisoryItem(1.0d, AdvisoryItem.WARNING_TYPES[6], new WarningSharingNotPossible());
-        	warningsContainer.addView(UIHelper.createWarningWidget(this, sharingNotPossible));
-        	labelWarnings.setText(String.valueOf(advisoryItemsNotValidAgentsForSharing.size() + 1));
         	noWarnings.setVisibility(View.GONE);
-        	for (AdvisoryItem advisory : advisoryItemsNotValidAgentsForSharing) {
+        	warningsContainer.addView(UIHelper.createWarningWidget(this, UIHelper.getAdvisoryProperties(this, new AdvisoryItem(1.0d, AdvisoryItem.WARNING_TYPES[6], new WarningSharingNotPossible()))));
+        	labelWarnings.setText(String.valueOf(advisoryItemsNotValidAgentsForSharing.size() + 1));
+        	for (AdvisoryProperties advisory : advisoryItemsNotValidAgentsForSharing) {
 				warningsContainer.addView(UIHelper.createWarningWidget(this, advisory));
 			}
         }
@@ -218,42 +177,42 @@ public class Activity_Share_Dialog extends ActivityDime implements OnClickListen
 	@Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.share.button_sel_person:
-            	UIHelper.createStandardDialog(Activity_Share_Dialog.this, mrContext, new BaseAdapter_Standard(), (List<DisplayableItem>)(Object) AndroidModelHelper.getItemsForSelection(allPersonsValidForSharing, selectedPersons), ResultObject.RESULT_OBJECT_TYPES.SHARING_PERSONS);
-                break;
+        case R.share.button_sel_person:
+        	UIHelper.createStandardDialog(Activity_Share_Dialog.this, mrContext, new BaseAdapter_Standard(), (List<DisplayableItem>)(Object) AndroidModelHelper.getItemsForSelection(allPersonsValidForSharing, selectedPersons), ResultObject.RESULT_OBJECT_TYPES.SHARING_PERSONS);
+            break;
+
+        case R.share.button_sel_group:
+        	UIHelper.createStandardDialog(this, mrContext, new BaseAdapter_Standard(), (List<DisplayableItem>)(Object) AndroidModelHelper.getItemsForSelection(allGroups, selectedGroups), ResultObject.RESULT_OBJECT_TYPES.SHARING_GROUPS);
+            break;
+
+        case R.share.button_sel_resource:
+        	UIHelper.createStandardDialog(Activity_Share_Dialog.this, mrContext, new BaseAdapter_Standard(), (List<DisplayableItem>)(Object) AndroidModelHelper.getItemsForSelection(allResources, selectedResources), ResultObject.RESULT_OBJECT_TYPES.SHARING_RESOURCES);
+            break;
             
-            case R.share.button_sel_group:
-            	UIHelper.createStandardDialog(this, mrContext, new BaseAdapter_Standard(), (List<DisplayableItem>)(Object) AndroidModelHelper.getItemsForSelection(allGroups, selectedGroups), ResultObject.RESULT_OBJECT_TYPES.SHARING_GROUPS);
-                break;
+        case R.share.button_sel_databox:
+        	UIHelper.createStandardDialog(Activity_Share_Dialog.this, mrContext, new BaseAdapter_Standard(), (List<DisplayableItem>)(Object) AndroidModelHelper.getItemsForSelection(allDataboxes, selectedDataboxes), ResultObject.RESULT_OBJECT_TYPES.SHARING_DATABOXES);
+            break;
+            
+        case R.share.button_sel_message:
+        	UIHelper.createStandardDialog(this, mrContext, new BaseAdapter_Standard(), (List<DisplayableItem>)(Object)  AndroidModelHelper.getItemsForSelection(allLiveposts, selectedLiveposts), ResultObject.RESULT_OBJECT_TYPES.SHARING_LIVEPOSTS);
+            break;
 
-            case R.share.button_sel_resource:
-            	UIHelper.createStandardDialog(Activity_Share_Dialog.this, mrContext, new BaseAdapter_Standard(), (List<DisplayableItem>)(Object) AndroidModelHelper.getItemsForSelection(allResources, selectedResources), ResultObject.RESULT_OBJECT_TYPES.SHARING_RESOURCES);
-                break;
-                
-            case R.share.button_sel_databox:
-            	UIHelper.createStandardDialog(Activity_Share_Dialog.this, mrContext, new BaseAdapter_Standard(), (List<DisplayableItem>)(Object) AndroidModelHelper.getItemsForSelection(allDataboxes, selectedDataboxes), ResultObject.RESULT_OBJECT_TYPES.SHARING_DATABOXES);
-                break;
-                
-            case R.share.button_sel_message:
-            	UIHelper.createStandardDialog(this, mrContext, new BaseAdapter_Standard(), (List<DisplayableItem>)(Object)  AndroidModelHelper.getItemsForSelection(allLiveposts, selectedLiveposts), ResultObject.RESULT_OBJECT_TYPES.SHARING_LIVEPOSTS);
-                break;
+        case R.share.container_profile:
+        	UIHelper.createStandardDialog(Activity_Share_Dialog.this, mrContext, new BaseAdapter_Dialog_Sharing_Profile(), (List<DisplayableItem>) (Object) allProfilesValidForSharing, ResultObject.RESULT_OBJECT_TYPES.SHARING_PROFILE);
+            break;
 
-            case R.share.container_profile:
-            	UIHelper.createStandardDialog(Activity_Share_Dialog.this, mrContext, new BaseAdapter_Dialog_Sharing_Profile(), (List<DisplayableItem>) (Object) allProfilesValidForSharing, ResultObject.RESULT_OBJECT_TYPES.SHARING_PROFILE);
-                break;
-
-            case R.share.button_share:
-                shareSelectedItems();
-                break;
-                
-            case R.share.button_cancel:
-            	List<GenItem> items = new ArrayList<GenItem>();
-            	items.addAll(listOfSelectedItems);
-            	items.addAll((List<GenItem>) (Object) listOfSelectedAgents);
-            	items.add(selectedProfile);
-            	AndroidModelHelper.sendEvaluationDataAsynchronously(items, mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_canceled));
-            	finish();
-            	break;
+        case R.share.button_share:
+            shareSelectedItems();
+            break;
+            
+        case R.share.button_cancel:
+        	List<GenItem> items = new ArrayList<GenItem>();
+        	items.addAll(listOfSelectedItems);
+        	items.addAll((List<GenItem>) (Object) listOfSelectedAgents);
+        	items.add(selectedProfile);
+        	AndroidModelHelper.sendEvaluationDataAsynchronously(items, mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_canceled));
+        	finish();
+        	break;
         }
     }
     
@@ -271,8 +230,7 @@ public class Activity_Share_Dialog extends ActivityDime implements OnClickListen
     	if(agentsNotValidForSharing.size() > 0) {
 	    	warning.setAgentsNotValidForSharing(agentsNotValidForSharing);
 	    	if(parentGuid.length() > 0) warning.setParentGroup(parentGuid);
-	    	AdvisoryItem advisoryItem = new AdvisoryItem(0.0d, AdvisoryItem.WARNING_TYPES[5], warning);
-	    	advisoryItemsNotValidAgentsForSharing.add(advisoryItem);
+	    	advisoryItemsNotValidAgentsForSharing.add(UIHelper.getAdvisoryProperties(this, new AdvisoryItem(0.0d, AdvisoryItem.WARNING_TYPES[5], warning)));
     	}
     }
     
@@ -288,7 +246,7 @@ public class Activity_Share_Dialog extends ActivityDime implements OnClickListen
     }
     
 	private void shareSelectedItems() {
-        if (!isSharingPossible()) {
+        if(!isSharingPossible()) {
             String message = "Please select ";
             if(listOfSelectedAgents.size() == 0) message += "an agent, ";
             if(listOfSelectedItems.size() == 0) message += "an item, ";
@@ -297,7 +255,7 @@ public class Activity_Share_Dialog extends ActivityDime implements OnClickListen
         	AlertDialog infoAlert = UIHelper.createInfoDialog(this, message, "ok");
             infoAlert.show();
         } 
-        else if (isShareWarning) {
+        else if(warningsContainer.getChildCount() > 0) {
         	Builder builder = UIHelper.createAlertDialogBuilder(this, "Confirmation needed", true);
             builder.setMessage("Do you really want to ignore the warning message and share the selected resources?");
             builder.setPositiveButton("share", new DialogInterface.OnClickListener() {

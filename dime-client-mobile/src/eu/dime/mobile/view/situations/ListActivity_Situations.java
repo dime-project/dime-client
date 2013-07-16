@@ -32,11 +32,6 @@ public class ListActivity_Situations extends ListActivityDisplayableItem {
         return (List<DisplayableItem>) (Object) Model.getInstance().getAllItems(mrContext, TYPES.SITUATION);
     }
 
-    @Override
-    protected void initializeHeader() {
-        
-    }
-
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		
@@ -58,4 +53,5 @@ public class ListActivity_Situations extends ListActivityDisplayableItem {
 	protected LoadingViewHandler createLoadingViewHandler() {
 		return LoadingViewHandlerFactory.<ListActivity_Situations>createLVH(ListActivity_Situations.this);
 	}
+	
 }

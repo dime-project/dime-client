@@ -34,11 +34,6 @@ public class ListActivity_Settings_Services extends ListActivityDisplayableItem 
 	protected List<DisplayableItem> loadListData() {
 		return (List<DisplayableItem>) (Object) Model.getInstance().getAllItems(mrContext, TYPES.ACCOUNT);
 	}
-	
-	@Override
-	protected void initializeHeader() {
-		
-	}
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

@@ -39,7 +39,7 @@ public class TabActivity_Settings extends TabActivityDime implements IResultOfSt
 		tabs.add(new DimeTabObject(getResources().getString(R.string.tab_settingsGeneral), Activity_Settings_General.class, dio));
 		tabs.add(new DimeTabObject(getResources().getString(R.string.tab_settingsServices), ListActivity_Settings_Services.class, new DimeIntentObject(TYPES.ACCOUNT)));
 //		tabs.add(new DimeTabObject(getResources().getString(R.string.tab_settingsRules), Activity_Settings_Rules.class, dio));
-		super.init(true, false, true);
+		super.init(true, false, false, true);
 	}
 
 	@Override

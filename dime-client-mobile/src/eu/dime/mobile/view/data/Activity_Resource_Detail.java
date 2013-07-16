@@ -43,7 +43,6 @@ public class Activity_Resource_Detail extends ActivityDime implements OnClickLis
 
 	@Override
 	protected void initializeData() {
-		UIHelper.inflateStandardHeader(this, resource, mrContext);
 		TextView owner = (TextView) findViewById(R.resource.owner);
 		TextView mimeType = (TextView) findViewById(R.resource.mime);
 		TextView filesize = (TextView) findViewById(R.resource.filesize);

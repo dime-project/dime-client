@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Toast;
 import eu.dime.control.LoadingViewHandler;
 import eu.dime.mobile.R;
@@ -38,7 +37,7 @@ public class ListActivity_Public_Search_Dialog extends ListActivityDisplayableIt
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
     	TAG = ListActivity_Public_Search_Dialog.class.getSimpleName();
-    	setContentView(R.layout.list_public_resolver);
+    	setContentView(R.layout.dialog_user_directory);
     	getListView().setOnItemClickListener(this);
         setBaseAdapter(new BaseAdapter_SearchResult());
     }
@@ -57,12 +56,6 @@ public class ListActivity_Public_Search_Dialog extends ListActivityDisplayableIt
     		}
     	}
         return ldi;
-    }
-
-    @Override
-    protected void initializeHeader() {
-        ImageButton button = (ImageButton) findViewById(R.publicresolver.search_button);
-        button.setOnClickListener(this);
     }
 
 	@Override

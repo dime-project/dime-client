@@ -61,7 +61,8 @@ public class Activity_Unshare_Dialog extends ActivityDime implements OnClickList
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void initializeData() {
-		UIHelper.inflateStandardHeader(this, item, mrContext);
+		LinearLayout header = (LinearLayout) findViewById(R.unshare.header);
+		UIHelper.inflateStandardHeader(this, item, mrContext, header);
 		sharedContainer.removeAllViews();
 		if(item instanceof AgentItem) {
 			items = (List<DisplayableItem>) (Object) ModelHelper.getAllShareableItemsDirectlySharedToAgent(mrContext, item.getGuid());

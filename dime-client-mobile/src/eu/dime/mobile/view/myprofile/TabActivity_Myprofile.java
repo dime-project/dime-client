@@ -28,7 +28,7 @@ public class TabActivity_Myprofile extends TabActivityDime {
 		super.onCreate(savedInstanceState);
 		TAG = TabActivity_Myprofile.class.getSimpleName();
 		tabs.add(new DimeTabObject(getResources().getString(R.string.tab_profileCards), ListActivity_Profile.class, new DimeIntentObject(TYPES.PROFILE)));
-		super.init(true, false, true);
+		super.init(true, false, true, true);
 	}
 
 	@Override

@@ -18,7 +18,7 @@ public class TabActivity_Place extends TabActivityDime {
 		super.onCreate(savedInstanceState);
 		TAG = TabActivity_Place.class.getSimpleName();
 		tabs.add(new DimeTabObject(getResources().getString(R.string.tab_places), ListActivity_Place.class, new DimeIntentObject(TYPES.PLACE)));
-		super.init(true, true, false);
+		super.init(true, true, false, false);
 	}
 	
     @Override

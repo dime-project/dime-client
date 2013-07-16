@@ -52,7 +52,7 @@ public class TabActivity_Data extends TabActivityDime implements IResultOfStanda
 		TAG = TabActivity_Data.class.getSimpleName();
 		tabs.add(new DimeTabObject(getResources().getString(R.string.tab_myResourcesData), ListActivity_Resource.class, new DimeIntentObject(TYPES.RESOURCE)));
 		tabs.add(new DimeTabObject(getResources().getString(R.string.tab_myResourcesDataboxes), ListActivity_Databox.class, new DimeIntentObject(TYPES.DATABOX)));
-		super.init( true, true, true);
+		super.init(true, true, true, true);
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class TabActivity_Data extends TabActivityDime implements IResultOfStanda
 		//actions for ListActivity_Data
 		if (currentActivity instanceof ListActivity_Resource) {
 			selectedGUIDs = new ArrayList<String>(((ListActivity_Resource) currentActivity).getSelectionGUIDS());
-			String[] actionsForResources = { res.getString(R.string.action_uploadFile), res.getString(R.string.action_removeSelectedResources), res.getString(R.string.action_assignToDatabox), res.getString(R.string.action_assignToNewDatabox), res.getString(R.string.action_shareSelectedItems) };
+			String[] actionsForResources = { res.getString(R.string.action_uploadFile), res.getString(R.string.action_removeSelectedResources), res.getString(R.string.action_assignToDatabox), res.getString(R.string.action_assignToNewDatabox) };
 			actionDialog = UIHelper.createActionDialog(this, Arrays.asList(actionsForResources), this, selectedGUIDs);
 			actionDialog.show();
 
@@ -69,7 +69,7 @@ public class TabActivity_Data extends TabActivityDime implements IResultOfStanda
 		//actions for ListActivity_Databox
 		else if (currentActivity instanceof ListActivity_Databox) {
 			selectedGUIDs = ((ListActivity_Databox) currentActivity).getSelectionGUIDS();
-			String[] actionsForDatabox = { res.getString(R.string.action_addNewDatabox), res.getString(R.string.action_deleteSelectedDataboxes), res.getString(R.string.action_shareSelectedItems) };
+			String[] actionsForDatabox = { res.getString(R.string.action_addNewDatabox), res.getString(R.string.action_deleteSelectedDataboxes) };
 			actionDialog = UIHelper.createActionDialog(this, Arrays.asList(actionsForDatabox), this, selectedGUIDs);
 			actionDialog.show();
 		}
@@ -144,11 +144,6 @@ public class TabActivity_Data extends TabActivityDime implements IResultOfStanda
 					alert.show();
 					alert.getButton(AlertDialog.BUTTON_POSITIVE).setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 				}
-				//share
-				else if (button.getText().equals(res.getString(R.string.action_shareSelectedItems))) {
-					actionDialog.dismiss();
-					AndroidModelHelper.shareResources(this, new ArrayList<String>(selectedGUIDs), TYPES.RESOURCE);
-				}
 			}
 			/**
              * ---------------------------------------------------------------------------------------------------------------------------
@@ -187,11 +182,6 @@ public class TabActivity_Data extends TabActivityDime implements IResultOfStanda
 						}
 					});
 					UIHelper.displayAlertDialog(builder, false);
-				}
-				//share
-				else if (button.getText().equals(res.getString(R.string.action_shareSelectedItems))) {
-					actionDialog.dismiss();
-					AndroidModelHelper.shareResources(this, new ArrayList<String>(selectedGUIDs), TYPES.DATABOX);
 				}
 			}
 		}
