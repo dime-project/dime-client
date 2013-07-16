@@ -7,4 +7,6 @@ dime-client-mobile/nbandroid/private.properties
 dime-client-mobile/local.properties
 dime-client-mobile/libs/dimeModel.jar
 dime-client-mobile/bin/
-/dime-client-model/resources/www/dime-communications/nbproject/private/
+/dime-client-model/resources/www/dime-communications/nbproject/private/dime-client-model/nbproject/private/private.xml
+dime-client-model/nbproject/private/private.xml
+dime-client-model/resources/www/dime-communications/nbproject/private/
