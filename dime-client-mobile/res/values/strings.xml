@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">di.me mobile</string>
+    <string name="project_landing_page">http://dimetrials.bdigital.org:8080/dime/</string>
     
     <!-- tab -->
     <string name="tab_persons">Persons</string>
@@ -141,6 +142,7 @@
     <string name="sharing_no_items">no item(s) selected</string>
     <string name="sharing_no_warnings">Sharing possible without warnings!</string>
     <string name="sharing_label_receivers">Recipients:</string>
+    <string name="sharing_label_shareas">Share as:</string>
     <string name="sharing_label_items">Items:</string>
     <string name="sharing_label_warnings">Warnings:</string>
     <string name="sharing_warning_untrusted">Privacy risk</string>
@@ -148,7 +150,7 @@
     <string name="sharing_warning_unshared_profile">Revealing profile card</string>
     <string name="sharing_warning_too_many_resources">Many items shared</string>
     <string name="sharing_warning_too_many_receivers">Many recipients selected</string>
-    <string name="sharing_warning_agent_not_valid_for_sharing">Not supported for recipients</string>
+    <string name="sharing_warning_agent_not_valid_for_sharing">Cannot share to recipients</string>
     <string name="sharing_warning_not_possible">Sharing not possible</string>
     <string name="sharing_warning_not_possible_detailed">Please select your identity you want to use for sharing and at least one recipient and item!</string>
     <string name="edit_trust_value_hint">Determines the number of warnings when sharing private items.</string>

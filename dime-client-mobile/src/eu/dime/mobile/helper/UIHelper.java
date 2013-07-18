@@ -114,11 +114,15 @@ public class UIHelper {
 	 ** ------------------------------------------------------------------------------------------------------------------------------------------ */
 
 	public static void hideView(View v) {
-		v.setVisibility(View.GONE);
+		if(v != null) {
+			v.setVisibility(View.GONE);
+		}
 	}
 
 	public static void showView(View v) {
-		v.setVisibility(View.VISIBLE);
+		if(v != null) {
+			v.setVisibility(View.VISIBLE);
+		}
 	}
 
 	public static TextView createTextView(Context context, int style, int typeface, int textSize, LayoutParams params, boolean isSingleLine) {
@@ -719,7 +723,7 @@ public class UIHelper {
 		image.setPadding(0, 0, 10, 0);
 		image.setImageResource(getDrawableId(item));
 		Button recycleButton = new Button(context);
-		recycleButton.setBackgroundResource(R.drawable.icon_black_recycle);
+		recycleButton.setBackgroundResource(R.drawable.icon_black_recycle_small);
 		recycleButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -794,7 +798,7 @@ public class UIHelper {
 		image.setPadding(0, 0, 10, 0);
 		image.setImageResource(getDrawableId(item));
 		Button recycleButton = new Button(context);
-		recycleButton.setBackgroundResource(R.drawable.icon_black_recycle);
+		recycleButton.setBackgroundResource(R.drawable.icon_black_recycle_small);
 		recycleButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -858,40 +862,49 @@ public class UIHelper {
         String notificationText = "Error occurred trying to get notification text!";
         String sender = "Personal Server";
         Intent intent = new Intent();           
-        int drawableId = R.drawable.icon_black_notification;
+        int drawableId = R.drawable.icon_black_notification_small;
         if(userNotification.getUnType().equals(UN_TYPE.REF_TO_ITEM)) {
         	try {
 	            UNEntryRefToItem entry = (UNEntryRefToItem) userNotification.getUnEntry();
 	        	dio = new DimeIntentObject(entry.getGuid(), entry.getType(), entry.getUserId());
-				if (entry.getType().equals(TYPES.GROUP)) {
-				    intent = new Intent(context, TabActivity_Group_Detail.class);
-				    drawableId = R.drawable.icon_black_group;
-				} else if (entry.getType().equals(TYPES.PERSON)) {
-				    intent = new Intent(context, TabActivity_Person_Detail.class);
-				    drawableId = R.drawable.icon_black_person;
-				} else if (entry.getType().equals(TYPES.DATABOX)) {
-				    intent = new Intent(context, TabActivity_Resource_Detail.class);
-				    drawableId = R.drawable.icon_black_databox;
-				} else if (entry.getType().equals(TYPES.RESOURCE)) {
-				    intent = new Intent(context, TabActivity_Resource_Detail.class);
-				    drawableId = R.drawable.icon_black_data_doc;
-				} else if(entry.getType().equals(TYPES.LIVEPOST)){
-				    intent = new Intent(context, TabActivity_Livepost_Detail.class);
-				    drawableId = R.drawable.icon_black_communication;
-				} else {
-					throw new Exception("type not supported yet");
-				}
-				if(entry.getOperation().equals(UNEntryRefToItem.OPERATION_SHARED)) {
+				if(entry.getOperation().equals(UNEntryRefToItem.OPERATION_SHARED) || entry.getOperation().equals(UNEntryRefToItem.OPERATION_UNSHARED)) {
+					if (entry.getType().equals(TYPES.GROUP)) {
+					    intent = new Intent(context, TabActivity_Group_Detail.class);
+					    drawableId = R.drawable.icon_black_group;
+					} else if (entry.getType().equals(TYPES.PERSON)) {
+					    intent = new Intent(context, TabActivity_Person_Detail.class);
+					    drawableId = R.drawable.icon_black_person;
+					} else if (entry.getType().equals(TYPES.DATABOX)) {
+					    intent = new Intent(context, TabActivity_Resource_Detail.class);
+					    drawableId = R.drawable.icon_black_databox;
+					} else if (entry.getType().equals(TYPES.RESOURCE)) {
+					    intent = new Intent(context, TabActivity_Resource_Detail.class);
+					    drawableId = R.drawable.icon_black_data_doc;
+					} else if(entry.getType().equals(TYPES.LIVEPOST)){
+					    intent = new Intent(context, TabActivity_Livepost_Detail.class);
+					    drawableId = R.drawable.icon_black_communication;
+					} else {
+						throw new Exception("type not supported yet");
+					}
 					try {
 		        		PersonItem pi = (PersonItem) AndroidModelHelper.getGenItemSynchronously(context, new DimeIntentObject(entry.getUserId(), TYPES.PERSON));
 		        		if(pi != null) sender = pi.getName();
 			        	DisplayableItem di = (DisplayableItem) AndroidModelHelper.getGenItemSynchronously(context, new DimeIntentObject(entry.getGuid(), entry.getType(), entry.getUserId()));
-				        if(di != null) notificationText = UIHelper.formatStringOnlyFirstCharUpperCase(entry.getType().toString()) + " \'" + di.getName() + "\' was shared to you!";
+				        if(di != null) notificationText = UIHelper.formatStringOnlyFirstCharUpperCase(entry.getType().toString()) + " \'" + di.getName() + "\' was " + (entry.getOperation().equals(UNEntryRefToItem.OPERATION_SHARED) ? "shared" : "unshared") + "!";
 		        	} catch (LoadingAbortedRuntimeException e) {
-	    				notificationText = "\'unknown item\' was shared to you!";
+	    				notificationText = "\'unknown item\' was " + (entry.getOperation().equals(UNEntryRefToItem.OPERATION_SHARED) ? "shared" : "unshared") + "!";
 	    				intent = new Intent();
 	    			}
 				} else {
+					if(entry.getOperation().equals(UNEntryRefToItem.OPERATION_INC_PRIV)) {
+						drawableId = R.drawable.icon_color_privacyup;
+					} else if(entry.getOperation().equals(UNEntryRefToItem.OPERATION_DEC_PRIV)) {
+						drawableId = R.drawable.icon_color_privacydown;
+					} else if(entry.getOperation().equals(UNEntryRefToItem.OPERATION_INC_TRUST)) {
+						drawableId = R.drawable.icon_color_trustup;
+					} else if(entry.getOperation().equals(UNEntryRefToItem.OPERATION_DEC_TRUST)) {
+						drawableId = R.drawable.icon_color_trustdown;
+					}
 					String test = (ModelHelper.isShareable(entry.getType())) ? "privay " : "trust ";
 					String operation = (entry.getOperation().equals(UNEntryRefToItem.OPERATION_DEC_PRIV) || entry.getOperation().equals(UNEntryRefToItem.OPERATION_DEC_TRUST)) ? "decrease " : "increase ";
 					notificationText = "The system suggests to " + operation + test +  "value of the " + entry.getType() + "!";
@@ -917,7 +930,7 @@ public class UIHelper {
 	    } else if(userNotification.getUnType().equals(UN_TYPE.MESSAGE)){
 	    	UNEntryMessage entry = (UNEntryMessage) userNotification.getUnEntry();
 	    	notificationText = entry.getMessage() + " Link: " + entry.getLink();
-	    	drawableId = R.drawable.icon_black_info;
+	    	drawableId = R.drawable.icon_black_info_small;
 	    } else if(userNotification.getUnType().equals(UN_TYPE.SITUATION_RECOMMENDATION)){
 	    	UNEntrySituationRecommendation entry = (UNEntrySituationRecommendation) userNotification.getUnEntry();
 	    	SituationItem si = (SituationItem) AndroidModelHelper.getGenItemSynchronously(context, new DimeIntentObject(entry.getGuid(), TYPES.SITUATION));
@@ -1059,19 +1072,18 @@ public class UIHelper {
 		else if (advisoryItem.getWarningType().equals(AdvisoryItem.WARNING_TYPES[4])) {
 			WarningTooManyReceivers attributes = (WarningTooManyReceivers) advisoryItem.getAttributes();
 			message += attributes.getNumberOfReceivers() +
-					" receivers selected!";
+					" recipients selected!";
 		}
 		// agent_not_valid_for_sharing
 		else if (advisoryItem.getWarningType().equals(AdvisoryItem.WARNING_TYPES[5])) {
 			WarningAgentNotValidForSharing attributes = (WarningAgentNotValidForSharing) advisoryItem.getAttributes();
-			message += "Cannot share to persons "
-					+ System.getProperty("line.separator")
-					+ formatStringList(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getAgentsNotValidForSharing(), false))
+			message += formatStringList(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getAgentsNotValidForSharing(), false))
 					+ System.getProperty("line.separator")
 					+ ((attributes.getParentGroup().length() > 0) ? "of group " + AndroidModelHelper.getOwnItemFromStorage(attributes.getParentGroup(), false).getName() + "." + System.getProperty("line.separator") : "")
-					+ "Each requires to have a service account which supports sharing!";
+					+ "You can only share to persons with a di.me account!";
 		}
 		// sharing_not_possible
+		//FIXME
 		else if (advisoryItem.getWarningType().equals(AdvisoryItem.WARNING_TYPES[6])) {
 			message = context.getResources().getString(R.string.sharing_warning_not_possible_detailed);
 		}
@@ -1161,13 +1173,8 @@ public class UIHelper {
 		double value = AndroidModelHelper.getTrustOrPrivacyLevelForDisplayableItem(di);
 		switch (di.getMType()) {
 		case GROUP:
-			if (value < 1) {
-				id = R.drawable.icon_color_group_trust_low;
-			} else if (value < 2) {
-				id = R.drawable.icon_color_group_trust_medium;
-			} else {
-				id = R.drawable.icon_color_group_trust_high;
-			}
+			//icon_color_group_trust_low; id = R.drawable.icon_color_group_trust_medium; id = R.drawable.icon_color_group_trust_high;
+			id = R.drawable.icon_black_group;
 			break;
 		case RESOURCE:
 			if (value < 1) {
@@ -1197,6 +1204,14 @@ public class UIHelper {
 			}
 			break;
 		case LIVEPOST:
+			//FIXME
+//			if (value < 1) {
+//				id = R.drawable.icon_color_livepost_trust_low;
+//			} else if (value < 2) {
+//				id = R.drawable.icon_color_livepost_trust_medium;
+//			} else {
+//				id = R.drawable.icon_color_livepost_trust_high;
+//			}
 			id = R.drawable.icon_black_communication;
 			break;
 		default:
@@ -1247,8 +1262,10 @@ public class UIHelper {
 			resId = R.drawable.action_rename_group;
 		} else if (name.equals(res.getString(R.string.action_mergeSelection))) {
 			resId = R.drawable.action_merge;
-		} else if (name.equals(res.getString(R.string.action_share)) || name.equals(res.getString(R.string.action_shareSelectedItems)) || name.equals(res.getString(R.string.action_unshare))) {
+		} else if (name.equals(res.getString(R.string.action_share)) || name.equals(res.getString(R.string.action_shareSelectedItems))) {
 			resId = R.drawable.action_share;
+		} else if(name.equals(res.getString(R.string.action_unshare))) { 
+			resId = R.drawable.action_unshare;
 		} else if (name.equals(res.getString(R.string.action_saveAsNewGroup))) {
 			resId = R.drawable.action_save_as_new_group;
 		} else if (name.equals(res.getString(R.string.action_addNewGroup))) {

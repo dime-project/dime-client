@@ -17,6 +17,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="8dp"
             android:background="@drawable/gradient_blue"
             android:orientation="horizontal" >
 
@@ -44,11 +48,6 @@
                 android:drawableRight="@drawable/action_upload_picture"
                 android:paddingRight="9dp" />
         </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="3px"
-            android:background="@drawable/actionbar_shadow_blue" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -125,7 +124,7 @@
                     android:text="medium"
                     android:textStyle="bold" />
             </LinearLayout>
-            
+
             <TextView
                 android:id="@+edit/bar_hint"
                 style="@style/dime_hint" />

@@ -2,6 +2,7 @@ package eu.dime.mobile.view.communication;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -13,11 +14,15 @@ import eu.dime.mobile.helper.objects.DimeTabObject;
 import eu.dime.mobile.view.abstr.TabActivityDisplayableItemDetail;
 
 public class TabActivity_Livepost_Detail extends TabActivityDisplayableItemDetail {
-
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		TAG = TabActivity_Livepost_Detail.class.getSimpleName();
+	}
+	
+	@Override
+	protected void initializeTabs() {
     	tabs.add(new DimeTabObject(getResources().getString(R.string.tab_communicationDetail) + " " + di.getName(), Activity_Livepost_Detail.class, dio));
     	TabActivity_Livepost_Detail.this.init(true, false, ownItem, ownItem);
 	}

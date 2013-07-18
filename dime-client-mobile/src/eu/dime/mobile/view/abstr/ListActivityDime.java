@@ -118,8 +118,6 @@ public abstract class ListActivityDime<ITEM_TYPE extends GenItem> extends ListAc
 						Toast.makeText(ListActivityDime.this, "You are working in offline mode now!", Toast.LENGTH_LONG).show();
 	                } else {
 	                	initializeHeader();
-		                getListView().setOnItemClickListener(ListActivityDime.this);
-		        		getListView().setOnItemLongClickListener(ListActivityDime.this);
 		                if(getListAdapter() == null) {
 		                	baseAdapter.init(ListActivityDime.this, mrContext, result);
 		                	setListAdapter(baseAdapter);

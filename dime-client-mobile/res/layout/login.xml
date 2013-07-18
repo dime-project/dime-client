@@ -82,8 +82,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:maxLines="1"
-                    android:inputType="textNoSuggestions" />
+                    android:inputType="textNoSuggestions"
+                    android:maxLines="1" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -125,8 +125,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:singleLine="true"
                     android:inputType="number"
+                    android:singleLine="true"
                     android:visibility="gone" />
 
                 <TextView
@@ -142,26 +142,6 @@
                     android:layout_height="wrap_content"
                     android:text="HTTPS"
                     android:visibility="gone" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp" >
-
-                    <CheckBox
-                        android:id="@+login/checkBox_accept"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text="" />
-
-                    <TextView
-                        android:id="@+login/textView_acceptText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="By login into the system, you accept the User Information and Usage Terms" />
-                </LinearLayout>
 
                 <CheckBox
                     android:id="@+login/checkBox_remember"

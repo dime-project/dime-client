@@ -36,7 +36,6 @@ import eu.dime.model.displayable.ProfileAttributeCategoriesEntry;
 import eu.dime.model.displayable.ProfileAttributeItem;
 import eu.dime.model.displayable.ProfileAttributeItem.VALUE_CATEGORIES;
 import eu.dime.model.displayable.ProfileItem;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,7 +53,11 @@ public class TabActivity_Profile_Detail extends TabActivityDisplayableItemDetail
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		TAG = TabActivity_Profile_Detail.class.getSimpleName();
-    	if(di.getMType().equals(TYPES.PROFILE)) {
+	}
+	
+	@Override
+	protected void initializeTabs() {
+		if(di.getMType().equals(TYPES.PROFILE)) {
     		isEditable = ((ProfileItem) di).isEditable() && di.getUserId().equals(Model.ME_OWNER);
     		isShareable = ((ProfileItem) di).supportsSharing() && di.getUserId().equals(Model.ME_OWNER);
     	}

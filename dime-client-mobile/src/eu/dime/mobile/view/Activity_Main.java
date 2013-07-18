@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -47,7 +46,6 @@ import eu.dime.model.displayable.SituationItem;
 import eu.dime.model.specialitem.NotificationItem;
 import eu.dime.model.specialitem.usernotification.UserNotificationItem;
 import eu.dime.restapi.DimeHelper;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -62,7 +60,6 @@ public class Activity_Main extends ActivityDime implements OnClickListener, OnLo
     private PlaceItem currentPlace;
     private ImageView dimeLogo;
     protected Dialog actionDialog = null;
-    private TextView dimeVersion;
     private TextView dimeUser;
     private boolean isPlaceAdapterConnected = false;
     private boolean isDimeServerAlive = false;
@@ -72,7 +69,6 @@ public class Activity_Main extends ActivityDime implements OnClickListener, OnLo
         super.onCreate(savedInstanceState);
         TAG = Activity_Main.class.getSimpleName();
         setContentView(R.layout.main);
-        dimeVersion = (TextView) findViewById(R.main.dime_version);
         dimeUser = (TextView) findViewById(R.main.dime_user);
         placeButton = (Button) findViewById(R.main.button_place);
         situationButton = (Button) findViewById(R.main.button_situation);
@@ -91,7 +87,6 @@ public class Activity_Main extends ActivityDime implements OnClickListener, OnLo
         try {
 	        DimeClient.addStringToViewStack(TAG.substring(9)); //remove Activity_
 	        dimeUser.setText(DimeClient.getUserMainSaid());
-			dimeVersion.setText(DimeClient.getSettings().getServerVersion());
         	startTask("Initializing...");
         } catch (Exception e) {	
 			finish();
@@ -264,10 +259,10 @@ public class Activity_Main extends ActivityDime implements OnClickListener, OnLo
             	createActionMenu();
             	break;
             	
-            case R.main.button_calendar:
-            	Log.d(TAG, "calendarBtn pressed!");
-            	//TODO add calendar activity
-            	break;
+//            case R.main.button_calendar:
+//            	Log.d(TAG, "calendarBtn pressed!");
+//            	//TODO add calendar activity
+//            	break;
                 
             case R.main.dime_logo:
             	eu.dime.mobile.helper.AndroidModelHelper.clearCache(TAG);

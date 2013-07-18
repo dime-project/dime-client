@@ -12,9 +12,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.Html;
 import android.text.TextWatcher;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -42,24 +40,20 @@ import eu.dime.model.specialitem.AuthItem;
 import eu.dime.model.storage.InitStorageFailedException;
 import eu.dime.restapi.DimeHelper;
 import eu.dime.restapi.RestApiAccess;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import sit.web.client.HttpHelper;
 
 public class Activity_Login extends Activity implements OnClickListener, OnEditorActionListener, TextWatcher, OnCheckedChangeListener {
 
 	private Settings settings;
-	private CheckBox accept;
     private CheckBox remember;
     private EditText user;
     private EditText pass;
-    private TextView acceptText;
     private Button login;
     private ImageView dimeLogo;
     private EditText serverIP;
@@ -81,8 +75,6 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
         setContentView(R.layout.login);
         user = (EditText) findViewById(R.login.editText_user);
         pass = (EditText) findViewById(R.login.editText_password);
-        accept = (CheckBox) findViewById(R.login.checkBox_accept);
-        acceptText = (TextView) findViewById(R.login.textView_acceptText);
         remember = (CheckBox) findViewById(R.login.checkBox_remember);
         login = (Button) findViewById(R.login.button_login);
         serverLabel = (TextView) findViewById(R.login.label_edittext_server);
@@ -96,15 +88,12 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
         exit.setOnClickListener(this);
         TextView register = (TextView) findViewById(R.login.register);
         register.setOnClickListener(this);
-        acceptText.setText(Html.fromHtml(getString(R.string.acceptTermsAndConditions)));
-        acceptText.setMovementMethod(LinkMovementMethod.getInstance());
         login.setOnClickListener(this);
         login.setEnabled(false);
         pass.setOnEditorActionListener(this);
         pass.addTextChangedListener(this);
         user.setOnEditorActionListener(this);
         user.addTextChangedListener(this);
-        accept.setOnCheckedChangeListener(this);
         serverIP.setOnEditorActionListener(this); 
         portEditText.setOnEditorActionListener(this); 
         dimeLogo.setOnLongClickListener(new OnLongClickListener() {
@@ -122,7 +111,6 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
         // Restore preferences
         settings = DimeClient.getSettings();
         overwriteDNS = settings.getOverrideDNS();
-        accept.setChecked(settings.isLoginPrefAccepted());
         remember.setChecked(settings.isLoginPrefRemembered());
         user.setText(settings.getUsername());
         serverIP.setText(settings.getHostname());
@@ -146,11 +134,7 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
                 break;
             
             case R.login.register:
-            	String myPath = settings.isUseHTTPS() ? "https://" : "http://";
-                myPath += settings.getHostname() + ":" + settings.getPort();
-                myPath += "/dime-communications/static/ui/dime/register.html";
-            	String urlString = myPath;
-    			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlString));
+    			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.project_landing_page)));
     			startActivity(browserIntent);
             	break;
         }
@@ -162,9 +146,9 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
 				pass.getText().toString(),
 				(overwriteDNS) ? Integer.parseInt(portEditText.getText().toString()) : DimeHelper.DEFAULT_PORT,
 				(overwriteDNS) ? isHttpsCheckBox.isChecked() : DimeHelper.DEFAULT_USE_HTTPS,
-				accept.isChecked(),
 				remember.isChecked(),
-				overwriteDNS).execute();
+				overwriteDNS)
+    	.execute();
     	dialog = ProgressDialog.show(this, null, "Trying to login...", true, true);
     	dialog.setOnCancelListener(new OnCancelListener() {
 			@Override
@@ -183,17 +167,15 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
         private String password="";
         private int port;
         private boolean useHTTPS;
-        private boolean loginPrefAccepted;
         private boolean loginPrefRemembered;
         private boolean overrideDNS;
         
-        public MyAsyncTak(String hostname, String username, String password, int port, boolean useHTTPS, boolean loginPrefAccepted, boolean loginPrefRemembered, boolean overrideDNS) {
+        public MyAsyncTak(String hostname, String username, String password, int port, boolean useHTTPS, boolean loginPrefRemembered, boolean overrideDNS) {
             this.hostname = hostname;
             this.username = username; //== mainSAID
             this.password = password;
             this.port = port;
             this.useHTTPS = useHTTPS;
-            this.loginPrefAccepted = loginPrefAccepted;
             this.loginPrefRemembered = loginPrefRemembered;
             this.overrideDNS = overrideDNS;
         }
@@ -203,7 +185,7 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
 			String result = "";
 			try {
 				String myHostName = (overrideDNS) ? hostname : DimeHelper.resolveIPOfPS(username);
-	        	settings.updateSettingsBeforeLogin(myHostName, username, password, port, useHTTPS, loginPrefAccepted, loginPrefRemembered, overrideDNS);
+	        	settings.updateSettingsBeforeLogin(myHostName, username, password, port, useHTTPS, loginPrefRemembered, overrideDNS);
 		        if(!new DimeHelper().dimeServerIsAuthenticated(username, settings.getRestApiConfiguration())) {
 		            result = "Could not login because the password was incorrect!";
 		        } else {
@@ -222,7 +204,7 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
 		        	}
 		        }
 		    } catch (UnknownHostException ex) {
-		    	settings.updateSettingsBeforeLogin(hostname, username, password, port, useHTTPS, loginPrefAccepted, loginPrefRemembered, overrideDNS);
+		    	settings.updateSettingsBeforeLogin(hostname, username, password, port, useHTTPS, loginPrefRemembered, overrideDNS);
                 Logger.getLogger(DimeClient.class.getName()).log(Level.SEVERE, "Unable to resolve hostname for said:" + username);
                 result = "Unable to resolve hostname for said:" + settings.getMainSAID();
             } catch (MalformedURLException ex) {
@@ -263,9 +245,7 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if(event != null && event.getAction() == KeyEvent.ACTION_DOWN) {
-        	if (!accept.isChecked()) {
-                showDialog("Please accept the terms and conditions");
-            } else if (!(user.getText().toString().length() > 0)) {
+        	if (!(user.getText().toString().length() > 0)) {
                 showDialog("Please provide a username");
             } else if (!(pass.getText().toString().length() > 0)) {
                 showDialog("Please provide a password");
@@ -307,7 +287,7 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
 	
 	private boolean loginAttemptPossible(){
 		boolean possible = true;
-		if (!accept.isChecked() || (!(user.getText().toString().length() > 0)) || (!(pass.getText().toString().length() > 0))) {
+		if ((!(user.getText().toString().length() > 0)) || (!(pass.getText().toString().length() > 0))) {
             possible = false;
         }
 		return possible;

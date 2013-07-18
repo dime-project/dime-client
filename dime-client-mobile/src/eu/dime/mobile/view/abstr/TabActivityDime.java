@@ -39,7 +39,6 @@ import eu.dime.mobile.helper.objects.DimeTabObject;
 import eu.dime.mobile.view.Activity_Main;
 import eu.dime.model.GenItem;
 import eu.dime.model.ModelRequestContext;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -115,6 +114,8 @@ public abstract class TabActivityDime extends TabActivity implements OnClickList
     public void onTabChanged(String tabId) {
         currentActivity = getCurrentActivity();
         UIHelper.hideView(findViewById(R.tabframe.search_area));
+        findViewById(R.tabframe.button_open_search).setSelected(false);
+        UIHelper.showView(findViewById(R.tabframe.header));
     }
 
     protected void onClickHomeButton() {
@@ -124,22 +125,30 @@ public abstract class TabActivityDime extends TabActivity implements OnClickList
     }
     
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	protected void onClickOpenSearchButton() {
+	protected void onClickOpenSearchButton(View v) {
         LinearLayout searchArea = (LinearLayout) findViewById(R.tabframe.search_area);
         ListView listView = ((ListActivity) currentActivity).getListView();
         EditText searchField = (EditText) findViewById(R.tabframe.autocompleteTextView_searchfield);
         final TextView searchResults = (TextView) findViewById(R.tabframe.searchresults);
         View header = (View) findViewById(R.tabframe.header);
         if (searchArea.getVisibility() == View.GONE) {
+        	v.setSelected(true);
         	DimeClient.addStringToViewStack(getResources().getString(R.string.self_evaluation_tool_search));
             UIHelper.showView(searchArea);
             ((InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInputFromWindow(searchField.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
             searchField.requestFocus();
-            if(header!=null) header.setVisibility(View.GONE);
+            if(header!=null) {
+            	TextView text = (TextView) header.findViewWithTag("");
+            	if(text != null && text.getText().length() > 0) searchField.setHint("search items...");//TODO
+            	header.setVisibility(View.GONE);
+            }
         } else {
+        	v.setSelected(false);
             UIHelper.hideView(searchArea);
             searchField.setText("");
-            if(header!=null) header.setVisibility(View.VISIBLE);
+            if(header!=null) {
+            	header.setVisibility(View.VISIBLE);
+            }
         }
         if(listView.getAdapter() instanceof HeaderViewListAdapter) {
         	HeaderViewListAdapter hvla = (HeaderViewListAdapter) listView.getAdapter();
@@ -193,7 +202,7 @@ public abstract class TabActivityDime extends TabActivity implements OnClickList
             onClickHomeButton();
             break;
         case R.tabframe.button_open_search:
-            onClickOpenSearchButton();
+            onClickOpenSearchButton(v);
             break;
         case R.tabframe.button_share:
             onClickShareButton();

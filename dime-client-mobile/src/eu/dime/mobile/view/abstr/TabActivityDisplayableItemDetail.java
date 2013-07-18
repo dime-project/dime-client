@@ -2,12 +2,16 @@ package eu.dime.mobile.view.abstr;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
+import eu.dime.control.NotificationListener;
+import eu.dime.control.NotificationManager;
 import eu.dime.mobile.R;
 import eu.dime.mobile.helper.AndroidModelHelper;
 import eu.dime.mobile.helper.DimeIntentObjectHelper;
@@ -16,30 +20,91 @@ import eu.dime.mobile.view.dialog.Activity_Edit_Item_Dialog;
 import eu.dime.mobile.view.dialog.Activity_Unshare_Dialog;
 import eu.dime.model.Model;
 import eu.dime.model.displayable.DisplayableItem;
+import eu.dime.model.specialitem.NotificationItem;
 
-public abstract class TabActivityDisplayableItemDetail extends TabActivityDime implements OnClickListener {
-	
+public abstract class TabActivityDisplayableItemDetail extends TabActivityDime implements OnClickListener, NotificationListener {
+
 	protected DisplayableItem di;
 	protected boolean ownItem = false;
+	private boolean isLoading = false;
 	
 	@Override
 	public void onCreate(android.os.Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		di = (DisplayableItem) AndroidModelHelper.getGenItemSynchronously(this, dio);
-		if(di != null) {
-			ownItem = di.getUserId().equals(Model.ME_OWNER);
-		} else {
-			Toast.makeText(this, "Couldn´t load detail view of item!", Toast.LENGTH_LONG).show();
-        	finish();
-		}
+		(new AsyncTask<Void, Void, DisplayableItem>() {
+			
+			@Override
+			protected DisplayableItem doInBackground(Void... params) {
+				return (DisplayableItem) AndroidModelHelper.getGenItemSynchronously(TabActivityDisplayableItemDetail.this, dio);
+			}
+			
+			@Override
+			protected void onPostExecute(DisplayableItem result) {
+				if(result != null) {
+					di = result;
+					ownItem = result.getUserId().equals(Model.ME_OWNER);
+					initializeTabs();
+				} else {
+					Toast.makeText(getApplicationContext(), "Couldn´t load detail view of item!", Toast.LENGTH_LONG).show();
+					TabActivityDisplayableItemDetail.this.finish();
+				}
+			}
+		}).execute();
+		isLoading = true;
 	}
 	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		NotificationManager.registerSecondLevel(this);
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		refreshView();
+	}
+    
+    private void refreshView() {
+    	if(!isLoading) {
+    		isLoading = true;
+	    	(new AsyncTask<Void, Void, DisplayableItem>() {
+				@Override
+				protected DisplayableItem doInBackground(Void... params) {
+					return (DisplayableItem) AndroidModelHelper.getGenItemSynchronously(TabActivityDisplayableItemDetail.this, dio);
+				}
+				
+				@Override
+				protected void onPostExecute(DisplayableItem result) {
+					if(result != null) {
+						di = result;
+						initializeHeader();
+					}
+				}
+			}).execute();
+    	}
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+    protected void onStop() {
+    	super.onStop();
+    	NotificationManager.unregisterSecondLevel(this);
+    }
+    
+    @Override
+    public void onPause() {
+    	super.onPause();
+    	isLoading = false;
+    }
+
 	@Override
 	protected void init(boolean showHomeButton, boolean showSearchButton, boolean showShareButton, boolean showActionButton) {
 		initializeHeader();
 		super.init(showHomeButton, showSearchButton, showShareButton, showActionButton);
 	}
 	
+	protected abstract void initializeTabs();
     protected abstract void initializeHeader();
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -88,6 +153,18 @@ public abstract class TabActivityDisplayableItemDetail extends TabActivityDime i
 	@Override
 	protected void onClickShareButton() {
     	AndroidModelHelper.shareResource(this, di);
+	}
+	
+	@Override
+	public void notificationReceived(String fromHoster, NotificationItem item) {
+		if(di.getType().equals(item.getElement().getType())) {
+			runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					refreshView();
+				}
+			});
+		}
 	}
 
 }

@@ -37,8 +37,8 @@
     <color name="bar_grad_bottom">#212121</color>
     <color name="divider_bottom">#8c8c8c</color>
     <!-- buttons -->
-    <color name="button_blue_top">#96c8f0</color>
-    <color name="button_blue_bottom">#64a0c8</color>
+    <color name="button_blue_top">#acd4f3</color>
+    <color name="button_blue_bottom">#77accf</color>
     <color name="button_yellow_top">#f5d049</color>
     <color name="button_yellow_bottom">#ecbe18</color>
     <color name="button_grey_top">#868686</color>

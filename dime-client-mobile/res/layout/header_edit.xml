@@ -25,6 +25,7 @@
             android:maxLines="1"
             android:paddingBottom="3dp"
             android:singleLine="true"
+            android:tag="name"
             android:textSize="20sp"
             android:textStyle="bold" />
 

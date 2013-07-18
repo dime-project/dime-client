@@ -2,7 +2,6 @@ package eu.dime.mobile.view.data;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -14,11 +13,15 @@ import eu.dime.mobile.helper.objects.DimeTabObject;
 import eu.dime.mobile.view.abstr.TabActivityDisplayableItemDetail;
 
 public class TabActivity_Resource_Detail extends TabActivityDisplayableItemDetail {
-
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		TAG = TabActivity_Resource_Detail.class.getSimpleName();
+	}
+
+	@Override
+	protected void initializeTabs() {
     	tabs.add(new DimeTabObject(getResources().getString(R.string.tab_dataDetail) + di.getName(), Activity_Resource_Detail.class, dio));
     	TabActivity_Resource_Detail.this.init(true, false, ownItem, ownItem);
 	}

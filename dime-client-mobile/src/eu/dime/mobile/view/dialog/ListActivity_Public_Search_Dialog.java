@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import eu.dime.control.LoadingViewHandler;
 import eu.dime.mobile.R;
@@ -22,12 +23,15 @@ import eu.dime.model.specialitem.NotificationItem;
 import eu.dime.model.specialitem.SearchResultItem;
 import eu.dime.model.displayable.DisplayableItem;
 import eu.dime.model.displayable.PersonItem;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import android.os.AsyncTask;
 
 public class ListActivity_Public_Search_Dialog extends ListActivityDisplayableItem implements OnClickListener {
 	
+	private TextView count;
 	private List<SearchResultItem> sri = new ArrayList<SearchResultItem>();
 
 	/**
@@ -39,12 +43,13 @@ public class ListActivity_Public_Search_Dialog extends ListActivityDisplayableIt
     	TAG = ListActivity_Public_Search_Dialog.class.getSimpleName();
     	setContentView(R.layout.dialog_user_directory);
     	getListView().setOnItemClickListener(this);
+    	count = (TextView) findViewById(R.userdirectory.search_count);
         setBaseAdapter(new BaseAdapter_SearchResult());
     }
 
     @Override
     protected List<DisplayableItem> loadListData() {
-    	EditText nameView = (EditText) findViewById(R.publicresolver.searchfield);
+    	EditText nameView = (EditText) findViewById(R.userdirectory.searchfield);
     	List<DisplayableItem> ldi = new ArrayList<DisplayableItem>();
     	if(nameView.getText().toString().length() > 0){
     		sri = ModelHelper.searchGlobaly(mrContext, nameView.getText().toString());
@@ -57,11 +62,16 @@ public class ListActivity_Public_Search_Dialog extends ListActivityDisplayableIt
     	}
         return ldi;
     }
+    
+    @Override
+    protected void initializeHeader() {
+    	count.setText(String.valueOf(sri.size()));
+    }
 
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-        case R.publicresolver.search_button:
+        case R.userdirectory.search_button:
         	reloadList();
         	break;
 		}

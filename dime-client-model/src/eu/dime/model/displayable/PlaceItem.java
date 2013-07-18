@@ -8,8 +8,10 @@
 package eu.dime.model.displayable;
 
 import eu.dime.model.JSONItem;
+
 import java.util.List;
 import java.util.Vector;
+
 import sit.json.JSONObject;
 import sit.sstl.StringEnumMap;
 
@@ -25,12 +27,13 @@ public final class PlaceItem extends DisplayableItem {
         FORMATTED, STREET_ADDRESS, LOCALITY, REGION, POSTAL_CODE, COUNTRY
     };
     public static final StringEnumMap<PLACE_ITEM_FIELDS> PlaceItemFieldMap =
-            new StringEnumMap(PLACE_ITEM_FIELDS.class, PLACE_ITEM_FIELDS.values(),
+            new StringEnumMap<PLACE_ITEM_FIELDS>(PLACE_ITEM_FIELDS.class, PLACE_ITEM_FIELDS.values(),
             new String[]{"position", "distance", "address", "tags", "phone", "url", "information", "YMRating", "socialRecRating", "userRating", "favorite",
                 "formatted", "streetAddress", "locality", "region", "postalCode", "country"
             });
 
-    public final class PlaceAddress extends JSONItem {
+    @SuppressWarnings("rawtypes")
+	public final class PlaceAddress extends JSONItem {
 
         private String formatted;
         private String street;
@@ -58,7 +61,6 @@ public final class PlaceItem extends DisplayableItem {
             result.formatted = this.formatted;
             result.street = this.street;
             result.locality = this.locality;
-
             result.region = this.region;
             result.postalCode = this.postalCode;
             result.country = this.country;
@@ -70,7 +72,6 @@ public final class PlaceItem extends DisplayableItem {
             formatted = "";
             street = "";
             locality = "";
-
             region = "";
             postalCode = "";
             country = "";
@@ -79,11 +80,9 @@ public final class PlaceItem extends DisplayableItem {
         @Override
         public JSONObject createJSONObject() {
             JSONObject result = new JSONObject(PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.ADDRESS));
-            
             result.addChild(getJSONValue(formatted, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.FORMATTED)));
             result.addChild(getJSONValue(street, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.STREET_ADDRESS)));            
             result.addChild(getJSONValue(locality, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.STREET_ADDRESS)));
-            
             result.addChild(getJSONValue(region, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.REGION)));            
             result.addChild(getJSONValue(postalCode, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.POSTAL_CODE)));
             result.addChild(getJSONValue(country, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.COUNTRY)));
@@ -95,7 +94,6 @@ public final class PlaceItem extends DisplayableItem {
               this.formatted = getStringValueOfJSONO(jsonObject, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.FORMATTED));
               this.street = getStringValueOfJSONO(jsonObject, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.STREET_ADDRESS));
               this.locality = getStringValueOfJSONO(jsonObject, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.STREET_ADDRESS));
-              
               this.region = getStringValueOfJSONO(jsonObject, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.REGION));
               this.postalCode = getStringValueOfJSONO(jsonObject, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.POSTAL_CODE));
               this.country = getStringValueOfJSONO(jsonObject, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.COUNTRY));
@@ -186,6 +184,7 @@ public final class PlaceItem extends DisplayableItem {
             this.country = country;
         }
     }
+    
     private String position;
     private Double distance;
     private PlaceAddress address;
@@ -209,10 +208,10 @@ public final class PlaceItem extends DisplayableItem {
 
     @Override
     protected final void wipeItemForDisplayItem() {
-         this.position = "";
+        this.position = "";
         this.distance = -1.0;
         this.address = new PlaceAddress();
-        this.tags = new Vector();
+        this.tags = new Vector<String>();
         this.phone ="";
         
         this.url = "";
@@ -228,68 +227,53 @@ public final class PlaceItem extends DisplayableItem {
     @Override
     protected DisplayableItem getCloneForDisplayItem() {
         PlaceItem result = new PlaceItem();
-        
         result.position = this.position;
         result.distance = this.distance;
         result.address = this.address.getClone();
-        result.tags = new Vector(this.tags);
+        result.tags = new Vector<String>(this.tags);
         result.phone = this.phone;
-        
         result.url = this.url;
         result.information = this.information;
         result.ymRating = this.ymRating;
         result.socRating = this.socRating;
         result.userRating = this.userRating;
-        
         result.favorite = this.favorite;
-
         return result;
     }
 
     @Override
     public void readJSONObjectForDisplayItem(JSONObject jsonObject) {
-
         this.position = getStringValueOfJSONO(jsonObject, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.POSITION));
         this.distance = getDoubleValueOfJSONO(jsonObject, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.DISTANCE));
         JSONObject myAddress = getItemOfJSONO(jsonObject, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.ADDRESS));
-        
-        if (myAddress!=null){
+        if(myAddress!=null) {
             this.address.readJSONObject(myAddress);
-        }else{
+        } else {
             this.address = new PlaceAddress("undefined", "", "", "", "", "");
         }
-        
         this.tags = getStringListOfJSONObject(jsonObject, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.TAGS));
         this.phone = getStringValueOfJSONO(jsonObject, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.PHONE));
-        
         this.url = getStringValueOfJSONO(jsonObject, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.URL));
         this.information = getStringValueOfJSONO(jsonObject, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.INFORMATION));
         this.ymRating = getDoubleValueOfJSONO(jsonObject, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.YM_RATING));
         this.socRating = getDoubleValueOfJSONO(jsonObject, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.SOCIAL_RATING));
         this.userRating = getDoubleValueOfJSONO(jsonObject, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.USER_RATING));
-        
         this.favorite = getBooleanValueOfJSONO(jsonObject, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.FAVORITE));
-
     }
 
     @Override
     protected JSONObject createJSONObjectForDisplayItem(JSONObject newJSONObject) {
-
         newJSONObject.addChild(getJSONValue(position, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.POSITION)));
         newJSONObject.addChild(getJSONValue(distance, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.DISTANCE)));
         newJSONObject.addChild(address.createJSONObject());
         newJSONObject.addChild(getJSONCollection(tags, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.TAGS)));
         newJSONObject.addChild(getJSONValue(phone, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.PHONE)));
-        
         newJSONObject.addChild(getJSONValue(url, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.URL)));
         newJSONObject.addChild(getJSONValue(information, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.INFORMATION)));
         newJSONObject.addChild(getJSONValue(ymRating, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.YM_RATING)));
         newJSONObject.addChild(getJSONValue(socRating, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.SOCIAL_RATING)));
-        newJSONObject.addChild(getJSONValue(userRating, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.USER_RATING)));
-                
+        newJSONObject.addChild(getJSONValue(userRating, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.USER_RATING)));      
         newJSONObject.addChild(getJSONValue(favorite, PlaceItemFieldMap.get(PLACE_ITEM_FIELDS.FAVORITE)));
-
-
         return newJSONObject;
     }
 
@@ -458,4 +442,5 @@ public final class PlaceItem extends DisplayableItem {
         changed = true;
         this.favorite = favorite;
     }
+    
 }

@@ -37,7 +37,11 @@ public class TabActivity_Group_Detail extends TabActivityDisplayableItemDetail i
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		TAG = TabActivity_Group_Detail.class.getSimpleName();
-    	tabs.add(new DimeTabObject(getResources().getString(R.string.tab_groupDetail) + di.getName(), ListActivity_Group_Detail.class, dio));
+	}
+	
+	@Override
+	protected void initializeTabs() {
+		tabs.add(new DimeTabObject(getResources().getString(R.string.tab_groupDetail) + di.getName(), ListActivity_Group_Detail.class, dio));
     	TabActivity_Group_Detail.this.init(true, true, true, true);
 	}
 
@@ -145,4 +149,5 @@ public class TabActivity_Group_Detail extends TabActivityDisplayableItemDetail i
 		}
 		UIHelper.inflateStandardHeader(this, di, mrContext, header);
 	}
+	
 }

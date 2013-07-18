@@ -18,24 +18,33 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="8dp"
             android:background="@drawable/gradient_blue"
             android:orientation="horizontal" >
 
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:paddingLeft="12dp"
+                android:text="Currently shared:"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+            
+            <TextView
+                android:id="@+unshare/share_count"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:paddingLeft="12dp"
-                android:text="Currently shared"
+                android:paddingLeft="5dp"
+                android:text="0"
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="3px"
-            android:background="@drawable/actionbar_shadow_blue" />
 
         <LinearLayout
             android:id="@+unshare/container"
@@ -43,8 +52,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:orientation="vertical"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp" >
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp" >
 
             <TextView
                 android:id="@+unshare/text_add_reciever"

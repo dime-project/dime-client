@@ -29,6 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text=""
+                android:tag="name"
                 android:textAppearance="?android:attr/textAppearanceLarge"  />
 
             <LinearLayout
@@ -46,7 +47,7 @@
                 <ImageView 
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:src="@drawable/icon_black_lock" />
+                    android:src="@drawable/icon_black_lock_small" />
             </LinearLayout>
 
             <TextView

@@ -11,7 +11,7 @@
 
         <View
             android:layout_width="96dp"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
         <TextView
             android:id="@+main/dime_user"
@@ -22,21 +22,6 @@
             android:paddingRight="6dp"
             android:textColor="@android:color/white"
             android:textSize="9sp" />
-
-        <View
-            android:layout_width="2px"
-            android:layout_height="match_parent"
-            android:layout_gravity="right"
-            android:background="@drawable/gradient_double_line" />
-
-        <ImageButton
-            android:id="@+main/info"
-            android:layout_width="54dp"
-            android:layout_height="48dp"
-            android:background="@drawable/button_transp_bar"
-            android:onClick="onClick"
-            android:padding="4dp"
-            android:src="@drawable/icon_white_info" />
 
         <View
             android:layout_width="2px"
@@ -63,28 +48,13 @@
         android:layout_height="3px"
         android:background="@drawable/actionbar_shadow" />
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:id="@+main/dime_logo"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_marginLeft="6dp"
-        android:layout_marginTop="-42dp" >
-
-        <ImageView
-            android:id="@+main/dime_logo"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/logo_white" />
-
-        <TextView
-            android:id="@+main/dime_version"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="32dp"
-            android:layout_marginTop="32dp"
-            android:textColor="@android:color/white"
-            android:textSize="9sp"
-            android:textStyle="bold" />
-    </RelativeLayout>
+        android:layout_marginTop="-42dp"
+        android:src="@drawable/logo_white" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -97,6 +67,7 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
+            android:layout_marginTop="-16dp"
             android:layout_weight="1" >
 
             <Button
@@ -129,7 +100,7 @@
                 android:onClick="onClick"
                 android:paddingBottom="8dp"
                 android:paddingTop="8dp"
-                android:text="Communication" />
+                android:text="Liveposts" />
         </LinearLayout>
 
         <LinearLayout
@@ -180,18 +151,18 @@
             android:layout_weight="1" >
 
             <Button
-                android:id="@+main/button_calendar"
+                android:id="@+main/info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:background="@drawable/button_transp"
-                android:drawableTop="@drawable/icon_black_calendar"
+                android:drawableTop="@drawable/icon_black_info"
                 android:focusable="true"
                 android:onClick="onClick"
                 android:paddingBottom="8dp"
                 android:paddingTop="8dp"
-                android:text="Calendar" />
+                android:text="Informations" />
 
             <View
                 android:layout_width="6dp"
@@ -271,7 +242,7 @@
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
             android:background="@drawable/button_col3_grey"
-            android:drawableLeft="@drawable/icon_black_notification"
+            android:drawableLeft="@drawable/icon_black_notification_small"
             android:drawablePadding="6dp"
             android:focusable="true"
             android:gravity="center_vertical"

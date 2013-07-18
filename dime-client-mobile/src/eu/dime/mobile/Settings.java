@@ -27,7 +27,6 @@ import sit.web.client.HttpHelper;
  */
 public class Settings {
 	
-    private static final String LOGIN_PREF_ACCEPTED_TAG = "LOGIN_PREF_ACCEPTED";
     private static final String LOGIN_PREF_REMEMBER_TAG = "LOGIN_PREF_REMEMBER";
     private static final String DIME_SETTINGS_TAG = "DIME_SETTINGS";
     private static final String PS_CRAWL_CONTEXT_TAG = "PS_CRAWL_CONTEXT";
@@ -56,7 +55,6 @@ public class Settings {
     private String password="";
     private int port;
     private boolean useHTTPS;
-    private boolean loginPrefAccepted;
     private boolean loginPrefRemembered;
     private boolean overrideDNS;
     private boolean crawlingContext;
@@ -80,7 +78,6 @@ public class Settings {
         } catch (IOException ex) {
             Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
         }
-        loginPrefAccepted = androidSettings.getBoolean(LOGIN_PREF_ACCEPTED_TAG, false);       
         loginPrefRemembered = androidSettings.getBoolean(LOGIN_PREF_REMEMBER_TAG, false);
         isDialogInfoAreaDisplayed = androidSettings.getBoolean(IS_DIALOG_INFO_AREA_DISPLAYED, false);
     }
@@ -98,17 +95,15 @@ public class Settings {
         } else {
             androidSettings.edit().putString(PS_KEY_TAG, CryptHelper.getObscuredContent(username, "")).commit();
         }
-        androidSettings.edit().putBoolean(LOGIN_PREF_ACCEPTED_TAG, loginPrefAccepted).commit();
         androidSettings.edit().putBoolean(LOGIN_PREF_REMEMBER_TAG, loginPrefRemembered).commit();
     }
     
-    public void updateSettingsBeforeLogin(String hostname, String username, String password, int port, boolean useHTTPS, boolean loginPrefAccepted, boolean loginPrefRemembered, boolean overrideDNS) {
+    public void updateSettingsBeforeLogin(String hostname, String username, String password, int port, boolean useHTTPS, boolean loginPrefRemembered, boolean overrideDNS) {
     	this.hostname = hostname;
     	this.username = username;
     	this.password = password;
     	this.port = port;
     	this.useHTTPS = useHTTPS;
-    	this.loginPrefAccepted = loginPrefAccepted;
     	this.loginPrefRemembered = loginPrefRemembered;
     	this.overrideDNS = overrideDNS;
     	storeSettings();
@@ -206,10 +201,6 @@ public class Settings {
     public synchronized String getUsername() {
         return username;
     }
-    
-    public synchronized boolean isLoginPrefAccepted() {
-        return loginPrefAccepted;
-    }
 
     public synchronized boolean isLoginPrefRemembered() {
         return loginPrefRemembered;
@@ -226,7 +217,6 @@ public class Settings {
                 + "\noverrideDNS: " + overrideDNS
                 + "\nreceiveNotifications: " + receiveNotifications
                 + "\ncrawlingContext: " + crawlingContext
-                + "\nloginPrefAccepted: " + loginPrefAccepted
                 + "\nloginPrefRemembered: " + loginPrefRemembered;
     }
 

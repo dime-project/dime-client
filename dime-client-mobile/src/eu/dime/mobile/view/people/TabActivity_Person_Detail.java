@@ -19,6 +19,10 @@ public class TabActivity_Person_Detail extends TabActivityDisplayableItemDetail 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		TAG = TabActivity_Person_Detail.class.getSimpleName();
+	}
+	
+	@Override
+	protected void initializeTabs() {
 		tabs.add(new DimeTabObject(getResources().getString(R.string.tab_personDetailProfile), ListActivity_Person_Profile.class, dio));
 		tabs.add(new DimeTabObject(getResources().getString(R.string.tab_personDetailData), ListActivity_Person_Data.class, dio));
 		tabs.add(new DimeTabObject(getResources().getString(R.string.tab_personDetailMessages), ListActivity_Person_Livepost.class, dio));

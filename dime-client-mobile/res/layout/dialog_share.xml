@@ -12,12 +12,31 @@
         android:orientation="vertical" >
 
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/gradient_blue"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:paddingLeft="12dp"
+                android:text="@string/sharing_label_shareas"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+share/container_profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
             android:background="@drawable/border_item_round"
             android:focusable="true"
             android:focusableInTouchMode="true"
@@ -44,16 +63,20 @@
                 android:orientation="vertical" >
 
                 <TextView
-                    android:id="@+share/text_full_name"
+                    android:id="@+share/text_profile_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
                     android:text="&lt;no profile selected>"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+share/text_profile_name"
+                    android:id="@+share/text_full_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
                     android:text="..."
                     android:textSize="11sp" />
 
@@ -73,6 +96,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"
+                        android:ellipsize="end"
+                        android:singleLine="true"
                         android:textSize="11sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -81,7 +106,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_marginTop="8dp"
             android:background="@drawable/gradient_blue"
             android:orientation="horizontal" >
 
@@ -113,7 +141,7 @@
 
             <Button
                 android:id="@+share/button_sel_person"
-                android:layout_width="50dp"
+                android:layout_width="54dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/button_transp_bar"
                 android:drawableRight="@drawable/action_add_person"
@@ -128,7 +156,7 @@
 
             <Button
                 android:id="@+share/button_sel_group"
-                android:layout_width="50dp"
+                android:layout_width="54dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/button_transp_bar"
                 android:drawableRight="@drawable/action_add_group"
@@ -136,34 +164,31 @@
                 android:paddingRight="9dp" />
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="3px"
-            android:background="@drawable/actionbar_shadow_blue" />
-
         <LinearLayout
             android:id="@+share/container_reciever"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:orientation="vertical"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp" >
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:orientation="vertical" >
         </LinearLayout>
 
         <TextView
             android:id="@+share/text_no_reciever"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:text="@string/sharing_no_receiver"
             android:textColor="@android:color/darker_gray" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_marginTop="8dp"
             android:background="@drawable/gradient_blue"
             android:orientation="horizontal" >
 
@@ -195,7 +220,7 @@
 
             <Button
                 android:id="@+share/button_sel_databox"
-                android:layout_width="50dp"
+                android:layout_width="54dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/button_transp_bar"
                 android:drawableRight="@drawable/action_add_new_databox"
@@ -210,7 +235,7 @@
 
             <Button
                 android:id="@+share/button_sel_resource"
-                android:layout_width="50dp"
+                android:layout_width="54dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/button_transp_bar"
                 android:drawableRight="@drawable/action_add_resources"
@@ -225,7 +250,7 @@
 
             <Button
                 android:id="@+share/button_sel_message"
-                android:layout_width="50dp"
+                android:layout_width="54dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/button_transp_bar"
                 android:drawableRight="@drawable/action_add_new_message"
@@ -233,34 +258,31 @@
                 android:paddingRight="9dp" />
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="3px"
-            android:background="@drawable/actionbar_shadow_blue" />
-
         <LinearLayout
             android:id="@+share/container_data"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:orientation="vertical"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp" >
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:orientation="vertical" >
         </LinearLayout>
 
         <TextView
             android:id="@+share/text_no_items"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:text="@string/sharing_no_items"
             android:textColor="@android:color/darker_gray" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_marginTop="8dp"
             android:background="@drawable/gradient_blue"
             android:orientation="horizontal" >
 
@@ -285,36 +307,30 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="3px"
-            android:background="@drawable/actionbar_shadow_blue" />
-
         <LinearLayout
             android:id="@+share/container_warnings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:focusable="false"
-            android:orientation="vertical"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp" >
+            android:orientation="vertical" >
         </LinearLayout>
 
         <TextView
             android:id="@+share/text_no_warnings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
             android:text="@string/sharing_no_warnings"
             android:textColor="@android:color/darker_gray" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="8dp"
             android:layout_weight="1" />
 
         <LinearLayout

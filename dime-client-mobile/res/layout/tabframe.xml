@@ -100,8 +100,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="10dp"
-        android:visibility="gone" >
+        android:background="#101410"
+        android:padding="6dp" >
 
         <AutoCompleteTextView
             android:id="@+tabframe/autocompleteTextView_searchfield"
@@ -109,11 +109,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:layout_weight="1"
-            android:ems="10"
-            android:gravity="fill_vertical"
             android:hint="search items..."
             android:singleLine="true"
-            android:text="" >
+            android:text=""
+            android:textSize="11sp" >
 
             <requestFocus />
         </AutoCompleteTextView>
@@ -124,7 +123,9 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="6dp"
             android:gravity="center_vertical"
-            android:text="0 results" />
+            android:text="0 results"
+            android:textSize="11sp"
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
     <TabHost

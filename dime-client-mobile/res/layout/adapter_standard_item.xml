@@ -72,7 +72,7 @@
                     android:layout_width="15dp"
                     android:layout_height="15dp"
                     android:layout_marginTop="5dp"
-                    android:src="@drawable/icon_black_lock" />
+                    android:src="@drawable/icon_black_lock_small" />
 
                 <ImageView
                     android:id="@+id/is_valid_for_sharing"

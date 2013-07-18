@@ -27,6 +27,7 @@
             android:maxLines="1"
             android:paddingBottom="3dp"
             android:singleLine="true"
+            android:tag="name"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -90,6 +91,6 @@
         android:id="@+id/locked"
         android:layout_width="15dp"
         android:layout_height="15dp"
-        android:src="@drawable/icon_black_lock" />
+        android:src="@drawable/icon_black_lock_small" />
 
 </LinearLayout>

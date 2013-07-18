@@ -33,6 +33,7 @@ public class Activity_Unshare_Dialog extends ActivityDime implements OnClickList
 	private List<DisplayableItem> items;
 	private List<DisplayableItem> itemsMarkedForUnsharing = new ArrayList<DisplayableItem>();
 	private List<DisplayableItem> agentsMarkedForUnsharing = new ArrayList<DisplayableItem>();
+	private TextView shareCount;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,7 @@ public class Activity_Unshare_Dialog extends ActivityDime implements OnClickList
 		Button cancelButton = (Button) findViewById(R.unshare.button_cancel);
 		saveButton = (Button) findViewById(R.unshare.button_save);
 		saveButton.setOnClickListener(this);
+		shareCount = (TextView) findViewById(R.unshare.share_count);
 		cancelButton.setOnClickListener(this);
 	}
 	
@@ -67,9 +69,11 @@ public class Activity_Unshare_Dialog extends ActivityDime implements OnClickList
 		if(item instanceof AgentItem) {
 			items = (List<DisplayableItem>) (Object) ModelHelper.getAllShareableItemsDirectlySharedToAgent(mrContext, item.getGuid());
 			addShareableWidgets(sharedContainer, items, itemsMarkedForUnsharing);
+			shareCount.setText(String.valueOf(items.size()));
 		} else if(item instanceof ShareableItem) {
 			List<ACL> acls = ModelHelper.getAclsOfItemAndContainers(mrContext, item);
 			addAgentWidgets(sharedContainer, acls, agentsMarkedForUnsharing);
+			shareCount.setText(String.valueOf(acls.size()));
 		}
 	}
 	

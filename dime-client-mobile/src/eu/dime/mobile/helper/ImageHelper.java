@@ -105,8 +105,6 @@ public class ImageHelper {
 				Bitmap bitmap = ImageHelper.getCachedImageBitmap(url);
 				if(bitmap != null) { 
 					iv.setImageBitmap(bitmap);
-				} else {
-					iv.setImageDrawable(ImageHelper.getDefaultImageDrawable(di, context));
 				}
 			} else {
 				synchronized (ivsToBeUpdated) {
@@ -203,13 +201,5 @@ public class ImageHelper {
     	}
         return icon;
     }
-    
-    public static Bitmap getCachedBitmap(ImageView iv) {
-		Bitmap bitmap = null;
-		if(iv !=null && iv.getDrawingCache() != null){
-			bitmap = Bitmap.createBitmap(iv.getDrawingCache());
-		}
-		return bitmap;
-	}
     
 }

@@ -1,8 +1,6 @@
 package eu.dime.mobile.view.dialog;
 
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -129,7 +127,7 @@ public class Activity_Share_Dialog extends ActivityDime implements OnClickListen
         selectedDataboxes = AndroidModelHelper.getListOfItemsWithGuids(allDataboxes, getIntent().getStringArrayListExtra(TYPES.DATABOX.toString()));
         listOfSelectedAgents.addAll(selectedGroups);
         listOfSelectedAgents.addAll(selectedPersons);
-        selectedProfile = ModelHelper.getDefaultProfileForSharing(mrContext, listOfSelectedAgents);
+        selectedProfile = ModelHelper.getDefaultProfileForSharing(mrContext, listOfSelectedAgents); //TODO get from intent when user selected a profile from the my profile view
     }
     
     @Override
@@ -255,17 +253,17 @@ public class Activity_Share_Dialog extends ActivityDime implements OnClickListen
         	AlertDialog infoAlert = UIHelper.createInfoDialog(this, message, "ok");
             infoAlert.show();
         } 
-        else if(warningsContainer.getChildCount() > 0) {
-        	Builder builder = UIHelper.createAlertDialogBuilder(this, "Confirmation needed", true);
-            builder.setMessage("Do you really want to ignore the warning message and share the selected resources?");
-            builder.setPositiveButton("share", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                	AndroidModelHelper.shareItemsAsynchronously(Activity_Share_Dialog.this, mrContext, listOfSelectedAgents, listOfSelectedItems, selectedProfile);
-                }
-            });
-            UIHelper.displayAlertDialog(builder, false);
-		} 
+//        else if(warningsContainer.getChildCount() > 0) {
+//        	Builder builder = UIHelper.createAlertDialogBuilder(this, "Confirmation needed", true);
+//            builder.setMessage("Do you really want to ignore the warning message and share the selected resources?");
+//            builder.setPositiveButton("share", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                	AndroidModelHelper.shareItemsAsynchronously(Activity_Share_Dialog.this, mrContext, listOfSelectedAgents, listOfSelectedItems, selectedProfile);
+//                }
+//            });
+//            UIHelper.displayAlertDialog(builder, false);
+//		} 
         else {
         	AndroidModelHelper.shareItemsAsynchronously(Activity_Share_Dialog.this, mrContext, listOfSelectedAgents, listOfSelectedItems, selectedProfile);
         }
@@ -309,7 +307,7 @@ public class Activity_Share_Dialog extends ActivityDime implements OnClickListen
 						if(key.equals("fullname")){
 							fullName.setText(value);
 						} else {
-			    			attributeKey.setText(key);
+			    			attributeKey.setText(key + ":");
 			    			attributeValue.setText(value);
 						}
 					}
@@ -317,8 +315,8 @@ public class Activity_Share_Dialog extends ActivityDime implements OnClickListen
 			}
 	    	profileName.setText(item.getName());
     	} else {
-    		fullName.setText("<no profile selected>");
-    		profileName.setText("...");
+    		profileName.setText("<no profile selected>");
+    		fullName.setText("...");
     	}
     }
 
