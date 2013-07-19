@@ -123,7 +123,8 @@ DimeView = {
     createAttributeItemJElement: function(entry){
         var jChildItem = $('<div/>').addClass("childItemProfileAttribute")
             .append(DimeView.createMark(entry, "profileAttributeMark", false))
-            .append('<div class="profileAttributeCategory">'+entry.category+'</div>')
+            .append('<div class="profileAttributeCategory">'
+                    +Dime.PACategory.getCategoryByName(entry.category).caption+'</div>')
             .append('<div class="profileAttributeName">'+ entry.name.substr(0, 23) + '</div>');
 
         var profileAttributeValues = $('<div class="profileAttributeValues"/>');
