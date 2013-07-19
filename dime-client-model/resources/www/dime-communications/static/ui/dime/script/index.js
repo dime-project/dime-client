@@ -818,6 +818,10 @@ DimeView = {
 
         Dime.evaluation.createAndSendEvaluationItemForAction("action_editItem");
         var isEditable=(entry.userId==='@me');
+        
+        if (entry.type===Dime.psMap.TYPE.LIVEPOST){
+            isEditable=false;
+        }
 
         Dime.Dialog.showDetailItemModal(entry, isEditable, message);
     },
