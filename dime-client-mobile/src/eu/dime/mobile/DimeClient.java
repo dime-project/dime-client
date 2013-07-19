@@ -114,7 +114,7 @@ public class DimeClient extends Application implements NotificationListener {
         if (notificationText == null || notificationText.length() == 0) {
             notificationText = "open in #di.me";
         }
-        Notification n = new Notification(R.drawable.icon_color_notification, notificationText, System.currentTimeMillis());
+        Notification n = new Notification(R.drawable.icon_android_notification, notificationText, System.currentTimeMillis());
         n.vibrate = new long[]{100, 200, 100, 500};
         n.setLatestEventInfo(context, notificationText, "open in #di.me", intent);
         androidNotificationManager.notify(NOTIFICATION_GENERAL_ID, n);

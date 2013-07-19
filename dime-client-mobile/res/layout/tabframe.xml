@@ -19,7 +19,7 @@
                 android:layout_width="60dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/button_transp_bar"
-                android:drawableRight="@drawable/icon_white_home"
+                android:drawableRight="@drawable/icon_bar_home"
                 android:onClick="onClick"
                 android:paddingRight="8dp" />
 
@@ -49,7 +49,7 @@
                 android:layout_width="54dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/button_transp_bar"
-                android:drawableRight="@drawable/icon_white_search"
+                android:drawableRight="@drawable/icon_bar_search"
                 android:onClick="onClick"
                 android:paddingRight="4dp" />
         </LinearLayout>
@@ -69,7 +69,7 @@
                 android:layout_width="54dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/button_transp_bar"
-                android:drawableRight="@drawable/icon_white_share"
+                android:drawableRight="@drawable/icon_bar_share"
                 android:onClick="onClick"
                 android:paddingRight="4dp" />
         </LinearLayout>
@@ -89,7 +89,7 @@
                 android:layout_width="54dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/button_transp_bar"
-                android:drawableRight="@drawable/icon_white_action"
+                android:drawableRight="@drawable/icon_bar_action"
                 android:onClick="onClick"
                 android:paddingRight="4dp" />
         </LinearLayout>

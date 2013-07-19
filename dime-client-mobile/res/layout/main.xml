@@ -35,7 +35,7 @@
             android:background="@drawable/button_transp_bar"
             android:onClick="onClick"
             android:padding="4dp"
-            android:src="@drawable/icon_white_logout" />
+            android:src="@drawable/icon_bar_logout" />
     </LinearLayout>
 
     <View
@@ -242,7 +242,7 @@
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
             android:background="@drawable/button_col3_grey"
-            android:drawableLeft="@drawable/icon_black_notification_small"
+            android:drawableLeft="@drawable/icon_color_notification"
             android:drawablePadding="6dp"
             android:focusable="true"
             android:gravity="center_vertical"

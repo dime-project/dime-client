@@ -12,9 +12,11 @@ import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.ClipDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
@@ -37,6 +39,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -65,6 +68,7 @@ import eu.dime.mobile.view.communication.TabActivity_Livepost_Detail;
 import eu.dime.mobile.view.data.TabActivity_Resource_Detail;
 import eu.dime.mobile.view.dialog.Activity_Edit_Item_Dialog;
 import eu.dime.mobile.view.dialog.Activity_Share_Dialog;
+import eu.dime.mobile.view.dialog.Activity_Unshare_Dialog;
 import eu.dime.mobile.view.dialog.ListActivity_Merge_Dialog;
 import eu.dime.mobile.view.people.TabActivity_Group_Detail;
 import eu.dime.mobile.view.people.TabActivity_Person_Detail;
@@ -371,7 +375,7 @@ public class UIHelper {
 		dialog.setTitle("Select Action");
 		((TextView) dialog.findViewById(android.R.id.title)).setTextColor(Color.WHITE);
 		dialog.setContentView(R.layout.dialog_action);
-		dialog.setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.icon_white_action);
+		dialog.setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.icon_bar_action);
 		TextView selection = (TextView) dialog.findViewById(R.action_dialog.selection_text);
 		if (selectedGUIDs != null) {
 			String text = selectedGUIDs.size() + " selected item(s)";
@@ -487,10 +491,9 @@ public class UIHelper {
 	public static void updateInfoContainer(Context context, LinearLayout infoContainer, DisplayableItem di) {
 		LinearLayout llchanged = createNewExpandedViewRow(context);
 		LinearLayout.LayoutParams lpmsProgressBar = new LinearLayout.LayoutParams(0, 5, 1f);
-		LinearLayout.LayoutParams lpmsLabel = new LinearLayout.LayoutParams(100, LinearLayout.LayoutParams.WRAP_CONTENT);
 		lpmsProgressBar.gravity = Gravity.CENTER_VERTICAL;
-		TextView labelTV = createTextView(context, R.style.dimeTheme, Typeface.NORMAL, 11, lpmsLabel, true);
-		labelTV.setText("changed:");
+		TextView labelTV = createTextView(context, R.style.dimeTheme, Typeface.NORMAL, 11, null, true);
+		labelTV.setText("changed:  ");
 		TextView valueTV = createTextView(context, R.style.dimeTheme, Typeface.NORMAL, 11, null, true);
 		valueTV.setText(UIHelper.formatDateByMillis(di.getLastUpdated()));
 		llchanged.addView(labelTV);
@@ -498,7 +501,7 @@ public class UIHelper {
 		infoContainer.addView(llchanged);
 		if(!di.getMType().equals(TYPES.GROUP)) {
 			LinearLayout llbar = createNewExpandedViewRow(context);
-			TextView labelTVbar = createTextView(context, R.style.dimeTheme, Typeface.NORMAL, 11, lpmsLabel, true);
+			TextView labelTVbar = createTextView(context, R.style.dimeTheme, Typeface.NORMAL, 11, null, true);
 			TextView barText = new TextView(context);
 			barText.setTextSize(11);
 			barText.setPadding(15, 0, 0, 0);
@@ -716,30 +719,54 @@ public class UIHelper {
         return emptyText;
 	}
 
-	public static LinearLayout createSharingWidget(final Context context, final DisplayableItem item, final List<DisplayableItem> selectedItems) {
-		LinearLayout ll = new LinearLayout(context);
-		ll.setOrientation(LinearLayout.HORIZONTAL);
-		ll.setPadding(0, 5, 0, 5);
-		ll.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+	public static LinearLayout createSharingWidget(final Context context, final DisplayableItem item, final List<DisplayableItem> items) {
+		final LinearLayout ll = new LinearLayout(context);
+		ll.setPadding(0, 0, 0, 10);
 		ImageView image = new ImageView(context);
-		image.setLayoutParams(new LayoutParams(40, 40));
-		image.setPadding(0, 0, 10, 0);
-		image.setImageResource(getDrawableId(item));
-		Button recycleButton = new Button(context);
-		recycleButton.setBackgroundResource(R.drawable.icon_black_recycle_small);
+		int id = 0;
+		switch (item.getMType()) {
+		case GROUP:
+			id = R.drawable.icon_small_group;
+			break;
+		case RESOURCE:
+			id = R.drawable.icon_small_resource;
+			break;
+		case DATABOX:
+			id = R.drawable.icon_small_databox;
+			break;
+		case PERSON:
+			id = R.drawable.icon_small_person;
+			break;
+		case LIVEPOST:
+			id = R.drawable.icon_small_communication;
+			break;
+		default:
+			id = R.drawable.icon_small_info;
+			break;
+		}
+		Drawable drawable = context.getResources().getDrawable(id).mutate();
+		drawable.setColorFilter(getWarningColor(context, item), Mode.SRC_ATOP);
+		image.setImageDrawable(drawable);
+		ImageButton recycleButton = new ImageButton(context);
+		recycleButton.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
+		recycleButton.setImageResource(R.drawable.icon_small_recycle);
+		recycleButton.setPadding(0, 0, 0, 0);
 		recycleButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				selectedItems.remove(item);
-				((Activity_Share_Dialog) context).updateViewOnSelectionChanged();
+				if(context instanceof Activity_Share_Dialog) {
+					items.remove(item);
+					((Activity_Share_Dialog) context).updateViewOnSelectionChanged();
+				} else if(context instanceof Activity_Unshare_Dialog){
+					items.add(item);
+					((LinearLayout) ll.getParent()).removeView(ll);
+				}
 			}
 		});
-		recycleButton.setLayoutParams(new LayoutParams(40, 40));
-		recycleButton.setGravity(Gravity.RIGHT);
 		TextView text = createTextView(context, -1, -1, -1, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1f), true);
 		text.setText(item.getName());
-		text.setPadding(0, 0, 0, 5);
 		text.setGravity(Gravity.CENTER_VERTICAL);
+		text.setPadding(10, 0, 0, 0);
 		ll.addView(image);
 		ll.addView(text);
 		ll.addView(recycleButton);
@@ -749,24 +776,20 @@ public class UIHelper {
 	@SuppressWarnings("deprecation")
 	public static View createWarningWidget(final Context context, AdvisoryProperties advisoryProperty) {
 		LinearLayout llparent = createLinearLayout(context, LinearLayout.VERTICAL);
+		llparent.setPadding(0, 0, 0, 10);
 		LinearLayout llchild = new LinearLayout(context);
 		ImageView image = new ImageView(context);
-		image.setLayoutParams(new LayoutParams(40, 40));
 		image.setPadding(0, 0, 10, 0);
-		final Button expand = new Button(context);
+		final ImageView expand = new ImageView(context);
 		TextView headline = createTextView(context, -1, -1, 14, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1f), true);
 		headline.setText(advisoryProperty.getHeadline());
 		headline.setGravity(Gravity.CENTER_VERTICAL);
 		final TextView text = createTextView(context, R.style.dimeTheme, Typeface.NORMAL, 12, null, false);
 		text.setText(advisoryProperty.getAdvisoryText());
+		text.setPadding(48, -5, 48, 5);
 		text.setVisibility(View.GONE);
-		text.setPadding(40, -5, 40, 5);
 		image.setImageResource(advisoryProperty.getDrawableId());
-		expand.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.button_expand_bar));
-		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(30, 30);
-		lp.setMargins(0, 5, 0, 5);
-		expand.setLayoutParams(lp);
-		expand.setGravity(Gravity.CENTER_VERTICAL);
+		expand.setBackgroundResource(R.drawable.button_expand_bar);
 		llchild.setTag(true);
 		llchild.setPadding(0, 5, 0, 0);
 		llchild.setOnClickListener(new OnClickListener() {
@@ -790,35 +813,6 @@ public class UIHelper {
 		llparent.addView(text);
 		return llparent;
 	}
-
-	public static LinearLayout createUnsahreWidget(final Context context, final DisplayableItem item, final List<DisplayableItem> items) {
-		final LinearLayout ll = new LinearLayout(context);
-		ll.setOrientation(LinearLayout.HORIZONTAL);
-		ll.setPadding(0, 5, 0, 5);
-		ll.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-		ImageView image = new ImageView(context);
-		image.setLayoutParams(new LayoutParams(40, 40));
-		image.setPadding(0, 0, 10, 0);
-		image.setImageResource(getDrawableId(item));
-		Button recycleButton = new Button(context);
-		recycleButton.setBackgroundResource(R.drawable.icon_black_recycle_small);
-		recycleButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				((LinearLayout) ll.getParent()).removeView(ll);
-				items.add(item);
-			}
-		});
-		recycleButton.setLayoutParams(new LayoutParams(40, 40));
-		recycleButton.setGravity(Gravity.RIGHT);
-		TextView text = createTextView(context, -1, -1, -1, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1f), true);
-		text.setText(item.getName());
-		text.setGravity(Gravity.CENTER_VERTICAL);
-		ll.addView(image);
-		ll.addView(text);
-		ll.addView(recycleButton);
-		return ll;
-	}
 	
 	@SuppressWarnings("deprecation")
 	public static void paintDimeProgressBar(Context context, ProgressBar pb, DisplayableItem di) {
@@ -838,9 +832,9 @@ public class UIHelper {
 	public static String getTrustOrPrivacyLabelOfProgressBar(DisplayableItem di) {
 		String s = "";
 		if(ModelHelper.isAgent(di.getMType())) {
-			s = "Trust:";
+			s = "Trust:    ";
 		} else if(ModelHelper.isShareable(di.getMType())) {
-			s = "Privacy:";
+			s = "Privacy:  ";
 		}
 		return s;
 	}
@@ -919,7 +913,7 @@ public class UIHelper {
         String notificationText = "Error occurred trying to get notification text!";
         String sender = "Personal Server";
         Intent intent = new Intent();           
-        int drawableId = R.drawable.icon_black_notification_small;
+        int drawableId = R.drawable.icon_black_info;
         if(userNotification.getUnType().equals(UN_TYPE.REF_TO_ITEM)) {
         	try {
 	            UNEntryRefToItem entry = (UNEntryRefToItem) userNotification.getUnEntry();
@@ -987,7 +981,7 @@ public class UIHelper {
 	    } else if(userNotification.getUnType().equals(UN_TYPE.MESSAGE)){
 	    	UNEntryMessage entry = (UNEntryMessage) userNotification.getUnEntry();
 	    	notificationText = entry.getMessage() + " Link: " + entry.getLink();
-	    	drawableId = R.drawable.icon_black_info_small;
+	    	drawableId = R.drawable.icon_small_info;
 	    } else if(userNotification.getUnType().equals(UN_TYPE.SITUATION_RECOMMENDATION)){
 	    	UNEntrySituationRecommendation entry = (UNEntrySituationRecommendation) userNotification.getUnEntry();
 	    	SituationItem si = (SituationItem) AndroidModelHelper.getGenItemSynchronously(context, new DimeIntentObject(entry.getGuid(), TYPES.SITUATION));
@@ -1006,9 +1000,9 @@ public class UIHelper {
 		String warningText = "";
 		int imageId = 0;
 		if (ai.getWarningLevel() <= 0.5) {
-			imageId = R.drawable.share_state_severe;
+			imageId = R.drawable.icon_small_share_severe;
 		} else {
-			imageId = R.drawable.share_state_critical;
+			imageId = R.drawable.icon_small_share_critical;
 		}
 		String warningType = ai.getWarningType();
 		// untrusted
@@ -1068,7 +1062,7 @@ public class UIHelper {
 		else if(warningType.equals(AdvisoryItem.WARNING_TYPES[6])) {
 			headline = context.getString(R.string.sharing_warning_not_possible);
 			warningText = context.getString(R.string.sharing_warning_not_possible_detailed);
-			imageId = R.drawable.icon_black_info_small;
+			imageId = R.drawable.icon_small_info;
 		}
 		return new AdvisoryProperties(headline, warningText, imageId);
 	}
@@ -1125,57 +1119,6 @@ public class UIHelper {
 			break;
 		}
 		return new StandardDialogProperties(label, infoText, 0);
-	}
-	
-	private static int getDrawableId(DisplayableItem di) {
-		int id = 0;
-		double value = AndroidModelHelper.getTrustOrPrivacyLevelForDisplayableItem(di);
-		switch (di.getMType()) {
-		case GROUP:
-			//icon_color_group_trust_low; id = R.drawable.icon_color_group_trust_medium; id = R.drawable.icon_color_group_trust_high;
-			id = R.drawable.icon_black_group;
-			break;
-		case RESOURCE:
-			if (value < 1) {
-				id = R.drawable.icon_color_data_resource_privacy_low;
-			} else if (value < 2) {
-				id = R.drawable.icon_color_data_resource_privacy_medium;
-			} else {
-				id = R.drawable.icon_color_data_resource_privacy_high;
-			}
-			break;
-		case DATABOX:
-			if (value < 1) {
-				id = R.drawable.icon_color_databox_privacy_low;
-			} else if (value < 2) {
-				id = R.drawable.icon_color_databox_privacy_medium;
-			} else {
-				id = R.drawable.icon_color_databox_privacy_high;
-			}
-			break;
-		case PERSON:
-			if (value < 1) {
-				id = R.drawable.icon_color_person_trust_low;
-			} else if (value < 2) {
-				id = R.drawable.icon_color_person_trust_medium;
-			} else {
-				id = R.drawable.icon_color_person_trust_high;
-			}
-			break;
-		case LIVEPOST:
-			if (value < 1) {
-				id = R.drawable.icon_color_communication_low;
-			} else if (value < 2) {
-				id = R.drawable.icon_color_communication_medium;
-			} else {
-				id = R.drawable.icon_color_communication_high;
-			}
-			id = R.drawable.icon_black_communication;
-			break;
-		default:
-			break;
-		}
-		return id;
 	}
 	
 	private static int getWarningColor(Context context, DisplayableItem di) {

@@ -31,7 +31,7 @@
             android:background="@drawable/button_col2_yellow"
             android:onClick="onClick"
             android:padding="0dp"
-            android:src="@drawable/icon_white_search" />
+            android:src="@drawable/icon_bar_search" />
     </LinearLayout>
 
     <LinearLayout

@@ -55,7 +55,7 @@
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/button_transp_bar"
-                android:drawableRight="@drawable/icon_white_search"
+                android:drawableRight="@drawable/icon_bar_search"
                 android:paddingRight="4dp" />
         </LinearLayout>
     </LinearLayout>

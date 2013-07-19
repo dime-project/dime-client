@@ -112,8 +112,7 @@
                     android:minHeight="20dp"
                     android:minWidth="50dp"
                     android:progress="0"
-                    android:progressDrawable="@drawable/seek_background"
-                    android:thumb="@drawable/seek_handler" />
+                    android:progressDrawable="@drawable/seek_background" />
 
                 <TextView
                     android:id="@+edit/bar_text"

@@ -138,8 +138,8 @@ public abstract class TabActivityDime extends TabActivity implements OnClickList
             ((InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInputFromWindow(searchField.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
             searchField.requestFocus();
             if(header!=null) {
-            	TextView text = (TextView) header.findViewWithTag("");
-            	if(text != null && text.getText().length() > 0) searchField.setHint("search items...");//TODO
+            	TextView text = (TextView) header.findViewWithTag("name");
+            	if(text != null && text.getText().length() > 0) searchField.setHint("search items of " + text.getText() + "...");
             	header.setVisibility(View.GONE);
             }
         } else {

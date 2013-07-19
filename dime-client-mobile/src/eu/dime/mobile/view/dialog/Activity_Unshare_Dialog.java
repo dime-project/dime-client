@@ -3,12 +3,14 @@ package eu.dime.mobile.view.dialog;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import eu.dime.control.LoadingViewHandler;
 import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
@@ -91,25 +93,26 @@ public class Activity_Unshare_Dialog extends ActivityDime implements OnClickList
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.unshare.button_save:
+			int errors = 0;
 			if(item instanceof AgentItem) {
 				for(DisplayableItem di : itemsMarkedForUnsharing) {
 					try {
 						di.removeAccessingAgent(item.getGuid(), item.getMType());
-						AndroidModelHelper.updateGenItemAsyncronously(di, null, this, mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_unshare_save));
 					} catch (Exception e) {
-						e.printStackTrace();
+						errors++;
 					}
 				}
 			} else if(item instanceof ShareableItem) {
 				for(DisplayableItem di : agentsMarkedForUnsharing) {
 					try {
 						item.removeAccessingAgent(di.getGuid(), di.getMType());
-					} catch (Exception e) {
-						e.printStackTrace();
+					} catch (Exception e) {	
+						errors++;
 					}
 				}
-				AndroidModelHelper.updateGenItemAsyncronously(item, null, this, mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_unshare_save));
 			}
+			if(errors > 0) Toast.makeText(this, "Could not unshare " + errors + " items!", Toast.LENGTH_SHORT).show();
+			AndroidModelHelper.updateGenItemAsyncronously(item, null, this, mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_unshare_save));
 			finish();
 			break;
 		case R.unshare.button_cancel:
@@ -120,9 +123,9 @@ public class Activity_Unshare_Dialog extends ActivityDime implements OnClickList
 	}
 	
 	private void addShareableWidgets(LinearLayout ll, List<DisplayableItem> items, List<DisplayableItem> markableItems){
-    	if(items.size()>0){
+    	if(items.size() > 0){
 	    	for(DisplayableItem item : items){
-		    	ll.addView(UIHelper.createUnsahreWidget(this,item, markableItems));
+		    	ll.addView(UIHelper.createSharingWidget(this,item, markableItems));
 	        }
     	} else {
     		TextView tv = new TextView(this);
@@ -134,11 +137,11 @@ public class Activity_Unshare_Dialog extends ActivityDime implements OnClickList
     }
 	
 	private void addAgentWidgets(LinearLayout ll, List<ACL> items, List<DisplayableItem> markableItems){
-    	if(items.size()>0 && items.get(0).getACLPackages().iterator().hasNext()){
+    	if(items.size() > 0 && items.get(0).getACLPackages().iterator().hasNext()){
 	    	for(ACL item : items){
 	    		for (String guid : item.getAgentGuids()) {
 					DisplayableItem agent = (DisplayableItem) ModelHelper.getAgent(mrContext, guid);
-					ll.addView(UIHelper.createUnsahreWidget(this,agent, markableItems));
+					ll.addView(UIHelper.createSharingWidget(this,agent, markableItems));
 				}
 		    	
 	        }
