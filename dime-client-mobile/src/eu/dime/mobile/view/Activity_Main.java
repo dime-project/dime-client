@@ -84,13 +84,19 @@ public class Activity_Main extends ActivityDime implements OnClickListener, OnLo
     @Override
     protected void onResume() {
         super.onResume();
-        try {
-	        DimeClient.addStringToViewStack(TAG.substring(9)); //remove Activity_
-	        dimeUser.setText(DimeClient.getUserMainSaid());
-        	startTask("Initializing...");
-        } catch (Exception e) {	
-			finish();
-		}
+        if(DimeClient.getSettings().getAuthItem() != null) {
+	        try {
+		        DimeClient.addStringToViewStack(TAG.substring(9)); //remove Activity_
+		        dimeUser.setText(DimeClient.getUserMainSaid());
+	        	startTask("Initializing...");
+	        } catch (Exception e) {	
+				finish();
+			}
+        } else {
+        	Toast.makeText(getApplicationContext(), "Error occurred! Please login again...", Toast.LENGTH_SHORT).show();
+        	startActivity(new Intent(Activity_Main.this, Activity_Shutdown.class));	                	
+        	finish();
+        }
     }
     
 	@Override

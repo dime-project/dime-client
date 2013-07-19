@@ -351,6 +351,7 @@ public class UIHelper {
 				dialog.dismiss();
 			}
 		});
+		dialog.setCancelable(true);
     	((TextView) dialog.findViewById(android.R.id.message)).setTextColor(Color.WHITE);
     	return dialog;
 	}

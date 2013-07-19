@@ -32,12 +32,21 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
-    
+
+    <style name="Theme.Transparent" parent="android:Theme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
     <!--
         <item name="android:paddingLeft"></item>
         <item name="android:paddingRight"></item>
         <item name="android:paddingTop"></item>
-        <item name="android:paddingBottom"></item>
-        
-     -->
+        <item name="android:paddingBottom"></item>
+    -->
+
 </resources>

@@ -147,8 +147,7 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
 				(overwriteDNS) ? Integer.parseInt(portEditText.getText().toString()) : DimeHelper.DEFAULT_PORT,
 				(overwriteDNS) ? isHttpsCheckBox.isChecked() : DimeHelper.DEFAULT_USE_HTTPS,
 				remember.isChecked(),
-				overwriteDNS)
-    	.execute();
+				overwriteDNS);
     	dialog = ProgressDialog.show(this, null, "Trying to login...", true, true);
     	dialog.setOnCancelListener(new OnCancelListener() {
 			@Override
@@ -158,6 +157,7 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
 			}
 		});
     	((TextView) dialog.findViewById(android.R.id.message)).setTextColor(Color.WHITE);
+    	loginTask.execute();
     }
     
     private class MyAsyncTak extends AsyncTask<Void, Void, String> {

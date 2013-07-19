@@ -61,10 +61,10 @@ public class Activity_Resource_Detail extends ActivityDime implements OnClickLis
     public void onClick(View v) {
         switch (v.getId()){
         case R.resource.button_openfile:
-        	FileHelper.saveFileAsynchronouslyOnSDAndOpen(this, resource, UIHelper.createCustonProgressDialog(this, "Trying to open the file!"));
+        	FileHelper.saveResourceItemAsynchronouslyOnSDAndOpen(this, resource, UIHelper.createCustonProgressDialog(this, "Trying to open the file!"));
         	break;
         case R.resource.button_downloadfile:
-        	FileHelper.saveFileAsynchronouslyOnSD(this, resource, UIHelper.createCustonProgressDialog(this, "Trying to download the file!"));
+        	FileHelper.saveResourceItemAsynchronouslyOnSD(this, resource, UIHelper.createCustonProgressDialog(this, "Trying to download the file!"));
         	break;
         }
     }

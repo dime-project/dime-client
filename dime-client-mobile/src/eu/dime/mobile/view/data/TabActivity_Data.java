@@ -3,7 +3,6 @@ package eu.dime.mobile.view.data;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -11,7 +10,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -21,7 +19,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 import eu.dime.control.LoadingViewHandler;
 import eu.dime.mobile.R;
@@ -192,13 +189,8 @@ public class TabActivity_Data extends TabActivityDime implements IResultOfStanda
 		switch (requestCode) {
 		case PICK_FILE:
 			if (resultCode == Activity.RESULT_OK) {
-				final ProgressDialog dialog = new ProgressDialog(this);
-				dialog.setCancelable(true);
-				dialog.setMessage("Uploading file to personal server...");
-				dialog.show();
-				TextView tv = (TextView) dialog.findViewById(android.R.id.message);
-				tv.setTextColor(Color.WHITE);
-				FileHelper.uploadFile(currentActivity, dialog, intent);
+				ProgressDialog dialog = UIHelper.createCustonProgressDialog(this, "Uploading file to personal server...");
+				FileHelper.uploadFile(currentActivity, dialog, intent.getData());
 			} else {
 				Toast.makeText(TabActivity_Data.this, "No file selected!", Toast.LENGTH_SHORT).show();
 			}

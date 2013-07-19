@@ -15,6 +15,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -29,10 +30,14 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import eu.dime.mobile.DimeClient;
+import eu.dime.mobile.helper.objects.DimeIntentObject;
 import eu.dime.mobile.view.abstr.ListActivityDime;
+import eu.dime.mobile.view.data.TabActivity_Data;
 import eu.dime.model.GenItem;
 import eu.dime.model.ModelHelper;
+import eu.dime.model.TYPES;
 import eu.dime.model.displayable.ResourceItem;
 import eu.dime.restapi.MultiPartPostClient;
 
@@ -43,7 +48,6 @@ import eu.dime.restapi.MultiPartPostClient;
 public class FileHelper implements sit.io.FileHelperI {
 
 	public void writeToFile(String fileName, String content) throws IOException {
-
 		File root = Environment.getExternalStorageDirectory();
 		if (root.canWrite()) {
 			File gpxfile = new File(root, fileName);
@@ -56,12 +60,12 @@ public class FileHelper implements sit.io.FileHelperI {
 		}
 	}
 	
-	public static void saveFileAsynchronouslyOnSDAndOpen(final Activity activity, final ResourceItem resource, final Dialog dialog) {
+	public static void saveResourceItemAsynchronouslyOnSDAndOpen(final Activity activity, final ResourceItem resource, final Dialog dialog) {
 		(new AsyncTask<Void, Void, String>() {
 
 			@Override
 			protected String doInBackground(Void... params) {
-				return saveFileOnSD(resource);
+				return saveResourceItemOnSD(resource);
 			}
 
 			@Override
@@ -83,12 +87,12 @@ public class FileHelper implements sit.io.FileHelperI {
 		}).execute();
 	}
 	
-	public static void saveFileAsynchronouslyOnSD(final Activity activity, final ResourceItem resource, final Dialog dialog) {
+	public static void saveResourceItemAsynchronouslyOnSD(final Activity activity, final ResourceItem resource, final Dialog dialog) {
 		(new AsyncTask<Void, Void, String>() {
 
 			@Override
 			protected String doInBackground(Void... params) {
-				return saveFileOnSD(resource);
+				return saveResourceItemOnSD(resource);
 			}
 
 			@Override
@@ -99,7 +103,7 @@ public class FileHelper implements sit.io.FileHelperI {
 		}).execute();
 	}
 	
-	private static String saveFileOnSD(ResourceItem resource) {
+	private static String saveResourceItemOnSD(ResourceItem resource) {
 		String result = "";
 		if (Environment.getExternalStorageDirectory().canWrite()) {
 			try {
@@ -193,12 +197,11 @@ public class FileHelper implements sit.io.FileHelperI {
 		}
 	}
 	
-	public static void uploadFile(final Activity activity, final Dialog dialog, final Intent intent) {
+	public static void uploadFile(final Activity activity, final Dialog dialog, final Uri selectedImageUri) {
 		(new AsyncTask<Void, Void, String>() {
 
 			@Override
 			protected String doInBackground(Void... params) {
-				Uri selectedImageUri = intent.getData();
 				String filePath = null;
 				String message = "";
 				try {
@@ -232,9 +235,13 @@ public class FileHelper implements sit.io.FileHelperI {
 			@SuppressWarnings("unchecked")
 			@Override
 			protected void onPostExecute(String message) {
-				Toast.makeText(activity, message, Toast.LENGTH_LONG).show();
-				dialog.dismiss();
-				if(activity instanceof ListActivityDime) ((ListActivityDime<GenItem>) activity).reloadList();
+				Toast.makeText(DimeClient.getAppContext(), message, Toast.LENGTH_LONG).show();
+				if(dialog != null && dialog.isShowing()) dialog.dismiss();
+				if(activity instanceof ListActivityDime) {
+					((ListActivityDime<GenItem>) activity).reloadList();
+				} else if(activity instanceof UploadPictureToPS) {
+					activity.startActivity(DimeIntentObjectHelper.populateIntent(new Intent(activity, TabActivity_Data.class), new DimeIntentObject(TYPES.RESOURCE)));
+				}
 			}
 		}).execute();
 	}
