@@ -246,7 +246,7 @@ public abstract class TabActivityDime extends TabActivity implements OnClickList
 		ll.setBackgroundResource(R.drawable.tab);
 		ll.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
 		ImageView image = new ImageView(this);
-		image.setImageResource(UIHelper.getResourceId(getResources(), tabname));
+		image.setImageResource(UIHelper.getResourceIdByName(getResources(), tabname));
 		image.setLayoutParams(new LayoutParams(40, 40));
 		image.setPadding(0, 0, 10, 0);
 		TextView txtTabInfo = new TextView(this);

@@ -74,7 +74,7 @@ public class Settings {
         username = androidSettings.getString(PS_USER_NAME_TAG,  "");
         overrideDNS = androidSettings.getBoolean(PS_OVERRIDE_DNS, false);       
         try {
-            password = CryptHelper.getUnObscuredContent(password, androidSettings.getString(PS_KEY_TAG, ""));
+        	password = CryptHelper.getUnObscuredContent(username, androidSettings.getString(PS_KEY_TAG, ""));
         } catch (IOException ex) {
             Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
         }

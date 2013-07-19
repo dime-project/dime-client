@@ -1,6 +1,7 @@
 package eu.dime.mobile.view.abstr;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import android.content.Intent;
@@ -110,11 +111,14 @@ public abstract class TabActivityDisplayableItemDetail extends TabActivityDime i
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	protected void onClickActionButton() {
-		selectedGUIDs = ((ListActivityDime) currentActivity).getSelectionGUIDS();
 		List<String> actions = new ArrayList<String>();
 		actions.addAll(getActionsForDetailView());
+		if(currentActivity instanceof ListActivityDime) {
+			selectedGUIDs = ((ListActivityDime) currentActivity).getSelectionGUIDS();
+		} else if(currentActivity instanceof ActivityDime) {
+			selectedGUIDs = Arrays.asList(di.getGuid());
+		}
 		actions.add(getString(R.string.action_editItem));
-		actions.add(getString(R.string.action_share));
 		actions.add(getString(R.string.action_unshare));
 		actionDialog = UIHelper.createActionDialog(this, actions, this, selectedGUIDs);
 		actionDialog.show();

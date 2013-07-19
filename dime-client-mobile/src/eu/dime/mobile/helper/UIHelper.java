@@ -56,6 +56,7 @@ import eu.dime.mobile.helper.objects.ResultObjectDisplayable;
 import eu.dime.mobile.helper.objects.ResultObjectProfileSharing;
 import eu.dime.mobile.helper.objects.ResultObjectServiceAdapter;
 import eu.dime.mobile.helper.objects.IResultOfStandardDialog;
+import eu.dime.mobile.helper.objects.StandardDialogProperties;
 import eu.dime.mobile.view.abstr.BaseAdapterDisplayableItem;
 import eu.dime.mobile.view.adapter.BaseAdapter_Dialog_Sharing_Profile;
 import eu.dime.mobile.view.adapter.BaseAdapter_ServiceAdapter;
@@ -235,10 +236,11 @@ public class UIHelper {
 					}, 200);
 				}
 			});
+			StandardDialogProperties properties = getStandardDialogProperties(activity.getResources(), type);
 			TextView titleTextView = (TextView) header.findViewById(R.dialog.title);
-			titleTextView.setText(getLabelForStandardDialog(activity.getResources(), type));
+			titleTextView.setText(properties.getlabel());
 			TextView infoText = (TextView) header.findViewById(R.dialog.info_text);
-			infoText.setText(getInfoTextForStandardDialog(activity.getResources(), type));
+			infoText.setText(properties.getInfoText());
 			Button search = (Button) header.findViewById(R.dialog.button_search);
 			search.setOnClickListener(new OnClickListener() {
 				@Override
@@ -385,7 +387,7 @@ public class UIHelper {
 			tmp.setText(name);
 			tmp.setTextSize(12);
 			tmp.setGravity(Gravity.CENTER_VERTICAL);
-			StateListDrawable sld = (StateListDrawable) context.getResources().getDrawable(UIHelper.getResourceId(context.getResources(), name));
+			StateListDrawable sld = (StateListDrawable) context.getResources().getDrawable(UIHelper.getResourceIdByName(context.getResources(), name));
 			tmp.setCompoundDrawablesWithIntrinsicBounds(sld, null, null, null);
 			tmp.setCompoundDrawablePadding(10);
 			LinearLayout.LayoutParams lpms = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -856,6 +858,60 @@ public class UIHelper {
 		}
 		return hint;
 	}
+
+	/** ------------------------------------------------------------------------------------------------------------------------------------------
+	 ** format functions
+	 ** ------------------------------------------------------------------------------------------------------------------------------------------ */
+
+	@SuppressLint("SimpleDateFormat")
+	public static String formatDateByMillis(long timeStamp) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(timeStamp);
+		DateFormat df = new SimpleDateFormat("E', 'dd MMM yyyy"); // DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.SHORT)
+		return df.format(cal.getTime());
+	}
+	
+	public static String formatStringList(List<String> strings) {
+		StringBuilder sb = new StringBuilder();
+		String delim = " -";
+		if(strings.size() == 0) {
+			//should not occur
+			sb.append(delim).append("\'" + "empty" + "\'");
+		} else {
+			for (int i = 0; i < strings.size(); i++) {
+				sb.append(delim).append("\'" + strings.get(i) + "\'");
+				delim = System.getProperty("line.separator") + " -";
+			}
+		}
+		return sb.toString();
+	}
+	
+	public static String concatNamesLists(String s1, String s2) {
+		String result = "";
+		if (s1.length() > 0 && s2.length() > 0) {
+			result = s1 + ", " + s2;
+		} else if (s1.length() > 0) {
+			result = s1;
+		} else if (s2.length() > 0) {
+			result = s2;
+		}
+		return result;
+	}
+	
+	@SuppressLint("DefaultLocale") 
+    public static String formatStringOnlyFirstCharUpperCase(String string) {
+    	string = string.toLowerCase();
+    	String firstChar = "" + string.charAt(0);
+    	return firstChar.toUpperCase() + string.substring(1);
+    }
+	
+	public static String formatDoubleToPercentage(double score) {
+		return ((int) ((score/1.0d) * 100)) + "%";
+	}
+
+	/** ------------------------------------------------------------------------------------------------------------------------------------------
+	 ** resources functions
+	 ** ------------------------------------------------------------------------------------------------------------------------------------------ */
 	
 	public static NotificationProperties getNotificationProperties(Context context, UserNotificationItem userNotification) {
 		DimeIntentObject dio = new DimeIntentObject();
@@ -943,102 +999,22 @@ public class UIHelper {
 	    }
 	    return new NotificationProperties(notificationText, DimeIntentObjectHelper.populateIntent(intent, dio), drawableId, sender);
 	}
-
-	/** ------------------------------------------------------------------------------------------------------------------------------------------
-	 ** format functions
-	 ** ------------------------------------------------------------------------------------------------------------------------------------------ */
-
-	@SuppressLint("SimpleDateFormat")
-	public static String formatDateByMillis(long timeStamp) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTimeInMillis(timeStamp);
-		DateFormat df = new SimpleDateFormat("E', 'dd MMM yyyy"); // DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.SHORT)
-		return df.format(cal.getTime());
-	}
-	
-	public static String formatStringList(List<String> strings) {
-		StringBuilder sb = new StringBuilder();
-		String delim = " -";
-		if(strings.size() == 0) {
-			//should not occur
-			sb.append(delim).append("\'" + "empty" + "\'");
-		} else {
-			for (int i = 0; i < strings.size(); i++) {
-				sb.append(delim).append("\'" + strings.get(i) + "\'");
-				delim = System.getProperty("line.separator") + " -";
-			}
-		}
-		return sb.toString();
-	}
-	
-	public static String concatNamesLists(String s1, String s2) {
-		String result = "";
-		if (s1.length() > 0 && s2.length() > 0) {
-			result = s1 + ", " + s2;
-		} else if (s1.length() > 0) {
-			result = s1;
-		} else if (s2.length() > 0) {
-			result = s2;
-		}
-		return result;
-	}
-	
-	@SuppressLint("DefaultLocale") 
-    public static String formatStringOnlyFirstCharUpperCase(String string) {
-    	string = string.toLowerCase();
-    	String firstChar = "" + string.charAt(0);
-    	return firstChar.toUpperCase() + string.substring(1);
-    }
-	
-	public static String formatDoubleToPercentage(double score) {
-		return ((int) ((score/1.0d) * 100)) + "%";
-	}
-
-	/** ------------------------------------------------------------------------------------------------------------------------------------------
-	 ** resources functions
-	 ** ------------------------------------------------------------------------------------------------------------------------------------------ */
 	
 	public static AdvisoryProperties getAdvisoryProperties(Context context, AdvisoryItem ai) {
-		return new AdvisoryProperties(UIHelper.getHeadlineForWarning(context, ai.getWarningType()), UIHelper.getTextForWarning(context, ai), UIHelper.getImageIdForWarning(ai.getWarningLevel()));
-	}
-	
-	public static int getImageIdForWarning(double warningLevel) {
-		int imageId;
-		if (warningLevel <= 0.5) {
+		String headline = "";
+		String warningText = "";
+		int imageId = 0;
+		if (ai.getWarningLevel() <= 0.5) {
 			imageId = R.drawable.share_state_severe;
 		} else {
 			imageId = R.drawable.share_state_critical;
 		}
-		return imageId;
-	}
-	
-	public static String getHeadlineForWarning(Context context, String warningType) {
-		String headline = "";
-		if(warningType.equals(AdvisoryItem.WARNING_TYPES[0])) {
-			headline = context.getResources().getString(R.string.sharing_warning_untrusted);
-		} else if(warningType.equals(AdvisoryItem.WARNING_TYPES[1])) {
-			headline = context.getResources().getString(R.string.sharing_warning_disjunct_groups);
-		} else if(warningType.equals(AdvisoryItem.WARNING_TYPES[2])) {
-			headline = context.getResources().getString(R.string.sharing_warning_unshared_profile);
-		} else if(warningType.equals(AdvisoryItem.WARNING_TYPES[3])) {
-			headline = context.getResources().getString(R.string.sharing_warning_too_many_resources);
-		} else if(warningType.equals(AdvisoryItem.WARNING_TYPES[4])) {
-			headline = context.getResources().getString(R.string.sharing_warning_too_many_receivers);
-		} else if(warningType.equals(AdvisoryItem.WARNING_TYPES[5])) {
-			headline = context.getResources().getString(R.string.sharing_warning_agent_not_valid_for_sharing);
-		} else if(warningType.equals(AdvisoryItem.WARNING_TYPES[6])) {
-			headline = context.getResources().getString(R.string.sharing_warning_not_possible);
-		}
-		return headline;
-	}
-	
-	public static String getTextForWarning(Context context, AdvisoryItem advisoryItem) {
-//		Resources res = context.getResources();
-		String message = "";
+		String warningType = ai.getWarningType();
 		// untrusted
-		if (advisoryItem.getWarningType().equals(AdvisoryItem.WARNING_TYPES[0])) {
-			WarningAttributesUntrusted attributes = (WarningAttributesUntrusted) advisoryItem.getAttributes();
-			message += getWarningText(AndroidModelHelper.getTrustOrPrivacyLevelForDisplayableItem(attributes.getPrivacyValue())) + " privacy: " 
+		if(warningType.equals(AdvisoryItem.WARNING_TYPES[0])) {
+			headline = context.getString(R.string.sharing_warning_untrusted);
+			WarningAttributesUntrusted attributes = (WarningAttributesUntrusted) ai.getAttributes();
+			warningText += getWarningText(AndroidModelHelper.getTrustOrPrivacyLevelForDisplayableItem(attributes.getPrivacyValue())) + " privacy: " 
 					+ System.getProperty("line.separator")
 					+ formatStringList(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getPrivateResources(), true))
 					+ System.getProperty("line.separator")
@@ -1047,125 +1023,107 @@ public class UIHelper {
 					+ formatStringList(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getUntrustedAgents(), false));
 		}
 		// disjunct_groups
-		else if (advisoryItem.getWarningType().equals(AdvisoryItem.WARNING_TYPES[1])) {
-			WarningAttributesDisjunctGroups attributes = (WarningAttributesDisjunctGroups) advisoryItem.getAttributes();
-			message += formatStringList(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getConcernedPersons(), false))
+		else if(warningType.equals(AdvisoryItem.WARNING_TYPES[1])) {
+			headline = context.getString(R.string.sharing_warning_disjunct_groups);
+			WarningAttributesDisjunctGroups attributes = (WarningAttributesDisjunctGroups) ai.getAttributes();
+			warningText += formatStringList(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getConcernedPersons(), false))
 					+ System.getProperty("line.separator")
 					+ "previous recepients:"
 					+ System.getProperty("line.separator")
 					+ formatStringList(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getPreviousSharedGroups(), false));
 		}
 		// profile_not_shared
-		else if (advisoryItem.getWarningType().equals(AdvisoryItem.WARNING_TYPES[2])) {
-			WarningAttributesProfileNotShared attributes = (WarningAttributesProfileNotShared) advisoryItem.getAttributes();
-			message += "the selected profile was never shared with:"
+		else if(warningType.equals(AdvisoryItem.WARNING_TYPES[2])) {
+			headline = context.getString(R.string.sharing_warning_unshared_profile);
+			WarningAttributesProfileNotShared attributes = (WarningAttributesProfileNotShared) ai.getAttributes();
+			warningText += "the selected profile was never shared with:"
 					+ System.getProperty("line.separator")
 					+ formatStringList(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getPersonGuids(), false));
 		}
 		// too_many_resources
-		else if (advisoryItem.getWarningType().equals(AdvisoryItem.WARNING_TYPES[3])) {
-			WarningTooManyResources attributes = (WarningTooManyResources) advisoryItem.getAttributes();
-			message += attributes.getNumberOfResources() 
+		else if(warningType.equals(AdvisoryItem.WARNING_TYPES[3])) {
+			headline = context.getString(R.string.sharing_warning_too_many_resources);
+			WarningTooManyResources attributes = (WarningTooManyResources) ai.getAttributes();
+			warningText += attributes.getNumberOfResources() 
 					+ " items selected!";
 		}
 		// too_many_receivers
-		else if (advisoryItem.getWarningType().equals(AdvisoryItem.WARNING_TYPES[4])) {
-			WarningTooManyReceivers attributes = (WarningTooManyReceivers) advisoryItem.getAttributes();
-			message += attributes.getNumberOfReceivers() +
+		else if(warningType.equals(AdvisoryItem.WARNING_TYPES[4])) {
+			headline = context.getString(R.string.sharing_warning_too_many_receivers);
+			WarningTooManyReceivers attributes = (WarningTooManyReceivers) ai.getAttributes();
+			warningText += attributes.getNumberOfReceivers() +
 					" recipients selected!";
 		}
 		// agent_not_valid_for_sharing
-		else if (advisoryItem.getWarningType().equals(AdvisoryItem.WARNING_TYPES[5])) {
-			WarningAgentNotValidForSharing attributes = (WarningAgentNotValidForSharing) advisoryItem.getAttributes();
-			message += formatStringList(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getAgentsNotValidForSharing(), false))
+		else if(warningType.equals(AdvisoryItem.WARNING_TYPES[5])) {
+			headline = context.getString(R.string.sharing_warning_agent_not_valid_for_sharing);
+			WarningAgentNotValidForSharing attributes = (WarningAgentNotValidForSharing) ai.getAttributes();
+			warningText += formatStringList(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getAgentsNotValidForSharing(), false))
 					+ System.getProperty("line.separator")
 					+ ((attributes.getParentGroup().length() > 0) ? "of group " + AndroidModelHelper.getOwnItemFromStorage(attributes.getParentGroup(), false).getName() + "." + System.getProperty("line.separator") : "")
 					+ "You can only share to persons with a di.me account!";
 		}
 		// sharing_not_possible
-		//FIXME
-		else if (advisoryItem.getWarningType().equals(AdvisoryItem.WARNING_TYPES[6])) {
-			message = context.getResources().getString(R.string.sharing_warning_not_possible_detailed);
+		else if(warningType.equals(AdvisoryItem.WARNING_TYPES[6])) {
+			headline = context.getString(R.string.sharing_warning_not_possible);
+			warningText = context.getString(R.string.sharing_warning_not_possible_detailed);
+			imageId = R.drawable.icon_black_info_small;
 		}
-		return message;
+		return new AdvisoryProperties(headline, warningText, imageId);
 	}
 	
-	private static String getLabelForStandardDialog(Resources res, RESULT_OBJECT_TYPES type) {
+	private static StandardDialogProperties getStandardDialogProperties(Resources res, RESULT_OBJECT_TYPES type) {
 		String label = "";
-		switch (type) {
-		case SERVICE_CONNECTION:
-			label = res.getString(R.string.service_connection_dialog_label);;
-			break;
-		case SHARING_DATABOXES:
-			label = "Select databoxes";
-			break;
-		case SHARING_GROUPS:
-			label = "Select groups";
-			break;
-		case SHARING_LIVEPOSTS:
-			label = "Select liveposts";
-			break;
-		case SHARING_PERSONS:
-			label = "Select persons";
-			break;
-		case SHARING_PROFILE:
-			label = "Select profile";
-			break;
-		case SHARING_RESOURCES:
-			label = "Select resources";
-			break;
-		case ADD_RESOURCES_TO_DATABOX:
-			label = "Select resource(s)";
-			break;
-		case ASSIGN_RESOURCES_TO_DATABOX:
-			label = "Select databox(es)";
-			break;
-		case ADD_PEOPLE_TO_GROUP:
-			label = "Select people";
-			break;
-		case ASSIGN_PEOPLE_TO_GROUP:
-			label = "Select group(s)";
-			break;
-		default:
-			break;
-		}
-		return label;
-	}
-	
-	private static String getInfoTextForStandardDialog(Resources res, RESULT_OBJECT_TYPES type) {
 		String infoText = "";
 		switch (type) {
 		case SERVICE_CONNECTION:
+			label = res.getString(R.string.service_connection_dialog_label);
 			infoText = res.getString(R.string.service_connection_dialog_info);
 			break;
 		case SHARING_DATABOXES:
+			label = "Select databoxes";
 			infoText = res.getString(R.string.sharing_dialog_select_databoxes_info);
 			break;
 		case SHARING_GROUPS:
+			label = "Select groups";
 			infoText = res.getString(R.string.sharing_dialog_select_group_info);
 			break;
 		case SHARING_LIVEPOSTS:
+			label = "Select liveposts";
 			infoText = res.getString(R.string.sharing_dialog_select_liveposts_info);
 			break;
 		case SHARING_PERSONS:
+			label = "Select persons";
 			infoText = res.getString(R.string.sharing_dialog_select_persons_info);
 			break;
 		case SHARING_PROFILE:
+			label = "Select profile";
 			infoText = res.getString(R.string.sharing_dialog_select_profile_info);
 			break;
 		case SHARING_RESOURCES:
+			label = "Select resources";
 			infoText = res.getString(R.string.sharing_dialog_select_resources_info);
 			break;
-		case ADD_RESOURCES_TO_DATABOX : case ASSIGN_RESOURCES_TO_DATABOX:
+		case ADD_RESOURCES_TO_DATABOX:
+			label = "Select resource(s)";
 			infoText = res.getString(R.string.dialog_add_resources_to_databox_info);
 			break;
-		case ADD_PEOPLE_TO_GROUP : case ASSIGN_PEOPLE_TO_GROUP:
+		case ASSIGN_RESOURCES_TO_DATABOX:
+			label = "Select databox(es)";
+			infoText = res.getString(R.string.dialog_add_resources_to_databox_info);
+			break;
+		case ADD_PEOPLE_TO_GROUP:
+			label = "Select people";
+			infoText = res.getString(R.string.dialog_add_people_to_group_info);
+			break;
+		case ASSIGN_PEOPLE_TO_GROUP:
+			label = "Select group(s)";
 			infoText = res.getString(R.string.dialog_add_people_to_group_info);
 			break;
 		default:
 			break;
 		}
-		return infoText;
+		return new StandardDialogProperties(label, infoText, 0);
 	}
 	
 	private static int getDrawableId(DisplayableItem di) {
@@ -1204,14 +1162,13 @@ public class UIHelper {
 			}
 			break;
 		case LIVEPOST:
-			//FIXME
-//			if (value < 1) {
-//				id = R.drawable.icon_color_livepost_trust_low;
-//			} else if (value < 2) {
-//				id = R.drawable.icon_color_livepost_trust_medium;
-//			} else {
-//				id = R.drawable.icon_color_livepost_trust_high;
-//			}
+			if (value < 1) {
+				id = R.drawable.icon_color_communication_low;
+			} else if (value < 2) {
+				id = R.drawable.icon_color_communication_medium;
+			} else {
+				id = R.drawable.icon_color_communication_high;
+			}
 			id = R.drawable.icon_black_communication;
 			break;
 		default:
@@ -1251,7 +1208,7 @@ public class UIHelper {
 		return s;
 	}
 
-	public static int getResourceId(Resources res, String name) {
+	public static int getResourceIdByName(Resources res, String name) {
 		int resId = R.drawable.action_place;
 		// Action icons
 		if (name.equals(res.getString(R.string.action_addPeopleToGroup)) || name.equals(res.getString(R.string.action_addPeopleToGroupDetail))) {

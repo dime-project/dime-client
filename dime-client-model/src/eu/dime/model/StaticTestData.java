@@ -19,10 +19,8 @@ public class StaticTestData {
     public static final String DEFAULT_MAIN_SAID = "ana02"; //HOSTER
     public static final String DEFAULT_PASSWORD = "dimePassForUser";
     public static final String[] SIMPLE_PS_SAIDS = {"max01", "ana02", "tom03"};
-    public static final String[] SHARETEST_NICKNAMES = {"sharetesta", "sharetestb"};
-    public static final String[] SHARETEST_FIRSTNAMES = {"Andreas", "Bastian"};
-    public static final String[] SHARETEST_LASTNAMES = {"Sharetest", "Sharetest"};
     
     public static final String JUAN_USERNAME = DEFAULT_MAIN_SAID;  //in segovia it was defined to have username == main_said
     public static final String JUAN_PASSWORD = "dimepass4owner"; 
+    
 }
