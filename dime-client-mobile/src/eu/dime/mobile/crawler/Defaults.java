@@ -10,7 +10,7 @@ public class Defaults {
 	public static final int DEFAULT_BT_SCAN		= 60;  // seconds 
 	public static final int DEFAULT_WF_SCAN		= 60;  // seconds
 	//public static final int DEFAULT_POS_SCAN	= Constants.POS_ON_REQUEST;  // seconds
-	public static final int DEFAULT_POS_SCAN	= 180;  // seconds
+	public static final int DEFAULT_POS_SCAN	= 1800;  // seconds
 	public static final int DEFAULT_STATUS_SCAN	= 180;  // seconds
 	
 	public static final int DEFAULT_BT_UPDATE		= DEFAULT_BT_SCAN;  // seconds 
