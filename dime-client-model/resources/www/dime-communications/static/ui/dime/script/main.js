@@ -3639,7 +3639,7 @@ Dime.BasicDialog = function(title, caption, dialogId, bodyId, body, cancelHandle
             .clickExt(handlerSelf, cancelHandler);
 
 
-    var footerElement=$('<div></div>').addClass("modal-footer")
+    this.footerElement=$('<div></div>').addClass("modal-footer")
         .append(this.cancelButton)
         .append(this.okButton);
 
@@ -3661,7 +3661,7 @@ Dime.BasicDialog = function(title, caption, dialogId, bodyId, body, cancelHandle
         $('<div class="modal-body" id="'+bodyId+'" ></div>').append(body)
         )
     //footer
-    .append(footerElement);
+    .append(this.footerElement);
 
 };
 
@@ -4027,9 +4027,11 @@ Dime.DetailDialog.prototype = {
     },
 
     createNameInput: function(item){
+        var prefix=((item.type!==Dime.psMap.TYPE.LIVEPOST)?'name of ':'title of ');
+        
         var nameInput=$('<input type="text"></input>').prop("readonly",this.readonly)
                 .addClass("itemDetailNameInput")
-                .attr('placeholder','name of '+Dime.psHelper.getCaptionForItemType(item.type))
+                .attr('placeholder',prefix+Dime.psHelper.getCaptionForItemType(item.type))
                 .val(item.name);
 
         //add assemble function for name
@@ -4322,10 +4324,56 @@ Dime.DetailDialog.prototype = {
         var receivers=[];
         var fromSaid=null;
         var senderDropdown;
+        var sendIsHidden=false;
+
+        var addRemoveClick= function(){
+            var newDialog = new Dime.SelectDialog("Share with", "Persons/Groups", true);
+
+            var itemLoadingFunction = function(){
+                var loadingHandler = function(response){
+                    newDialog.addItemsToList(response);
+                    for(var i=0;i<receivers.length;i++){
+                        newDialog.selectEntryByGuid(receivers[i].guid);
+                    }
+                };
+                Dime.REST.getAll(Dime.psMap.TYPE.PERSON, loadingHandler);
+                Dime.REST.getAll(Dime.psMap.TYPE.GROUP, loadingHandler);
+
+            };
+            var handleResult = function(resultItems, isOK){
+                if(!isOK){
+                    return;
+                }
+                receivers = resultItems;
+                receiverList.empty();
+                jQuery.each(resultItems, function(){
+                    receiverList.append(
+                        Dime.Dialog.Helper.getAgentElement(this)
+                    );
+                });
+                checkAndUpdateSendOk();
+
+            };
+            newDialog.show(itemLoadingFunction, handleResult, this);
+        };
+
+        var checkAndUpdateSendOk=function(){
+
+            if (fromSaid && fromSaid.length>0 && receivers.length>0){
+                dialogRef.dialog.okButton.removeClass("hidden");
+                dialogRef.dialog.okButton.text("Share");
+                //remove the hint
+                dialogRef.dialog.footerElement.find('.livePostHint').remove();
+                sendIsHidden=false;
+            }else if (!sendIsHidden){
+                dialogRef.dialog.okButton.addClass("hidden");
+                dialogRef.dialog.footerElement.append($('<span/>').addClass('livePostHint').text('Please select "From" and "Recipients" to share livepost!'))
+                sendIsHidden=true;
+            }
+        };
 
         var livePostSender = $('<div/>').addClass('livePostSender')
                     .append($('<span/>').addClass('livePostSenderCaption').text("From"));
-
 
         //sender
         var updateProfile=function(response){
@@ -4339,9 +4387,7 @@ Dime.DetailDialog.prototype = {
                 }
                 var updateProfileOnClick=function(){
                     fromSaid=entry.said;
-                    if (receivers.length>0){
-                        dialogRef.dialog.okButton.text("Send");
-                    }
+                    checkAndUpdateSendOk();
                 };
 
                 profileDropdown.push(new BSTool.DropDownEntry(dialogRef, entry.name, updateProfileOnClick));
@@ -4361,46 +4407,13 @@ Dime.DetailDialog.prototype = {
                 var sortedAgents = Dime.psHelper.sortAgents(receivers);
 
                 //update items
-                Dime.psHelper.addAccessForItem(sortedAgents.personGuids, sortedAgents.groupGuids, sortedAgents.serviceGuids, item, fromSaid);
+                Dime.psHelper.addAccessForItem(sortedAgents.pAgents, sortedAgents.gAgents, sortedAgents.sAgents, item, fromSaid);
             }
         }
 
-        var receiverList= $('<div/>').addClass('livePostReceiverList');
+        var receiverList= $('<div/>').addClass('livePostReceiverList').click(addRemoveClick);
 
-        var receiverButton = $('<button/>').text("Add/Remove").click(function(){
-            var newDialog = new Dime.SelectDialog("Share with", "Persons/Groups", true);
-
-            var itemLoadingFunction = function(){
-                var loadingHandler = function(response){
-                    newDialog.addItemsToList(response);
-                    for(var i=0;i<receivers.length;i++){
-                        newDialog.selectEntryByGuid(receivers[i].guid);
-                    }
-                };
-                Dime.REST.getAll(Dime.psMap.TYPE.PERSON, loadingHandler);
-                Dime.REST.getAll(Dime.psMap.TYPE.GROUP, loadingHandler);
-
-            };
-            var handleResult = function(resultItems, isOK){
-                if(!isOK){
-                    return;
-                }                
-                receivers = resultItems;
-                receiverList.empty();
-                jQuery.each(resultItems, function(){
-                    receiverList.append(
-                        Dime.Dialog.Helper.getAgentElement(this)
-                    );
-                });
-                if (receivers.length>0 && fromSaid && fromSaid.length>0){
-                    dialogRef.dialog.okButton.text("Send");
-                }else{
-                    dialogRef.dialog.okButton.text("Create");
-                }
-
-            };
-            newDialog.show(itemLoadingFunction, handleResult, this);
-        });
+        var receiverButton = $('<button/>').text("Add/Remove").click(addRemoveClick);
 
         //only on new items
         if (this.createNewItem){
@@ -4411,14 +4424,17 @@ Dime.DetailDialog.prototype = {
             this.body
                 .append(livePostSender)
                 .append($('<div/>').addClass('livePostReceiver')
-                    .append($('<span/>').addClass('livePostReceiverCaption').text("Reciepient(s)"))
+                    .append($('<span/>').addClass('livePostReceiverCaption').text("Recipient(s)"))
                     .append(receiverList)
                     .append(receiverButton)
                 );
         }
         this.body
-            .append(this.createIcon(item, false))
-            .append(this.createNameInput(item))
+            .append($('<div/>').addClass('livePostName')
+                .append($('<span/>').text("Title:"))
+                .append(this.createNameInput(item))
+            )
+            .append(this.getPrivTrustElement(item))
             .append(
                 $('<div/>').addClass('DimeDetailDialogText')
                 .append(
@@ -4435,6 +4451,7 @@ Dime.DetailDialog.prototype = {
             
         };
         this.assembleFunctions.push(updateText);
+        checkAndUpdateSendOk();
     },
 
     initParentType: function(item){
@@ -4442,6 +4459,10 @@ Dime.DetailDialog.prototype = {
         this.body
             .append(this.createIcon(item, true))
             .append(this.createNameInput(item));
+
+        if(item.type!==Dime.psMap.TYPE.GROUP){
+            this.body.append(this.getPrivTrustElement(item))
+        }
 
         var childType = Dime.psHelper.getChildType(item.type);
             $(this.getDialog()).addClass('shareDlg');
@@ -4477,7 +4498,8 @@ Dime.DetailDialog.prototype = {
         
         this.body
             .append(this.createIcon(item, false))
-            .append(this.createNameInput(item));
+            .append(this.createNameInput(item))
+            .append(this.getPrivTrustElement(item));
 
         if (item.downloadUrl && item.downloadUrl.length>0){
             var innerHtml = '<a href="' + Dime.psHelper.guessLinkURL(item.downloadUrl) + '" target="_blank">open</a>';
@@ -4511,9 +4533,7 @@ Dime.DetailDialog.prototype = {
         
         var item = this.item;        
         
-        if (Dime.privacyTrust.hasPrivTrust(item)){        
-            this.body.append(this.getPrivTrustElement(item));
-        }
+        
         
         //add different details for specific item types
         
