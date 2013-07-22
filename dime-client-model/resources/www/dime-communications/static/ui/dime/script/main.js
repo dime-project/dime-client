@@ -4158,8 +4158,8 @@ Dime.DetailDialog.prototype = {
             this.item.value = {};
         }
         
-        var element = $('<div id="'+this.pAValueId+'" class="h2ModalScreen well DimeDetailDialogPAValues">Values:</div>');
-        var ul = $('<ul></ul>');
+        var element =$('<div/>').attr('id',this.pAValueId).addClass('h2ModalScreen well DimeDetailDialogPAValues');
+        var ul = $('<ul/>');
         element.append(ul);
      
         for (var i=0; i<category.keys.length;i++){
@@ -4236,7 +4236,6 @@ Dime.DetailDialog.prototype = {
         var dialogSelf = this;
 
          this.body
-            .append(this.createIcon(item, false))
             .append(this.createNameInput(item));
 
 
@@ -5506,14 +5505,16 @@ Dime.Dialog={
     showDetailItemModal: function(entry, isEditable, message){
         var caption
 
-        if (isEditable){
-            if (entry.type===Dime.psMap.TYPE.PROFILEATTRIBUTE){
-                caption = "Edit "+ Dime.PACategory.getCategoryByName(entry.category).caption+': '+entry.name;
-            }else{
-                caption = "Edit "+ Dime.psHelper.getCaptionForItemType(entry.type)+': '+entry.name;
-            }
+        
+        if (entry.type===Dime.psMap.TYPE.PROFILEATTRIBUTE){
+            caption = Dime.PACategory.getCategoryByName(entry.category).caption+': '+entry.name;
         }else{
-            caption = Dime.psHelper.getCaptionForItemType(entry.type)+': '+entry.name+' - (read only)';
+            caption = Dime.psHelper.getCaptionForItemType(entry.type)+': '+entry.name;
+        }
+        if (isEditable){
+            caption = "Edit "+ caption;        
+        }else{
+            caption = caption + ' - (read only)';
         }
         var dialog = new Dime.DetailDialog(caption, entry, false, true, isEditable, message, Dime.psMap.getInfoHtmlForType(entry.type));
         
@@ -5529,10 +5530,20 @@ Dime.Dialog={
         
     },
 
+    showNewItemModal: function(type, message, newItem){
+        if (!newItem){
+            newItem = Dime.psHelper.createNewItem(type, "");
+        }
+        
+        var caption;
+        if (type===Dime.psMap.TYPE.PROFILEATTRIBUTE && newItem.category){
+            caption = "New "+Dime.PACategory.getCategoryByName(newItem.category).caption+' ...';
+        }else{
+            caption = "New "+ Dime.psHelper.getCaptionForItemType(type)+' ...';
+        }
 
-    showNewItemModal: function(type, message){
-        var caption = "New "+ Dime.psHelper.getCaptionForItemType(type)+' ...';
-        var dialog = new Dime.DetailDialog(caption, Dime.psHelper.createNewItem(type, ""), true, true, true, message, Dime.psMap.getInfoHtmlForType(type));
+        
+        var dialog = new Dime.DetailDialog(caption, newItem, true, true, true, message, Dime.psMap.getInfoHtmlForType(type));
         
         var callbackFunction = function(item, isOk){
             
