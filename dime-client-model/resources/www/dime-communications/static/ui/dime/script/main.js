@@ -5507,9 +5507,9 @@ Dime.Dialog={
 
         
         if (entry.type===Dime.psMap.TYPE.PROFILEATTRIBUTE){
-            caption = Dime.PACategory.getCategoryByName(entry.category).caption+': '+entry.name;
+            caption = Dime.PACategory.getCategoryByName(entry.category).caption+': "'+entry.name+'"';
         }else{
-            caption = Dime.psHelper.getCaptionForItemType(entry.type)+': '+entry.name;
+            caption = Dime.psHelper.getCaptionForItemType(entry.type)+': "'+entry.name+'"';
         }
         if (isEditable){
             caption = "Edit "+ caption;        
