@@ -2714,8 +2714,18 @@ input[type="text"].DimeDetailDialogPAValueListItemValue{
 
 .shareDlgItem{
 
-    width: 90%;
     float: left;
+    background-color: #D7D9D7;
+    border-radius: 5px;
+    margin-top: 1px;
+    
+
+    width: 326px;
+    margin-left: 3px;
+    
+
+    padding: 3px;
+
 }
 .shareDlgItem:hover{
     /* border: solid 1px #5A9DD5;*/
