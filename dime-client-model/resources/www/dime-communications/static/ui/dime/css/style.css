@@ -2712,6 +2712,25 @@ input[type="text"].DimeDetailDialogPAValueListItemValue{
     cursor: pointer;
 }
 
+.shareDlgSection .metaDataShareProfile {
+    background-color: none;
+    border:none;
+    border-radius:5px;
+    float:left;
+    margin-left:4px;
+    width: 342px;
+    padding-bottom: 5px;
+
+}
+
+.shareDlgSection .metaDataShareItem {
+    background-color: none;
+    border:none;
+    border-radius:5px;
+    width: 323px;
+}
+
+
 .shareDlgItem{
 
     float: left;
