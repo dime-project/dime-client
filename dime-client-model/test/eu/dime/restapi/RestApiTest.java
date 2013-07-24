@@ -1,8 +1,6 @@
 package eu.dime.restapi;
 
 import eu.dime.control.DummyLoadingViewHandler;
-import eu.dime.control.NotificationListener;
-import eu.dime.control.NotificationManager;
 import eu.dime.model.CALLTYPES;
 import eu.dime.model.GenItem;
 import eu.dime.model.ItemFactory;
@@ -23,8 +21,11 @@ import eu.dime.restapi.TestCollectionRestApi.TestResult;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -39,7 +40,7 @@ import sit.web.client.HttpHelper;
  *
  * @author simon
  */
-public class RestApiTest implements NotificationListener {
+public class RestApiTest {
 
     private List<NotificationItem> notifications = new ArrayList<NotificationItem>();
     private enum OutputType {WIKI, CSV}
@@ -137,7 +138,6 @@ public class RestApiTest implements NotificationListener {
 
     public int doFullTest(String hoster, String owner) {
     	OutputType ot = OutputType.CSV;
-        NotificationManager.registerSecondLevel(this);
         if (!checkDimeServerAvailable(hoster)) {
             Logger.getLogger(RestApiTest.class.getName()).log(Level.WARNING, "RestApiTest skipped - di.me Server is offline !!! (ERROR)");
             return SERVER_OFFLINE;
@@ -379,13 +379,15 @@ public class RestApiTest implements NotificationListener {
 
     private void deliverEvaluation(OutputType type) {
         FileHelper fh = new FileHelper();
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
+        Calendar cal = Calendar.getInstance();
         try {
         	switch (type) {
 			case WIKI:
-				fh.writeToFile("wiki-restapitest.txt", testCollection.toWikiDoc());
+				fh.writeToFile("wiki-restapitest" + dateFormat.format(cal.getTime()) + ".txt", testCollection.toWikiDoc());
 				break;
 			case CSV:
-				fh.writeToFile("result-restapitest.csv", testCollection.toString());
+				fh.writeToFile("result-restapitest"+ dateFormat.format(cal.getTime()) + ".csv", testCollection.toString());
 				break;
 			default:
 				break;
@@ -548,11 +550,6 @@ public class RestApiTest implements NotificationListener {
         public TestReference getTestReference() {
             return testReference;
         }
-    }
-
-    @Override
-    public void notificationReceived(String fromHoster, NotificationItem item) {
-        notifications.add(item);
     }
     
 }

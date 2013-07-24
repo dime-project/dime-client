@@ -35,7 +35,7 @@ public final class ProfileAttributeItem extends DisplayableItem {
 			new ProfileAttributeCategoriesEntry(VALUE_CATEGORIES.BIRTH_DATE, "BirthDate", "Birthday", new String[] { "birthDate" }, new String[] { "date" }),
 			new ProfileAttributeCategoriesEntry(VALUE_CATEGORIES.EMAIL_ADDRESS, "EmailAddress", "Email", new String[] { "emailAddress" }, new String[] { "email address" }),
 			new ProfileAttributeCategoriesEntry(VALUE_CATEGORIES.PHONE_NUMBER, "PhoneNumber", "Phone", new String[] { "phoneNumber" }, new String[] { "number" }),
-			new ProfileAttributeCategoriesEntry(VALUE_CATEGORIES.POSTAL_CODE, "PostalAddress", "Address", new String[] { "region", "country", "extendedAddress", "addressLocation", "streetAddress", "postalcode", "locality", "pobox" }, new String[] { "region", "country", "addition to address", "location", "street", "postal code", "locality", "PO box" }),
+			new ProfileAttributeCategoriesEntry(VALUE_CATEGORIES.POSTAL_CODE, "PostalAddress", "Address", new String[] { "region", "country", "extendedAddress", "addressLocation", "streetAddress", "postalCode", "locality", "pobox" }, new String[] { "region", "country", "addition to address", "location", "street", "postal code", "locality", "PO box" }),
 			new ProfileAttributeCategoriesEntry(VALUE_CATEGORIES.AFFILIATION, "Affiliation", "Affiliation", new String[] { "department", "org", "title", "role" }, new String[] { "department", "organistaion", "job description", "role" }),
 			new ProfileAttributeCategoriesEntry(VALUE_CATEGORIES.HOBBY, "Hobby", "Hobby", new String[] { "hobby" }, new String[] { "hobby" }) });
 

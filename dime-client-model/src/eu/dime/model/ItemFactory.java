@@ -8,10 +8,12 @@
 package eu.dime.model;
 
 import eu.dime.model.displayable.AccountItem;
+import eu.dime.model.displayable.AgentItem;
 import eu.dime.model.displayable.DisplayableItem;
 import eu.dime.model.displayable.PersonItem;
 import eu.dime.model.displayable.ProfileAttributeItem;
 import eu.dime.model.displayable.ProfileAttributeItem.VALUE_CATEGORIES;
+import eu.dime.model.displayable.ShareableItem;
 import eu.dime.model.specialitem.AccountSettingsItem;
 import eu.dime.model.specialitem.AuthItem;
 import eu.dime.model.specialitem.EvaluationItem;
@@ -25,10 +27,12 @@ import eu.dime.model.specialitem.usernotification.UNTypeEntry;
 import eu.dime.model.specialitem.usernotification.UN_TYPE;
 import eu.dime.model.specialitem.usernotification.UnEntry;
 import eu.dime.model.specialitem.usernotification.UserNotificationItem;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import sit.json.JSONObject;
 
 /**
@@ -63,6 +67,11 @@ public class ItemFactory {
         result.setUserId(Model.ME_OWNER);
         result.setName(name);
         result.setLastUpdated(System.currentTimeMillis());
+        if(ModelHelper.isAgent(type)) {
+        	((AgentItem) result).setTrustLevel(AgentItem.STANDARD_TRUST_LEVEL);
+        } else if(ModelHelper.isShareable(type)) {
+        	((ShareableItem) result).setPrivacyLevel(ShareableItem.STANDARD_PRIVACY_LEVEL);
+        }
         return result;
     }
 

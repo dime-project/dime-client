@@ -112,7 +112,7 @@ public class TabActivity_Settings extends TabActivityDime implements IResultOfSt
 			} else {
 				final String actionName = getResources().getResourceEntryName(R.string.action_connectServiceAdapter);
 				AccountItem account = ItemFactory.createAccountItem(service.getName(), service.getGuid(), service.getImageUrl());
-				AndroidModelHelper.createGenItemAsyncronously(account, null, currentActivity, mrContext, actionName);
+				AndroidModelHelper.createGenItemAsynchronously(account, null, currentActivity, mrContext, actionName);
 			}
 		}
 	}

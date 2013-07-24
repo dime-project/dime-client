@@ -18,6 +18,7 @@ import java.net.URLConnection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
@@ -46,20 +47,35 @@ public class ImageHelper {
     private static HashMap<String, List<WeakReference<ImageView>>> ivsToBeUpdated = new HashMap<String, List<WeakReference<ImageView>>>();
     
     public static synchronized void loadImageAsynchronously(ImageView iv, DisplayableItem di, Context context) {
-    	iv.setImageDrawable(ImageHelper.getDefaultImageDrawable(di, context));
-		if (di != null && di.getImageUrl() != null && di.getImageUrl().length() > 0 && !bad.contains(di.getImageUrl())) {
-			String imageUrl = di.getImageUrl();
-	    	if(di.getMType().equals(TYPES.ACCOUNT) || di.getMType().equals(TYPES.SERVICEADAPTER)) {
-	    		imageUrl = "/dime-communications/static/ui/images" + imageUrl;
-	    	}
-			String url = ModelHelper.guessURLString(imageUrl);
-	    	boolean containsKey = false;
-	    	boolean isEmpty = false;
-	    	synchronized (ivsToBeUpdated) {
-	    		containsKey = ivsToBeUpdated.containsKey(url);
-	    		isEmpty = containsKey && ivsToBeUpdated.get(url).size() == 0;
-			}
-			if(!containsKey) {
+    	String imageUrl = di.getImageUrl();
+    	if(di.getMType().equals(TYPES.ACCOUNT) || di.getMType().equals(TYPES.SERVICEADAPTER)) {
+    		imageUrl = "/dime-communications/static/ui/images" + imageUrl;
+    	}
+		String url = ModelHelper.guessURLString(imageUrl);
+		iv.setImageDrawable(ImageHelper.getDefaultImageDrawable(di, context));
+		if (di != null && di.getImageUrl() != null && di.getImageUrl().length() > 0 && !bad.contains(url)) {
+	    	if(imageCache != null && imageCache.containsKey(url)) {
+				Bitmap bitmap = ImageHelper.getCachedImageBitmap(url);
+				if(bitmap != null) { 
+					iv.setImageBitmap(bitmap);
+				}
+			} else if (ivsToBeUpdated.containsKey(url)) {
+				synchronized (ivsToBeUpdated) {
+					//since BaseAdpaters in lists are reused and getView is called many times because the ListView tries to calculate how many items can be visible,
+					//we have to make sure that imageViews are only put in the list once
+					for (String key : ivsToBeUpdated.keySet()) {
+						Iterator<WeakReference<ImageView>> iter = ivsToBeUpdated.get(key).iterator();
+				        while (iter.hasNext()){
+				            ImageView wiv = iter.next().get();
+				            if(iv.equals(wiv)) {
+								iter.remove();
+							}
+				        }
+					}
+					List<WeakReference<ImageView>> ivs = ivsToBeUpdated.get(url);
+					ivs.add(new WeakReference<ImageView>(iv));
+				}
+			} else {
 				synchronized (ivsToBeUpdated) {
 					ivsToBeUpdated.put(url, new Vector<WeakReference<ImageView>>());
 					List<WeakReference<ImageView>> ivs = ivsToBeUpdated.get(url);
@@ -91,26 +107,14 @@ public class ImageHelper {
 								for (WeakReference<ImageView> iv: ivsToBeUpdated.get(imageUrl)){
 									if(iv.get() != null) iv.get().setImageBitmap(bitmap);
 								}
+								ivsToBeUpdated.remove(imageUrl);
 							}
 						} else {
 							bad.add(imageUrl);
 						}
-						synchronized (ivsToBeUpdated) {
-							ivsToBeUpdated.get(imageUrl).clear();
-						}	
 					}
 				};
 				task.execute(url);
-			} else if(isEmpty) {
-				Bitmap bitmap = ImageHelper.getCachedImageBitmap(url);
-				if(bitmap != null) { 
-					iv.setImageBitmap(bitmap);
-				}
-			} else {
-				synchronized (ivsToBeUpdated) {
-					List<WeakReference<ImageView>> ivs = ivsToBeUpdated.get(url);
-					ivs.add(new WeakReference<ImageView>(iv));
-				}
 			}
 		}
 	}

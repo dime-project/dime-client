@@ -64,7 +64,7 @@ public class TabActivity_Group_Detail extends TabActivityDisplayableItemDetail i
 					final String actionName = res.getResourceEntryName(R.string.action_removeSelectedPeopleFromGroup);
 					actionDialog.dismiss();
 					di.removeItems(selectedGUIDs);
-					AndroidModelHelper.updateGenItemAsyncronously(di, null, currentActivity, mrContext, actionName);
+					AndroidModelHelper.updateGenItemAsynchronously(di, null, currentActivity, mrContext, actionName);
 				}
 				//merge selection
 				else if (button.getText().equals(res.getString(R.string.action_mergeSelection))) {
@@ -95,7 +95,7 @@ public class TabActivity_Group_Detail extends TabActivityDisplayableItemDetail i
 							if (text != null && text.getText() != null && text.getText().length() > 0) {
 								((GroupItem)di).setGroupType(GroupItem.VALID_GROUP_TYPE_VALUES[2]);
 								di.setName(text.getText().toString());
-								AndroidModelHelper.updateGenItemAsyncronously(di, dialog, currentActivity, mrContext, actionName);
+								AndroidModelHelper.updateGenItemAsynchronously(di, dialog, currentActivity, mrContext, actionName);
 							} else {
 								UIHelper.createInfoDialog(TabActivity_Group_Detail.this, "Please provide a group name!", "ok");
 							}
@@ -116,7 +116,7 @@ public class TabActivity_Group_Detail extends TabActivityDisplayableItemDetail i
 	public void handleResult(ResultObject result) {
 		final String actionName = getResources().getResourceEntryName(R.string.action_addPeopleToGroupDetail);
 		di.addItems((AndroidModelHelper.getListOfGuidsOfDisplayableList(((ResultObjectDisplayable)result).getDisplayables())));
-		AndroidModelHelper.updateGenItemAsyncronously(di, null, currentActivity, mrContext, actionName);
+		AndroidModelHelper.updateGenItemAsynchronously(di, null, currentActivity, mrContext, actionName);
 	}
 
 	@Override

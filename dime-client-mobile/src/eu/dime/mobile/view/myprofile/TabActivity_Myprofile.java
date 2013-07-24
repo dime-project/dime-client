@@ -77,7 +77,7 @@ public class TabActivity_Myprofile extends TabActivityDime {
 							if (inputName != null && inputName.getText() != null && inputName.getText().length() > 0) {
 								ProfileItem newProfile = (ProfileItem) ItemFactory.createNewDisplayableItemByType(TYPES.PROFILE, inputName.getText().toString());
 								newProfile.setEditable(true);
-								AndroidModelHelper.createGenItemAsyncronously(newProfile, dialog, currentActivity, mrContext, actionName);
+								AndroidModelHelper.createGenItemAsynchronously(newProfile, dialog, currentActivity, mrContext, actionName);
 							} else {
 								UIHelper.createInfoDialog(TabActivity_Myprofile.this, "Please provide a profile name", "ok");
 							}

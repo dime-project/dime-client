@@ -3,112 +3,97 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
-    android:orientation="vertical" >
+    android:padding="10dp" >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:layout_marginLeft="8dp"
-        android:text="Current place:"
-        android:textSize="14sp" />
+    <ImageView
+        android:id="@+place/placeImage"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/preview_place" />
 
     <LinearLayout
-        android:id="@+place/currentPlaceHeader"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="10dp" >
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingLeft="5dp" >
 
-        <ImageView
-            android:id="@+place/placeImage"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/preview_place" />
-
-        <LinearLayout
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+place/name"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:paddingLeft="5dp" >
+            android:text="Current place not set!"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+place/name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Current Place not set!"
-                android:textStyle="bold" />
+        <TextView
+            android:id="@+place/distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Distance -" />
 
-            <TextView
-                android:id="@+place/distance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Distance -" />
+        <TextView
+            android:id="@+place/favourite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:text="favourite"
+            android:textColor="@color/dm_col4_low"
+            android:visibility="gone" />
 
-            <TextView
-                android:id="@+place/favourite"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:text="favourite"
-                android:textColor="@color/dm_col4_low"
-                android:visibility="gone" />
+        <TextView
+            android:id="@+place/current"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="current"
+            android:textColor="@color/dm_col2_low"
+            android:visibility="gone" />
 
-            <TextView
-                android:id="@+place/current"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="current"
-                android:textColor="@color/dm_col2_low"
-                android:visibility="gone" />
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp" >
 
-            <TableLayout
+            <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp" >
+                android:baselineAligned="false" >
 
-                <TableRow
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:baselineAligned="false" >
+                    android:text="Recommendation" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Recommendation" />
+                <RatingBar
+                    android:id="@+place/ratingSocial"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:isIndicator="true"
+                    android:numStars="5"
+                    android:stepSize="0.1" />
+            </TableRow>
 
-                    <RatingBar
-                        android:id="@+place/ratingSocial"
-                        style="?android:attr/ratingBarStyleSmall"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:isIndicator="true"
-                        android:numStars="5"
-                        android:stepSize="0.1" />
-                </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Public rating" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Public rating" />
-
-                    <RatingBar
-                        android:id="@+place/ratingPublic"
-                        style="?android:attr/ratingBarStyleSmall"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:isIndicator="true"
-                        android:numStars="5"
-                        android:stepSize="0.1" />
-                </TableRow>
-            </TableLayout>
-        </LinearLayout>
+                <RatingBar
+                    android:id="@+place/ratingPublic"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:isIndicator="true"
+                    android:numStars="5"
+                    android:stepSize="0.1" />
+            </TableRow>
+        </TableLayout>
     </LinearLayout>
 
 </LinearLayout>

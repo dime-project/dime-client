@@ -14,7 +14,6 @@ import eu.dime.model.ModelHelper;
 import eu.dime.model.TYPES;
 import eu.dime.model.displayable.DisplayableItem;
 import eu.dime.model.specialitem.NotificationItem;
-
 import java.util.List;
 
 public class ListActivity_Livepost extends ListActivityDisplayableItem {
@@ -32,7 +31,7 @@ public class ListActivity_Livepost extends ListActivityDisplayableItem {
     @Override
     @SuppressWarnings("unchecked")
     protected List<DisplayableItem> loadListData() {
-        return (List<DisplayableItem>) (Object) ModelHelper.getAllLivePosts(mrContext);
+        return (List<DisplayableItem>) (Object) ModelHelper.getAllAllLivePosts(mrContext);
     }
     
     @Override

@@ -94,6 +94,10 @@ public class UNEntryRefToItem extends UnEntry {
     public TYPES getType() throws ModelTypeNotFoundException {
         return ModelHelper.getMTypeFromString(this.type);
     }
+    
+    public String getStringType() {
+    	return type;
+    }
 
     public String getUserId() {
         return userId;

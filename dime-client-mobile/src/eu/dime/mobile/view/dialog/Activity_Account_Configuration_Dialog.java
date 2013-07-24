@@ -195,9 +195,9 @@ public class Activity_Account_Configuration_Dialog extends ActivityDime implemen
 	    		}
 	        	account.setSettings(newSettings);
 	        	if(accountGuid == null) {
-	        		AndroidModelHelper.createGenItemAsyncronously(account, null, this, mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_account_configuration_save));
+	        		AndroidModelHelper.createGenItemAsynchronously(account, null, this, mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_account_configuration_save));
 	        	} else {
-	        		AndroidModelHelper.updateGenItemAsyncronously(account, null, this, mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_account_configuration_update));
+	        		AndroidModelHelper.updateGenItemAsynchronously(account, null, this, mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_account_configuration_update));
 	        	}
 	        	finish();
         	} catch (MandatorySettingNotSetException ex) {

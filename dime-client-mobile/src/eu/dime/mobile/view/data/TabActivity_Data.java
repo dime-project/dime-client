@@ -130,7 +130,7 @@ public class TabActivity_Data extends TabActivityDime implements IResultOfStanda
 							if (text != null && text.getText() != null && text.getText().length() > 0) {
 								DataboxItem newBox = (DataboxItem) ItemFactory.createNewDisplayableItemByType(TYPES.DATABOX, text.getText().toString());
 								newBox.setItems(selectedGUIDs);
-								AndroidModelHelper.createGenItemAsyncronously(newBox, dialog, currentActivity, mrContext, actionName);
+								AndroidModelHelper.createGenItemAsynchronously(newBox, dialog, currentActivity, mrContext, actionName);
 							} else {
 								UIHelper.createInfoDialog(TabActivity_Data.this, "Please provide a databox name", "ok");
 							}
@@ -159,7 +159,7 @@ public class TabActivity_Data extends TabActivityDime implements IResultOfStanda
 						public void onClick(final DialogInterface dialog, int which) {
 							if (text != null && text.getText() != null && text.getText().length() > 0) {
 								DataboxItem newBox = (DataboxItem) ItemFactory.createNewDisplayableItemByType(TYPES.DATABOX, text.getText().toString());
-								AndroidModelHelper.createGenItemAsyncronously(newBox, dialog, currentActivity, mrContext, actionName);
+								AndroidModelHelper.createGenItemAsynchronously(newBox, dialog, currentActivity, mrContext, actionName);
 							} else {
 								UIHelper.createInfoDialog(reftoparent, "Please provide a databox name", "ok");
 							}
@@ -212,7 +212,7 @@ public class TabActivity_Data extends TabActivityDime implements IResultOfStanda
 			final String actionName = getResources().getResourceEntryName(R.string.action_assignToDatabox);
 			for(DataboxItem databoxItem : (List<DataboxItem>) (Object) ((ResultObjectDisplayable)result).getDisplayables()) {
 				databoxItem.addItems(selectedGUIDs);
-				AndroidModelHelper.updateGenItemAsyncronously(databoxItem, null, currentActivity, mrContext, actionName);
+				AndroidModelHelper.updateGenItemAsynchronously(databoxItem, null, currentActivity, mrContext, actionName);
 			}
 		}
 	}

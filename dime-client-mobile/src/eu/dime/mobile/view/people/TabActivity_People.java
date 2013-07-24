@@ -133,7 +133,7 @@ public class TabActivity_People extends TabActivityDime implements IResultOfStan
 							if(text != null && text.getText() != null && text.getText().length() > 0) {
 								GroupItem newGroup = (GroupItem) ItemFactory.createNewDisplayableItemByType(TYPES.GROUP, text.getText().toString());
 								newGroup.setItems(selectedGUIDs);
-								AndroidModelHelper.createGenItemAsyncronously(newGroup, dialog, currentActivity, mrContext, actionName);
+								AndroidModelHelper.createGenItemAsynchronously(newGroup, dialog, currentActivity, mrContext, actionName);
 							} else {
 								UIHelper.createInfoDialog(TabActivity_People.this, "Please provide a group name", "ok");
 							}
@@ -213,7 +213,7 @@ public class TabActivity_People extends TabActivityDime implements IResultOfStan
 						public void onClick(final DialogInterface dialog, int which) {
 							if (text != null && text.getText() != null && text.getText().length() > 0) {
 								GroupItem newGroup = (GroupItem) ItemFactory.createNewDisplayableItemByType(TYPES.GROUP, text.getText().toString());
-								AndroidModelHelper.createGenItemAsyncronously(newGroup, dialog, currentActivity, mrContext, actionName);
+								AndroidModelHelper.createGenItemAsynchronously(newGroup, dialog, currentActivity, mrContext, actionName);
 							} else {
 								UIHelper.createInfoDialog(reftoparent, "Please provide a group name", "ok");
 							}
@@ -263,7 +263,7 @@ public class TabActivity_People extends TabActivityDime implements IResultOfStan
 			String actionName = getResources().getResourceEntryName(R.string.action_addPeopleToGroup);
 			for(GroupItem groupItem : (List<GroupItem>)(Object)((ResultObjectDisplayable)result).getDisplayables()){
 				groupItem.addItems(selectedGUIDs);
-				AndroidModelHelper.updateGenItemAsyncronously(groupItem, null, currentActivity, mrContext, actionName);
+				AndroidModelHelper.updateGenItemAsynchronously(groupItem, null, currentActivity, mrContext, actionName);
 			}
 		}
 	}

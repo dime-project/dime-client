@@ -9,7 +9,8 @@
         android:id="@+header/image"
         android:layout_width="80dip"
         android:layout_height="80dip"
-        android:src="@drawable/preview_unknown" />
+        android:src="@drawable/preview_unknown"
+        android:layout_gravity="center_vertical" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -50,30 +51,39 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <TextView
-                android:id="@+header/bar_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+header/level_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="11sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <ProgressBar
-            android:id="@+header/bar"
-            style="?android:attr/progressBarStyleHorizontal"
+            android:id="@+header/bar_area"
             android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:layout_marginTop="2dp"
-            android:max="2" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@color/metabar_grey"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp" >
+
+                <TextView
+                    android:id="@+header/bar_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+header/level_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <View
+                android:id="@+header/bar"
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:background="@color/metabar_grey" />
+        </LinearLayout>
 
         <TextView
             android:id="@+header/children_text"
@@ -82,7 +92,8 @@
             android:layout_marginTop="5dp"
             android:background="@color/metabar_grey"
             android:gravity="center_vertical"
-            android:padding="2dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:textSize="11sp"
             android:visibility="gone" />
     </LinearLayout>

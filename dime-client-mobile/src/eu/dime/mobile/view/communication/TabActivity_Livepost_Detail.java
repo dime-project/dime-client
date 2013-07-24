@@ -24,7 +24,7 @@ public class TabActivity_Livepost_Detail extends TabActivityDisplayableItemDetai
 	@Override
 	protected void initializeTabs() {
     	tabs.add(new DimeTabObject(getResources().getString(R.string.tab_communicationDetail) + " " + di.getName(), Activity_Livepost_Detail.class, dio));
-    	TabActivity_Livepost_Detail.this.init(true, false, ownItem, ownItem);
+    	TabActivity_Livepost_Detail.this.init(true, false, isOwnItem(), isOwnItem());
 	}
 
 	@Override

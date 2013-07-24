@@ -6,6 +6,7 @@
     <style name="dimeTheme" parent="android:Theme.Light.NoTitleBar">
         <item name="android:textColor">@color/dm_text</item>
         <item name="android:typeface">monospace</item>
+        <item name="android:windowContentOverlay">@null</item>
     </style>
 
     <style name="dime_bar">

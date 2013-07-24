@@ -32,7 +32,7 @@ public class CompoundCheckListenerSituationItem<DisplayableItem> implements OnCh
     	try {
     		SituationItem si = (SituationItem) pa.getItem(position);
     		si.setActive(isChecked);
-    		AndroidModelHelper.updateGenItemAsyncronously(si, null, (Activity)context, mrContext, null);
+    		AndroidModelHelper.updateGenItemAsynchronously(si, null, (Activity)context, mrContext, null);
     		ContextItem contextItem = ContextHelper.createCurrentSituationContextItem(si.getName(), Integer.valueOf(600));
     		DimeClient.contextCrawler.updateContext(Scopes.SCOPE_SITUATION, contextItem);
 		} catch (Exception e) {

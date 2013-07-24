@@ -12,10 +12,8 @@ import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.TextView;
 import eu.dime.control.LoadingViewHandler;
 import eu.dime.mobile.R;
-import eu.dime.mobile.crawler.data.Place;
 import eu.dime.mobile.helper.ContextHelper;
 import eu.dime.mobile.helper.ImageHelper;
-import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.handler.LoadingViewHandlerFactory;
 import eu.dime.mobile.view.abstr.ActivityDime;
 import eu.dime.model.Model;
@@ -26,7 +24,7 @@ import eu.dime.model.specialitem.NotificationItem;
 public class Activity_Place_Detail extends ActivityDime implements OnClickListener, OnRatingBarChangeListener {
 	
 	private PlaceItem place;
-	private PlaceItem currentPlace;
+	private boolean isCurrentPlace;
 	private RatingBar ratingSetPersonal;
 	private RatingBar ratingPersonal;
 	private TextView favouriteTextView;
@@ -77,8 +75,13 @@ public class Activity_Place_Detail extends ActivityDime implements OnClickListen
 	@Override
 	protected void loadData() {
 		place = (PlaceItem) Model.getInstance().getItem(mrContext, TYPES.PLACE, dio.getItemId());
-		Place placeTmp = ContextHelper.getCurrentPlace(); // get current place from context
-		if (placeTmp != null) { currentPlace = (PlaceItem) Model.getInstance().getItem(mrContext, TYPES.PLACE, placeTmp.getPlaceId()); }
+		PlaceItem placeTmp = null;
+		try {
+			placeTmp = (PlaceItem) Model.getInstance().getItem(mrContext, TYPES.PLACE, ContextHelper.getCurrentPlace().getPlaceId());
+			isCurrentPlace = place.getGuid().equals(placeTmp.getGuid());
+		} catch (Exception e) {
+			isCurrentPlace = false;
+		}
 	}
 
 	@Override
@@ -98,15 +101,10 @@ public class Activity_Place_Detail extends ActivityDime implements OnClickListen
 		ratingPersonal.setRating((float) (place.getUserRating() * 5.0));
 		ratingSetPersonal.setRating((float) (place.getUserRating() * 5.0));
 		ratingSetPersonal.setOnRatingBarChangeListener(this);
-		
 		// hide favourite label if not favourite
-		if (!place.getFavorite()) { UIHelper.hideView(favouriteTextView); }
-		
+		favouriteTextView.setVisibility((place.getFavorite()) ? View.VISIBLE : View.GONE);
 		// hide current label if not equal to currentPlace
-		if (currentPlace != null && place != null) {
-			if (!place.getGuid().equals(currentPlace.getGuid())) { UIHelper.hideView(currentTextView); }
-		} else { UIHelper.hideView(currentTextView); }
-		
+		currentTextView.setVisibility(isCurrentPlace ? View.VISIBLE : View.GONE);
 		ImageView image = (ImageView) findViewById(R.placedetail.image);
 		ImageHelper.loadImageAsynchronously(image, place, this);
 		Button openMaps = (Button) findViewById(R.placedetail.button_openmaps);

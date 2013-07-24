@@ -147,7 +147,8 @@ public class BaseAdapter_Standard extends BaseAdapterDisplayableItem {
 			viewHolder.expandedArea.setVisibility(View.GONE);
 			viewHolder.expander.setBackgroundResource(R.drawable.button_expand);
 		}
-		viewHolder.selectedCB.setOnCheckedChangeListener(new CheckListener<DisplayableItem>(position, this));
+		viewHolder.selectedCB.setEnabled(di.getUserId().equals(Model.ME_OWNER));
+		if(di.getUserId().equals(Model.ME_OWNER)) viewHolder.selectedCB.setOnCheckedChangeListener(new CheckListener<DisplayableItem>(position, this));
 		viewHolder.expander.setOnClickListener(new ExpandClickListener<DisplayableItem>(position, this));
 		return convertView;
 	}

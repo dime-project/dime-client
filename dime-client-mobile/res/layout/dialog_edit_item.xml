@@ -89,8 +89,7 @@
             <LinearLayout
                 android:id="@+edit/bar_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp" >
+                android:layout_height="wrap_content" >
 
                 <TextView
                     android:id="@+edit/bar_label"
@@ -101,11 +100,11 @@
 
                 <SeekBar
                     android:id="@+edit/bar"
-                    android:layout_width="0dp"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:layout_marginLeft="10dp"
                     android:layout_marginTop="2dp"
-                    android:layout_weight="1"
                     android:background="@drawable/seek_scale"
                     android:max="2"
                     android:maxHeight="20dp"
@@ -114,14 +113,35 @@
                     android:progress="0"
                     android:progressDrawable="@drawable/seek_background" />
 
-                <TextView
-                    android:id="@+edit/bar_text"
-                    android:layout_width="100dp"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="10dp"
-                    android:text="medium"
-                    android:textStyle="bold" />
+                    android:paddingRight="10dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|center_horizontal" >
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" >
+
+                        <TextView
+                            android:id="@+edit/bar_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
+                            android:text="medium"
+                            android:textStyle="bold" />
+
+                        <View
+                            android:id="@+edit/coloredBar"
+                            android:layout_width="match_parent"
+                            android:layout_height="5dp"
+                            android:layout_marginTop="1dp"
+                            android:background="@color/metabar_grey" />
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
 
             <TextView
@@ -136,8 +156,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:layout_marginTop="5dp"
+            android:layout_height="wrap_content"
             android:background="@drawable/gradient_dime_top"
             android:orientation="horizontal"
             android:paddingBottom="10dp"
@@ -147,11 +166,11 @@
             <ImageView
                 android:id="@+edit/message"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:background="@drawable/button_transp_bar"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:src="@drawable/icon_white_settings" />
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:src="@drawable/icon_white_edit_item" />
 
             <Button
                 android:id="@+edit/button_save"

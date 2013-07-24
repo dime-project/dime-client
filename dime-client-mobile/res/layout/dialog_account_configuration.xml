@@ -21,31 +21,32 @@
                 android:padding="10dp"
                 android:src="@drawable/preview_unknown" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+account/service_name"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="10dp" >
-
-                <TextView
-                    android:id="@+account/service_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="service name"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
-
-                <TextView
-                    android:id="@+account/service_description"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="service description"
-                    android:textSize="11sp" />
-            </LinearLayout>
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:text="service name"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+account/service_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="service description"
+            android:textSize="11sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginTop="8dp"
             android:background="@drawable/gradient_blue"
             android:orientation="horizontal" >
 
@@ -61,11 +62,6 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="3px"
-            android:background="@drawable/actionbar_shadow_blue" />
-
         <LinearLayout
             android:id="@+account/container_settings"
             android:layout_width="match_parent"
@@ -74,7 +70,6 @@
             android:orientation="vertical"
             android:paddingLeft="10dp"
             android:paddingRight="10dp" >
-            
         </LinearLayout>
 
         <View

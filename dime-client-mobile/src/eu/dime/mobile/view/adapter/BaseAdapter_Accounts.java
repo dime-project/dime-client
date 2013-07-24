@@ -9,11 +9,8 @@ import eu.dime.mobile.R;
 import eu.dime.mobile.helper.ImageHelper;
 import eu.dime.mobile.helper.listener.CheckListener;
 import eu.dime.mobile.view.abstr.BaseAdapterDisplayableItem;
-import eu.dime.model.Model;
-import eu.dime.model.TYPES;
 import eu.dime.model.displayable.AccountItem;
 import eu.dime.model.displayable.DisplayableItem;
-import eu.dime.model.displayable.ServiceAdapterItem;
 
 public class BaseAdapter_Accounts extends BaseAdapterDisplayableItem {
 
@@ -38,15 +35,7 @@ public class BaseAdapter_Accounts extends BaseAdapterDisplayableItem {
         viewHolder.isConfigurable.setVisibility((ai.getSettings() != null && ai.getSettings().size() > 0) ? View.VISIBLE : View.GONE);
         viewHolder.isActive.setVisibility((ai.isActive()) ? View.VISIBLE : View.GONE);
         viewHolder.name.setText(ai.getName());
-        //FIXME as soon as imageUrl is set correctly
-        if(ai.getImageUrl() != null && ai.getImageUrl().length() > 0) {
-        	ImageHelper.loadImageAsynchronously(viewHolder.image, ai, context);
-        } else if (ai.getServiceAdapterGUID() != null && ai.getServiceAdapterGUID().length() > 0) {
-        	ServiceAdapterItem service = (ServiceAdapterItem) Model.getInstance().getItem(mrContext, TYPES.SERVICEADAPTER, ai.getServiceAdapterGUID());
-        	ImageHelper.loadImageAsynchronously(viewHolder.image, service, context);
-        } else {
-        	viewHolder.image.setImageDrawable(ImageHelper.getDefaultImageDrawable(ai, context));
-        }
+        ImageHelper.loadImageAsynchronously(viewHolder.image, ai, context);
         viewHolder.selectedCB.setChecked((selection.contains(ai.getGuid())));
         viewHolder.selectedCB.setOnCheckedChangeListener(new CheckListener<DisplayableItem>(position, this));
         return convertView;

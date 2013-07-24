@@ -7,6 +7,7 @@ import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.helper.DimeIntentObjectHelper;
 import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.objects.DimeIntentObject;
+import eu.dime.mobile.view.Activity_Shutdown;
 import eu.dime.model.ModelRequestContext;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -55,6 +56,11 @@ public abstract class ActivityDime extends Activity implements NotificationListe
 	@Override
 	protected void onResume() {
 		super.onResume();
+		if(DimeClient.getSettings().getAuthItem() == null) {
+        	Toast.makeText(getApplicationContext(), "Error occurred! Please login again...", Toast.LENGTH_SHORT).show();
+        	startActivity(new Intent(ActivityDime.this, Activity_Shutdown.class));	                	
+        	finish();
+        }
 	}
 	
 	@Override
@@ -71,8 +77,8 @@ public abstract class ActivityDime extends Activity implements NotificationListe
 		NotificationManager.unregisterSecondLevel(this);
 	}
 
-	protected void startTask(String dialogText) {
-    	if(dialogText.length()>0){
+	public void startTask(String dialogText) {
+    	if(dialogText.length() > 0){
 	    	dialog = UIHelper.createCustonProgressDialog(ActivityDime.this, dialogText);
     	}
     	(new AsyncTask<Void, Void, Boolean>() {

@@ -112,7 +112,7 @@ public class Activity_Unshare_Dialog extends ActivityDime implements OnClickList
 				}
 			}
 			if(errors > 0) Toast.makeText(this, "Could not unshare " + errors + " items!", Toast.LENGTH_SHORT).show();
-			AndroidModelHelper.updateGenItemAsyncronously(item, null, this, mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_unshare_save));
+			AndroidModelHelper.updateGenItemAsynchronously(item, null, this, mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_unshare_save));
 			finish();
 			break;
 		case R.unshare.button_cancel:

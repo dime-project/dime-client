@@ -7,14 +7,13 @@ import eu.dime.control.LoadingViewHandler;
 import eu.dime.mobile.helper.handler.LoadingViewHandlerFactory;
 import eu.dime.mobile.view.abstr.ListActivityDime;
 import eu.dime.mobile.view.adapter.BaseAdapter_Notification;
-import eu.dime.model.GenItem;
 import eu.dime.model.Model;
 import eu.dime.model.TYPES;
 import eu.dime.model.specialitem.NotificationItem;
-
+import eu.dime.model.specialitem.usernotification.UserNotificationItem;
 import java.util.List;
 
-public class ListActivity_Notifications extends ListActivityDime<GenItem> {
+public class ListActivity_Notifications extends ListActivityDime<UserNotificationItem> {
 
 	/**
      * Called when the activity is first created.
@@ -28,8 +27,8 @@ public class ListActivity_Notifications extends ListActivityDime<GenItem> {
 
     @Override
     @SuppressWarnings("unchecked")
-    protected List<GenItem> loadListData() {
-        return (List<GenItem>) (Object) Model.getInstance().getAllItems(mrContext, TYPES.USERNOTIFICATION);
+    protected List<UserNotificationItem> loadListData() {
+        return (List<UserNotificationItem>) (Object) Model.getInstance().getAllItems(mrContext, TYPES.USERNOTIFICATION);
     }
 
 	@Override

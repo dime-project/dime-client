@@ -181,7 +181,7 @@ public class TabActivity_Profile_Detail extends TabActivityDisplayableItemDetail
             								pai.getValue().put(entry.getKey(), entry.getValue().getText().toString());
             							}
             						}
-            						AndroidModelHelper.createAndAssignProfileAttributesAsyncronously((ProfileItem) di, pai, dialog, currentActivity, mrContext, actionName);
+            						AndroidModelHelper.createAndAssignProfileAttributesAsynchronously((ProfileItem) di, pai, dialog, currentActivity, mrContext, actionName);
             					}
             								
             				});
@@ -214,7 +214,7 @@ public class TabActivity_Profile_Detail extends TabActivityDisplayableItemDetail
             		builder.setItems(items, new DialogInterface.OnClickListener() {
             		    public void onClick(DialogInterface dialog, final int item) {  
             				di.addItem(attributes.get(item).getGuid());
-            				AndroidModelHelper.updateGenItemAsyncronously(di, dialog, currentActivity, mrContext, actionName);
+            				AndroidModelHelper.updateGenItemAsynchronously(di, dialog, currentActivity, mrContext, actionName);
             		    }
             		});
             		UIHelper.displayAlertDialog(builder, false);

@@ -23,7 +23,7 @@ public class TabActivity_Resource_Detail extends TabActivityDisplayableItemDetai
 	@Override
 	protected void initializeTabs() {
     	tabs.add(new DimeTabObject(getResources().getString(R.string.tab_dataDetail) + di.getName(), Activity_Resource_Detail.class, dio));
-    	TabActivity_Resource_Detail.this.init(true, false, ownItem, ownItem);
+    	TabActivity_Resource_Detail.this.init(true, false, isOwnItem(), isOwnItem());
 	}
 
 	@Override

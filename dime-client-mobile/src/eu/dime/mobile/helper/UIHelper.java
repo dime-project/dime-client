@@ -13,13 +13,9 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
-import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
-import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -43,7 +39,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.TextView;
 import eu.dime.mobile.DimeClient;
@@ -68,6 +63,7 @@ import eu.dime.mobile.view.communication.TabActivity_Livepost_Detail;
 import eu.dime.mobile.view.data.TabActivity_Resource_Detail;
 import eu.dime.mobile.view.dialog.Activity_Edit_Item_Dialog;
 import eu.dime.mobile.view.dialog.Activity_Share_Dialog;
+import eu.dime.mobile.view.dialog.Activity_Share_New_Livepost_Dialog;
 import eu.dime.mobile.view.dialog.Activity_Unshare_Dialog;
 import eu.dime.mobile.view.dialog.ListActivity_Merge_Dialog;
 import eu.dime.mobile.view.people.TabActivity_Group_Detail;
@@ -105,7 +101,6 @@ import eu.dime.model.displayable.ProfileItem;
 import eu.dime.model.displayable.ResourceItem;
 import eu.dime.model.displayable.ServiceAdapterItem;
 import eu.dime.model.displayable.SituationItem;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -403,6 +398,10 @@ public class UIHelper {
 				tmp.setEnabled(false);
 			} else if (name.equals(context.getResources().getString(R.string.action_editItem))) {
 				tmp.setId(R.string.action_editItem);
+			} else if (name.equals(context.getResources().getString(R.string.action_share))) {
+				tmp.setId(R.string.action_share);
+			} else if (name.equals(context.getResources().getString(R.string.action_unshare))) {
+				tmp.setId(R.string.action_unshare);
 			}
 			tl.addView(tmp);
 		}
@@ -419,8 +418,12 @@ public class UIHelper {
 		if(ModelHelper.isDisplayableItem(item.getMType())) {
 			DisplayableItem di = (DisplayableItem) item;
 			if(!di.getUserId().equals(Model.ME_OWNER)) {
-				Button button = (Button) dialog.findViewById(R.string.action_editItem);
-				if(button != null) button.setEnabled(false);
+				Button buttonEdit = (Button) dialog.findViewById(R.string.action_editItem);
+				if(buttonEdit != null) buttonEdit.setEnabled(false);
+				Button buttonShare = (Button) dialog.findViewById(R.string.action_share);
+				if(buttonShare != null) buttonShare.setEnabled(false);
+				Button buttonUnshare = (Button) dialog.findViewById(R.string.action_unshare);
+				if(buttonUnshare != null) buttonUnshare.setEnabled(false);
 			}
 			if(item.getMType().equals(TYPES.PERSON)) {
 				PersonItem person = (PersonItem) di;
@@ -451,7 +454,8 @@ public class UIHelper {
 			TextView childrenText = (TextView) header.findViewById(R.header.children_text);
 			TextView barText = (TextView) header.findViewById(R.header.bar_text);
 			TextView levelText = (TextView) header.findViewById(R.header.level_text);
-			ProgressBar progressBar = (ProgressBar) header.findViewById(R.header.bar);
+			LinearLayout barArea = (LinearLayout) header.findViewById(R.header.bar_area);
+			View bar = (View) header.findViewById(R.header.bar);
 			ImageView lock = (ImageView) header.findViewById(R.id.locked);
 			String name = (ModelHelper.isParentable(di)) ? di.getName() + " (" + di.getItems().size() + ")" : di.getName();
 			nameText.setText(name);
@@ -460,13 +464,12 @@ public class UIHelper {
 			lock.setVisibility(di.getUserId().equals(Model.ME_OWNER) ? View.GONE : View.VISIBLE);
 			AndroidModelHelper.loadGroupsOfChildAsynchronously(activity, mrContext.owner, di, childrenText);
 			if(di.getMType().equals(TYPES.GROUP)) {
-				barText.setVisibility(View.GONE);
-				levelText.setVisibility(View.GONE);
-				progressBar.setVisibility(View.GONE);
+				barArea.setVisibility(View.GONE);
 			} else {
+				barArea.setVisibility(View.VISIBLE);
 				barText.setText(getTrustOrPrivacyLabelOfProgressBar(di));
-				paintDimeProgressBar(activity, progressBar, di);
-				updateTrustOrPrivacyLevelTextView(activity, levelText, di);
+				levelText.setText(getWarningText(di));
+				bar.setBackgroundColor(getWarningColor(activity, di));
 			}
 		} else {
 			Toast.makeText(activity, "Error loading item!", Toast.LENGTH_LONG).show();
@@ -490,32 +493,35 @@ public class UIHelper {
 	
 	public static void updateInfoContainer(Context context, LinearLayout infoContainer, DisplayableItem di) {
 		LinearLayout llchanged = createNewExpandedViewRow(context);
-		LinearLayout.LayoutParams lpmsProgressBar = new LinearLayout.LayoutParams(0, 5, 1f);
-		lpmsProgressBar.gravity = Gravity.CENTER_VERTICAL;
 		TextView labelTV = createTextView(context, R.style.dimeTheme, Typeface.NORMAL, 11, null, true);
-		labelTV.setText("changed:  ");
+		labelTV.setText("changed:");
 		TextView valueTV = createTextView(context, R.style.dimeTheme, Typeface.NORMAL, 11, null, true);
 		valueTV.setText(UIHelper.formatDateByMillis(di.getLastUpdated()));
+		valueTV.setPadding(15, 0, 0, 0);
 		llchanged.addView(labelTV);
 		llchanged.addView(valueTV);
 		infoContainer.addView(llchanged);
 		if(!di.getMType().equals(TYPES.GROUP)) {
+			LinearLayout llContainer = new LinearLayout(context);
+			llContainer.setOrientation(LinearLayout.VERTICAL);
 			LinearLayout llbar = createNewExpandedViewRow(context);
 			TextView labelTVbar = createTextView(context, R.style.dimeTheme, Typeface.NORMAL, 11, null, true);
 			TextView barText = new TextView(context);
+			labelTVbar.setText(getTrustOrPrivacyLabelOfProgressBar(di));
 			barText.setTextSize(11);
 			barText.setPadding(15, 0, 0, 0);
-			ProgressBar progressBar = new ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal);
-			progressBar.setLayoutParams(lpmsProgressBar);
-			progressBar.setMax(2);
-			progressBar.setProgress(1);
+			barText.setText(getWarningText(di));
+			View bar = new View(context);
+			bar.setBackgroundColor(getWarningColor(context, di));
+			int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, context.getResources().getDisplayMetrics());
+			LinearLayout.LayoutParams barParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, value);
+			barParams.setMargins(0, -5, 0, 5);
+			bar.setLayoutParams(barParams);
 			llbar.addView(labelTVbar);
-			llbar.addView(progressBar);
 			llbar.addView(barText);
-			infoContainer.addView(llbar);
-			updateTrustOrPrivacyLevelTextView(context, barText, di);
-			labelTVbar.setText(getTrustOrPrivacyLabelOfProgressBar(di));
-			paintDimeProgressBar(context, progressBar, di);
+			llContainer.addView(llbar);
+			llContainer.addView(bar);
+			infoContainer.addView(llContainer);
 		}
 	}
 	
@@ -635,7 +641,7 @@ public class UIHelper {
 					break;
 				} else {
 					ImageView image = new ImageView(context);
-					LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(24, 24);
+					LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
 					params.setMargins(0, 0, 10, 0);
 					image.setLayoutParams(params);
 					ImageHelper.loadImageAsynchronously(image, di, context);
@@ -747,6 +753,8 @@ public class UIHelper {
 		Drawable drawable = context.getResources().getDrawable(id).mutate();
 		drawable.setColorFilter(getWarningColor(context, item), Mode.SRC_ATOP);
 		image.setImageDrawable(drawable);
+		int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, context.getResources().getDisplayMetrics());
+		image.setPadding(0, 0, value, 0);
 		ImageButton recycleButton = new ImageButton(context);
 		recycleButton.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
 		recycleButton.setImageResource(R.drawable.icon_small_recycle);
@@ -757,6 +765,9 @@ public class UIHelper {
 				if(context instanceof Activity_Share_Dialog) {
 					items.remove(item);
 					((Activity_Share_Dialog) context).updateViewOnSelectionChanged();
+				} else if(context instanceof Activity_Share_New_Livepost_Dialog){
+					items.remove(item);
+					((Activity_Share_New_Livepost_Dialog) context).updateViewOnSelectionChanged();
 				} else if(context instanceof Activity_Unshare_Dialog){
 					items.add(item);
 					((LinearLayout) ll.getParent()).removeView(ll);
@@ -766,7 +777,6 @@ public class UIHelper {
 		TextView text = createTextView(context, -1, -1, -1, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1f), true);
 		text.setText(item.getName());
 		text.setGravity(Gravity.CENTER_VERTICAL);
-		text.setPadding(10, 0, 0, 0);
 		ll.addView(image);
 		ll.addView(text);
 		ll.addView(recycleButton);
@@ -778,18 +788,18 @@ public class UIHelper {
 		LinearLayout llparent = createLinearLayout(context, LinearLayout.VERTICAL);
 		llparent.setPadding(0, 0, 0, 10);
 		LinearLayout llchild = new LinearLayout(context);
-		ImageView image = new ImageView(context);
-		image.setPadding(0, 0, 10, 0);
+		final ImageView image = new ImageView(context);
+		int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, context.getResources().getDisplayMetrics());
+		image.setPadding(0, 0, value, 0);
+		image.setImageResource(advisoryProperty.getDrawableId());
 		final ImageView expand = new ImageView(context);
+		expand.setBackgroundResource(R.drawable.button_expand_bar);
 		TextView headline = createTextView(context, -1, -1, 14, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1f), true);
 		headline.setText(advisoryProperty.getHeadline());
 		headline.setGravity(Gravity.CENTER_VERTICAL);
 		final TextView text = createTextView(context, R.style.dimeTheme, Typeface.NORMAL, 12, null, false);
 		text.setText(advisoryProperty.getAdvisoryText());
-		text.setPadding(48, -5, 48, 5);
 		text.setVisibility(View.GONE);
-		image.setImageResource(advisoryProperty.getDrawableId());
-		expand.setBackgroundResource(R.drawable.button_expand_bar);
 		llchild.setTag(true);
 		llchild.setPadding(0, 5, 0, 0);
 		llchild.setOnClickListener(new OnClickListener() {
@@ -799,10 +809,12 @@ public class UIHelper {
 					v.setTag(false);
 					expand.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.button_collapse_bar));
 					text.setVisibility(View.VISIBLE);
+					text.setPadding(image.getWidth(), 0, expand.getWidth(), 5);
 				} else {
 					v.setTag(true);
 					expand.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.button_expand_bar));
 					text.setVisibility(View.GONE);
+					text.setPadding(image.getWidth(), 0, expand.getWidth(), 5);
 				}
 			}
 		});
@@ -814,34 +826,14 @@ public class UIHelper {
 		return llparent;
 	}
 	
-	@SuppressWarnings("deprecation")
-	public static void paintDimeProgressBar(Context context, ProgressBar pb, DisplayableItem di) {
-		int level = AndroidModelHelper.getTrustOrPrivacyLevelForDisplayableItem(di);
-		pb.setProgress((level + 1) % 2);
-		Rect bounds = pb.getProgressDrawable().getBounds();
-		final float[] roundedCorners = new float[] { 5, 5, 5, 5, 5, 5, 5, 5 };
-		ShapeDrawable pgDrawable = new ShapeDrawable(new RoundRectShape(roundedCorners, null, null));
-		pgDrawable.getPaint().setColor(getWarningColor(context, di));
-		ClipDrawable progress = new ClipDrawable(pgDrawable, Gravity.LEFT, ClipDrawable.HORIZONTAL);
-		pb.setBackgroundDrawable(context.getResources().getDrawable(android.R.drawable.progress_horizontal));
-		pb.setProgressDrawable(progress);
-		pb.getProgressDrawable().setBounds(bounds);
-		pb.setProgress(level);
-	}
-	
 	public static String getTrustOrPrivacyLabelOfProgressBar(DisplayableItem di) {
 		String s = "";
 		if(ModelHelper.isAgent(di.getMType())) {
-			s = "Trust:    ";
+			s = "Trust:";
 		} else if(ModelHelper.isShareable(di.getMType())) {
-			s = "Privacy:  ";
+			s = "Privacy:";
 		}
 		return s;
-	}
-
-	public static void updateTrustOrPrivacyLevelTextView(Context context, TextView tv, DisplayableItem di) {
-		tv.setText(getWarningText(di));
-		tv.setTextColor(getWarningColor(context, di));
 	}
 	
 	public static String updateEditTrustOrPrivacyLevelHint(Context context, DisplayableItem di) {
@@ -956,9 +948,9 @@ public class UIHelper {
 					} else if(entry.getOperation().equals(UNEntryRefToItem.OPERATION_DEC_TRUST)) {
 						drawableId = R.drawable.icon_color_trustdown;
 					}
-					String test = (ModelHelper.isShareable(entry.getType())) ? "privay " : "trust ";
+					String value = (ModelHelper.isShareable(entry.getType())) ? " privay " : " trust ";
 					String operation = (entry.getOperation().equals(UNEntryRefToItem.OPERATION_DEC_PRIV) || entry.getOperation().equals(UNEntryRefToItem.OPERATION_DEC_TRUST)) ? "decrease " : "increase ";
-					notificationText = "The system suggests to " + operation + test +  "value of the " + entry.getType() + "!";
+					notificationText = "The system suggests to " + operation + value +  "value of the " + ModelHelper.getStringType(entry.getType()) + "!";
 					intent = new Intent(context, Activity_Edit_Item_Dialog.class);
 				}
 			} catch (ModelTypeNotFoundException e) {
@@ -1104,7 +1096,7 @@ public class UIHelper {
 			infoText = res.getString(R.string.dialog_add_resources_to_databox_info);
 			break;
 		case ASSIGN_RESOURCES_TO_DATABOX:
-			label = "Select databox(es)";
+			label = "Select databoxes";
 			infoText = res.getString(R.string.dialog_add_resources_to_databox_info);
 			break;
 		case ADD_PEOPLE_TO_GROUP:
@@ -1112,7 +1104,7 @@ public class UIHelper {
 			infoText = res.getString(R.string.dialog_add_people_to_group_info);
 			break;
 		case ASSIGN_PEOPLE_TO_GROUP:
-			label = "Select group(s)";
+			label = "Select groups";
 			infoText = res.getString(R.string.dialog_add_people_to_group_info);
 			break;
 		default:
@@ -1121,17 +1113,29 @@ public class UIHelper {
 		return new StandardDialogProperties(label, infoText, 0);
 	}
 	
-	private static int getWarningColor(Context context, DisplayableItem di) {
+	public static int getWarningColor(Context context, DisplayableItem di) {
 		int resId = 0;
 		int level = AndroidModelHelper.getTrustOrPrivacyLevelForDisplayableItem(di);
 		if (level <= 0) {
-			if(ModelHelper.isAgent(di.getMType())) resId = context.getResources().getColor(R.color.warning_level_low);
-			else resId = context.getResources().getColor(R.color.warning_level_high);
+			if(ModelHelper.isAgent(di.getMType())) {
+				resId = context.getResources().getColor(R.color.trust_level_low);
+			}
+			else {
+				resId = context.getResources().getColor(R.color.privacy_level_low);
+			}
 		} else if (level <= 1) {
-			resId = context.getResources().getColor(R.color.warning_level_neutral);
+			if(ModelHelper.isAgent(di.getMType())) {
+				resId = context.getResources().getColor(R.color.trust_level_medium);
+			} else {
+				resId = context.getResources().getColor(R.color.privacy_level_medium);
+			}
 		} else if (level <= 2) {
-			if(ModelHelper.isAgent(di.getMType())) resId = context.getResources().getColor(R.color.warning_level_high);
-			else resId = context.getResources().getColor(R.color.warning_level_low);
+			if(ModelHelper.isAgent(di.getMType())) {
+				resId = context.getResources().getColor(R.color.trust_level_high);
+			}
+			else {
+				resId = context.getResources().getColor(R.color.privacy_level_high);
+			}
 		}
 		return resId;
 	}

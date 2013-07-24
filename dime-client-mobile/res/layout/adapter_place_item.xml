@@ -46,13 +46,6 @@
                 android:text="favourite"
                 android:textColor="@color/dm_col4_low" />
 
-            <TextView
-                android:id="@+placeitem/current"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="current"
-                android:textColor="@color/dm_col2_low" />
-
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

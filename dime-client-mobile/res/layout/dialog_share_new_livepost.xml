@@ -197,65 +197,9 @@
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:paddingLeft="12dp"
-                android:text="@string/sharing_label_items"
+                android:text="New livepost:"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
-            <TextView
-                android:id="@+share/label_items"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:paddingLeft="5dp"
-                android:text="0"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <View
-                android:layout_width="2px"
-                android:layout_height="fill_parent"
-                android:layout_gravity="right"
-                android:background="@drawable/gradient_double_line_blue" />
-
-            <Button
-                android:id="@+share/button_sel_databox"
-                android:layout_width="54dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/button_transp_bar"
-                android:drawableRight="@drawable/action_add_new_databox"
-                android:onClick="onClick"
-                android:paddingRight="9dp" />
-
-            <View
-                android:layout_width="2px"
-                android:layout_height="fill_parent"
-                android:layout_gravity="right"
-                android:background="@drawable/gradient_double_line_blue" />
-
-            <Button
-                android:id="@+share/button_sel_resource"
-                android:layout_width="54dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/button_transp_bar"
-                android:drawableRight="@drawable/action_add_resources"
-                android:onClick="onClick"
-                android:paddingRight="9dp" />
-
-            <View
-                android:layout_width="2px"
-                android:layout_height="fill_parent"
-                android:layout_gravity="right"
-                android:background="@drawable/gradient_double_line_blue" />
-
-            <Button
-                android:id="@+share/button_sel_message"
-                android:layout_width="54dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/button_transp_bar"
-                android:drawableRight="@drawable/action_add_new_message"
-                android:onClick="onClick"
-                android:paddingRight="9dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -267,14 +211,93 @@
             android:orientation="vertical" >
         </LinearLayout>
 
-        <TextView
-            android:id="@+share/text_no_items"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" >
+
+            <LinearLayout
+                android:id="@+share/bar_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:id="@+share/bar_label"
+                    android:layout_width="80dp"
+                    android:layout_height="match_parent"
+                    android:gravity="right|center_vertical"
+                    android:paddingRight="10dp"
+                    android:text="privacy:" />
+
+                <SeekBar
+                    android:id="@+share/bar"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="2dp"
+                    android:background="@drawable/seek_scale"
+                    android:max="2"
+                    android:maxHeight="20dp"
+                    android:minHeight="20dp"
+                    android:minWidth="50dp"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/seek_background" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:paddingRight="10dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|center_horizontal" >
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" >
+
+                        <TextView
+                            android:id="@+share/bar_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
+                            android:text="medium"
+                            android:textStyle="bold" />
+
+                        <View
+                            android:id="@+share/coloredBar"
+                            android:layout_width="match_parent"
+                            android:layout_height="5dp"
+                            android:layout_marginTop="1dp"
+                            android:background="@color/metabar_grey" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                style="@style/dime_hint"
+                android:text="@string/edit_privacy_value_hint" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+share/livepost_subject"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:text="@string/sharing_no_items"
-            android:textColor="@android:color/darker_gray" />
+            android:hint="enter subject..." />
+
+        <EditText
+            android:id="@+share/livepost_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:hint="enter message..."
+            android:minLines="5" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -284,7 +307,8 @@
             android:layout_marginRight="6dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/gradient_blue"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            android:visibility="gone" >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -314,7 +338,8 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:focusable="false"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:visibility="gone" >
         </LinearLayout>
 
         <TextView
@@ -325,7 +350,8 @@
             android:layout_marginRight="20dp"
             android:gravity="center_vertical"
             android:text="@string/sharing_no_warnings"
-            android:textColor="@android:color/darker_gray" />
+            android:textColor="@android:color/darker_gray"
+            android:visibility="gone" />
 
         <View
             android:layout_width="match_parent"

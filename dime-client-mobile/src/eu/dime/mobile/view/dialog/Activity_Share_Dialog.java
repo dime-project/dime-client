@@ -78,6 +78,7 @@ public class Activity_Share_Dialog extends ActivityDime implements OnClickListen
     private List<ResourceItem> selectedResources = new ArrayList<ResourceItem>();
     private List<LivePostItem> selectedLiveposts = new ArrayList<LivePostItem>();
     private ProfileItem selectedProfile;
+    private boolean firstLoad = true;
 
     /**
      * Called when the activity is first created.
@@ -120,14 +121,22 @@ public class Activity_Share_Dialog extends ActivityDime implements OnClickListen
         allDataboxes = ModelHelper.getAllDataBoxes(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler()));
         allGroups = ModelHelper.getAllGroups(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler()));
         allProfilesValidForSharing = ModelHelper.getAllValidProfilesForSharing(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler()));
-        selectedPersons = AndroidModelHelper.getListOfItemsWithGuids(ModelHelper.getAllPersons(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler())), getIntent().getStringArrayListExtra(TYPES.PERSON.toString()));
-        selectedResources = AndroidModelHelper.getListOfItemsWithGuids(allResources, getIntent().getStringArrayListExtra(TYPES.RESOURCE.toString()));
-		selectedLiveposts = AndroidModelHelper.getListOfItemsWithGuids(allLiveposts, getIntent().getStringArrayListExtra(TYPES.LIVEPOST.toString()));
-        selectedGroups = AndroidModelHelper.getListOfItemsWithGuids(allGroups, getIntent().getStringArrayListExtra(TYPES.GROUP.toString()));
-        selectedDataboxes = AndroidModelHelper.getListOfItemsWithGuids(allDataboxes, getIntent().getStringArrayListExtra(TYPES.DATABOX.toString()));
+        selectedPersons = AndroidModelHelper.getListOfItemsWithGuids(ModelHelper.getAllPersons(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler())), getIntent().getStringArrayListExtra(ModelHelper.getStringType(TYPES.PERSON)));
+        selectedResources = AndroidModelHelper.getListOfItemsWithGuids(allResources, getIntent().getStringArrayListExtra(ModelHelper.getStringType(TYPES.RESOURCE)));
+		selectedLiveposts = AndroidModelHelper.getListOfItemsWithGuids(allLiveposts, getIntent().getStringArrayListExtra(ModelHelper.getStringType(TYPES.LIVEPOST)));
+        selectedGroups = AndroidModelHelper.getListOfItemsWithGuids(allGroups, getIntent().getStringArrayListExtra(ModelHelper.getStringType(TYPES.GROUP)));
+        selectedDataboxes = AndroidModelHelper.getListOfItemsWithGuids(allDataboxes, getIntent().getStringArrayListExtra(ModelHelper.getStringType(TYPES.DATABOX)));
         listOfSelectedAgents.addAll(selectedGroups);
         listOfSelectedAgents.addAll(selectedPersons);
-        selectedProfile = ModelHelper.getDefaultProfileForSharing(mrContext, listOfSelectedAgents); //TODO get from intent when user selected a profile from the my profile view
+        List<ProfileItem> selectedProfiles = AndroidModelHelper.getListOfItemsWithGuids(allProfilesValidForSharing, getIntent().getStringArrayListExtra(ModelHelper.getStringType(TYPES.PROFILE)));
+        if(selectedProfiles.size() > 0) {
+        	selectedProfile = selectedProfiles.get(0);
+        	if(selectedProfiles.size() > 1) {
+        		advisoryItemsNotValidAgentsForSharing.add(new AdvisoryProperties("You can only select one profile", "More than one profiles were selected. " + (selectedProfiles.size() -1) + " profiles are ignored!", R.drawable.icon_small_info));
+        	}
+        } else {
+        	selectedProfile = ModelHelper.getDefaultProfileForSharing(mrContext, listOfSelectedAgents);
+        }
     }
     
     @Override
@@ -141,7 +150,11 @@ public class Activity_Share_Dialog extends ActivityDime implements OnClickListen
         recieverContainer.removeAllViews();
         dataContainer.removeAllViews();
         warningsContainer.removeAllViews();
-        advisoryItemsNotValidAgentsForSharing.clear();
+        if(firstLoad) {
+        	firstLoad = false;
+        } else {
+        	advisoryItemsNotValidAgentsForSharing.clear();
+        }
         checkValidityOfChildrenOfGroups(selectedGroups);
         checkValidityOfPersons(selectedPersons, "");
         listOfSelectedAgents.clear();
@@ -160,7 +173,7 @@ public class Activity_Share_Dialog extends ActivityDime implements OnClickListen
         	labelWarnings.setText(String.valueOf(0));
         	noWarnings.setVisibility(View.VISIBLE);
             noWarnings.setText("Loading...");
-	        AndroidModelHelper.loadAdvisoryPropertiesAsyncronously(this, new AdvisoryRequestItem(selectedProfile.getGuid(), AndroidModelHelper.getListOfGuidsOfGenItemList((List<GenItem>) (Object) listOfSelectedAgents), AndroidModelHelper.getListOfGuidsOfGenItemList(listOfSelectedItems)), advisoryItemsNotValidAgentsForSharing, noWarnings, labelWarnings, warningsContainer);
+	        AndroidModelHelper.loadAdvisoryPropertiesAsynchronously(this, new AdvisoryRequestItem(selectedProfile.getGuid(), AndroidModelHelper.getListOfGuidsOfGenItemList((List<GenItem>) (Object) listOfSelectedAgents), AndroidModelHelper.getListOfGuidsOfGenItemList(listOfSelectedItems)), advisoryItemsNotValidAgentsForSharing, noWarnings, labelWarnings, warningsContainer);
         } else {
         	noWarnings.setVisibility(View.GONE);
         	warningsContainer.addView(UIHelper.createWarningWidget(this, UIHelper.getAdvisoryProperties(this, new AdvisoryItem(1.0d, AdvisoryItem.WARNING_TYPES[6], new WarningSharingNotPossible()))));

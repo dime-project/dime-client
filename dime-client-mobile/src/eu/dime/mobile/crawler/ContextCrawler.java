@@ -19,16 +19,12 @@ import eu.dime.model.context.ContextItem;
 import eu.dime.model.context.constants.Scopes;
 import eu.dime.restapi.DimeHelper;
 import eu.dime.restapi.JSONResponse;
-import eu.dime.restapi.RestApiAccess;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import sit.json.JSONObject;
 
 public class ContextCrawler implements IContextCrawler {
 	
@@ -110,17 +106,9 @@ public class ContextCrawler implements IContextCrawler {
 	}
 
 	@Override
-	@SuppressWarnings("unused")
 	public void updateContext(String scopes, ContextItem data) {
 		Log.i(Constants.LOG_TAG,"Firing context data.. (" + scopes + ")");
-		JSONObject json = data.createJSONObject();
-		Log.v(Constants.LOG_TAG, json.toString());
-		try {
-			GenItem response = RestApiAccess.postItemNew(DimeClient.getUserMainSaid(), Model.ME_OWNER,TYPES.CONTEXT, data, AndroidModelHelper.getModelConfiguration().restApiConfiguration);
-			// TODO what if postItemNew fails???
-		} catch (Exception ex) {
-			Log.e(Constants.LOG_TAG, "Exception " + ex.toString() + " posting context: " + json.toString());
-		}
+		AndroidModelHelper.updateContextAsynchronously(data);
 	}
 
 	@Override
@@ -133,7 +121,6 @@ public class ContextCrawler implements IContextCrawler {
 			return ContextHelper.createContextData(scope,context,validity.intValue());
 		} else {
 			Log.d(Constants.LOG_TAG,"No local sensors support scope --> invoking PS for " + scope + "..");
-                        //TODO : check - better use places already in the model??
 			JSONResponse result = helper.doDIMEJSONGET(DimeHelper.DIME_BASIC_PATH 
                                 + DimeClient.getUserMainSaid() + "/context/" + Model.ME_OWNER + "/" 
                                 + Scopes.SCOPE_CURRENT_PLACE, "", AndroidModelHelper.getModelConfiguration().restApiConfiguration);
@@ -144,9 +131,7 @@ public class ContextCrawler implements IContextCrawler {
 	        if (result.hasError()) {
 	            Logger.getLogger(ContextCrawler.class.getName()).log(Level.SEVERE, "Error:\n" + result.toString());
 	        }
-
 	        if ((result != null) && (!result.hasError()) && (!result.replyObjects.isEmpty())) {
-	        	
 	        	try {
 	                GenItem item = ItemFactory.createNewItemByJSON(TYPES.CONTEXT, result.replyObjects.get(0));
 	                return (ContextItem)item;
@@ -158,6 +143,5 @@ public class ContextCrawler implements IContextCrawler {
 	        } else return null;
 		}
 	}
-
 
 }

@@ -1,6 +1,7 @@
 package eu.dime.mobile.view.data;
 
 import android.content.res.Resources;
+import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -20,16 +21,22 @@ import eu.dime.model.GenItem;
 import eu.dime.model.ModelHelper;
 import eu.dime.model.displayable.DataboxItem;
 import eu.dime.model.displayable.DisplayableItem;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class TabActivity_Databox_Detail extends TabActivityDisplayableItemDetail implements IResultOfStandardDialog {
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		TAG = TabActivity_Databox_Detail.class.getSimpleName();
+	}
 
 	@Override
 	protected void initializeTabs() {
-		TAG = TabActivity_Databox_Detail.class.getSimpleName();
     	tabs.add(new DimeTabObject(getResources().getString(R.string.tab_databoxDetail) + di.getName(), ListActivity_Databox_Detail.class, dio));
-    	TabActivity_Databox_Detail.this.init(true, true, ownItem, ownItem);
+    	TabActivity_Databox_Detail.this.init(true, true, isOwnItem(), isOwnItem());
 	}
 	
 	@Override
@@ -58,7 +65,7 @@ public class TabActivity_Databox_Detail extends TabActivityDisplayableItemDetail
 				final String actionName = res.getResourceEntryName(R.string.action_removeResourcesFromDatabox);
 				actionDialog.dismiss();
 				di.removeItems(selectedGUIDs);
-				AndroidModelHelper.updateGenItemAsyncronously(di, null, currentActivity, mrContext, actionName);
+				AndroidModelHelper.updateGenItemAsynchronously(di, null, currentActivity, mrContext, actionName);
 			}
 			//share
 			else if (button.getText().equals(res.getString(R.string.action_shareSelectedItems))) {
@@ -77,7 +84,7 @@ public class TabActivity_Databox_Detail extends TabActivityDisplayableItemDetail
 	public void handleResult(ResultObject result) {
 		final String actionName = getResources().getResourceEntryName(R.string.action_addResourcesToDatabox);
 		di.addItems(AndroidModelHelper.getListOfGuidsOfDisplayableList(((ResultObjectDisplayable)result).getDisplayables()));
-		AndroidModelHelper.updateGenItemAsyncronously(di, null, currentActivity, mrContext, actionName);
+		AndroidModelHelper.updateGenItemAsynchronously(di, null, currentActivity, mrContext, actionName);
 	}
 
 	@Override

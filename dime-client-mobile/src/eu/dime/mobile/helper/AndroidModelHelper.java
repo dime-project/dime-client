@@ -30,13 +30,16 @@ import android.widget.Toast;
 import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
 import eu.dime.control.DummyLoadingViewHandler;
+import eu.dime.mobile.crawler.Constants;
 import eu.dime.mobile.helper.listener.ClickListenerUserNotifications;
 import eu.dime.mobile.helper.objects.AdvisoryProperties;
 import eu.dime.mobile.helper.objects.DimeIntentObject;
 import eu.dime.mobile.helper.objects.NotificationProperties;
 import eu.dime.mobile.view.Activity_Main;
+import eu.dime.mobile.view.abstr.ActivityDime;
 import eu.dime.mobile.view.abstr.ListActivityDime;
 import eu.dime.mobile.view.dialog.Activity_Share_Dialog;
+import eu.dime.mobile.view.places.Activity_Place_Detail;
 import eu.dime.model.ComparatorHelper;
 import eu.dime.model.CreateItemFailedException;
 import eu.dime.model.GenItem;
@@ -50,10 +53,12 @@ import eu.dime.model.SharingNotSupportedForSAIDException;
 import eu.dime.model.TYPES;
 import eu.dime.model.acl.ACL;
 import eu.dime.model.acl.ACLPackage;
+import eu.dime.model.context.ContextItem;
 import eu.dime.model.displayable.AgentItem;
 import eu.dime.model.displayable.DataboxItem;
 import eu.dime.model.displayable.DisplayableItem;
 import eu.dime.model.displayable.GroupItem;
+import eu.dime.model.displayable.LivePostItem;
 import eu.dime.model.displayable.PersonItem;
 import eu.dime.model.displayable.ProfileAttributeItem;
 import eu.dime.model.displayable.ProfileItem;
@@ -231,7 +236,7 @@ public class AndroidModelHelper {
 		return ((DisplayableItem)Model.getInstance().getOwnItem(DimeClient.getUserMainSaid(), guid, isShareable));
 	}
 	
-    public static void createGenItemAsyncronously(final GenItem item, final DialogInterface dialog, Activity activity, final ModelRequestContext mrContext, final String actionName) {
+    public static void createGenItemAsynchronously(final GenItem item, final DialogInterface dialog, Activity activity, final ModelRequestContext mrContext, final String actionName) {
     	final WeakReference<Activity> mActivity = new WeakReference<Activity>(activity);
     	(new AsyncTask<Void, Void, String>() {
     		
@@ -254,8 +259,12 @@ public class AndroidModelHelper {
 			@Override
             protected void onPostExecute(String result) {
 				if(mActivity.get() != null && !mActivity.get().isFinishing()) {
-					if(mActivity.get() instanceof ListActivityDime) ((ListActivityDime<GenItem>) (Object) mActivity.get()).reloadList();
-					if(mActivity.get() instanceof ListActivityDime) UIHelper.hideSoftKeyboard(mActivity.get().getParent(), mActivity.get().getParent().getCurrentFocus());
+					if(mActivity.get() instanceof ListActivityDime) {
+						((ListActivityDime<GenItem>) (Object) mActivity.get()).reloadList();
+						UIHelper.hideSoftKeyboard(mActivity.get().getParent(), mActivity.get().getParent().getCurrentFocus());
+					} else if(mActivity.get() instanceof ActivityDime) {
+						((Activity_Place_Detail) mActivity.get()).startTask("Refreshing view...");
+					}
 	            	if(dialog != null) dialog.dismiss();
 				}
 				Toast.makeText(DimeClient.getAppContext(), result, Toast.LENGTH_LONG).show();
@@ -265,7 +274,7 @@ public class AndroidModelHelper {
         }).execute();
     }
     
-    public static void updateGenItemAsyncronously(final GenItem item, final DialogInterface dialog, Activity activity, final ModelRequestContext mrContext, final String actionName) {
+    public static void updateGenItemAsynchronously(final GenItem item, final DialogInterface dialog, Activity activity, final ModelRequestContext mrContext, final String actionName) {
     	final WeakReference<Activity> mActivity = new WeakReference<Activity>(activity);
     	(new AsyncTask<Void, Void, String>() {
     		
@@ -286,12 +295,40 @@ public class AndroidModelHelper {
 			@Override
             protected void onPostExecute(String result) {
 				if(mActivity.get() != null && !mActivity.get().isFinishing()) {
-					if(mActivity.get() instanceof ListActivityDime) ((ListActivityDime<GenItem>) (Object) mActivity.get()).reloadList();
-					if(mActivity.get() instanceof ListActivityDime) UIHelper.hideSoftKeyboard(mActivity.get().getParent(), mActivity.get().getParent().getCurrentFocus());
+					if(mActivity.get() instanceof ListActivityDime) {
+						((ListActivityDime<GenItem>) (Object) mActivity.get()).reloadList();
+						UIHelper.hideSoftKeyboard(mActivity.get().getParent(), mActivity.get().getParent().getCurrentFocus());
+					} else if(mActivity.get() instanceof ActivityDime) {
+						((ActivityDime) mActivity.get()).startTask("Refreshing view...");
+					}
 					if(dialog != null) dialog.dismiss();
 				}
 				Toast.makeText(DimeClient.getAppContext(), result, Toast.LENGTH_LONG).show();
 				sendEvaluationDataAsynchronously(Arrays.asList(item), mrContext, actionName);
+            }
+            
+        }).execute();
+    }
+    
+    public static void updateContextAsynchronously(final ContextItem item) {
+    	(new AsyncTask<Void, Void, String>() {
+    		
+			@Override
+            protected String doInBackground(Void... params) {
+				String result = "posting context: " + item.getScope() + " successful!";
+				GenItem response = null;
+				try {
+					response = RestApiAccess.postItemNew(DimeClient.getUserMainSaid(), Model.ME_OWNER,TYPES.CONTEXT, item, AndroidModelHelper.getModelConfiguration().restApiConfiguration);
+				} catch (Exception ex) {
+					result = "Exception " + ex.toString() + " posting context: " + item.getScope();
+				}
+				if(response == null) result = "Error occurred trying to send context data!";
+                return result;
+            }
+
+			@Override
+            protected void onPostExecute(String result) {
+				Log.e(Constants.LOG_TAG, result);
             }
             
         }).execute();
@@ -330,7 +367,7 @@ public class AndroidModelHelper {
         }).execute();
     }
     
-    public static void createAndAssignProfileAttributesAsyncronously(final ProfileItem profile, final ProfileAttributeItem pai, final DialogInterface dialog, Activity activity, final ModelRequestContext mrContext, final String actionName) {
+    public static void createAndAssignProfileAttributesAsynchronously(final ProfileItem profile, final ProfileAttributeItem pai, final DialogInterface dialog, Activity activity, final ModelRequestContext mrContext, final String actionName) {
     	final WeakReference<Activity> mActivity = new WeakReference<Activity>(activity);
     	(new AsyncTask<Void, Void, String>() {
     		
@@ -342,7 +379,7 @@ public class AndroidModelHelper {
 					String name = tmp.getName();
 					result = UIHelper.formatStringOnlyFirstCharUpperCase(tmp.getType()) + name + " created!";
 					profile.addItem(tmp.getGuid());
-					updateGenItemAsyncronously(profile, null, mActivity.get(), mrContext, actionName);
+					updateGenItemAsynchronously(profile, null, mActivity.get(), mrContext, actionName);
 				} catch (CreateItemFailedException e) {
 					result = "Error: Creation of the " + UIHelper.formatStringOnlyFirstCharUpperCase(pai.getType()) +" failed!";
 				} catch (Exception e) {
@@ -355,8 +392,10 @@ public class AndroidModelHelper {
 			@Override
             protected void onPostExecute(String result) {
 				if(mActivity.get() != null && !mActivity.get().isFinishing()) {
-					if(mActivity.get() instanceof ListActivityDime) ((ListActivityDime<GenItem>) (Object) mActivity.get()).reloadList();
-					if(mActivity.get() instanceof ListActivityDime) UIHelper.hideSoftKeyboard(mActivity.get().getParent(), mActivity.get().getParent().getCurrentFocus());
+					if(mActivity.get() instanceof ListActivityDime) {
+						((ListActivityDime<GenItem>) (Object) mActivity.get()).reloadList();
+						UIHelper.hideSoftKeyboard(mActivity.get().getParent(), mActivity.get().getParent().getCurrentFocus());
+					}
 	            	if(dialog != null) dialog.dismiss();
 				}
 				Toast.makeText(DimeClient.getAppContext(), result, Toast.LENGTH_LONG).show();
@@ -452,13 +491,13 @@ public class AndroidModelHelper {
 	 ** ------------------------------------------------------------------------------------------------------------------------------------------ */
     public static void shareResources(Context context, List<String> guids, TYPES itemType) {
 		Intent intent = new Intent(context, Activity_Share_Dialog.class);
-		intent.putStringArrayListExtra(itemType.toString(), new ArrayList<String>(guids));
+		intent.putStringArrayListExtra(ModelHelper.getStringType(itemType), new ArrayList<String>(guids));
 		context.startActivity(DimeIntentObjectHelper.populateIntent(intent, new DimeIntentObject()));
 	}
     
     public static void shareResource(Context context, DisplayableItem item) {
 		Intent intent = new Intent(context, Activity_Share_Dialog.class);
-		intent.putStringArrayListExtra(item.getMType().toString(), new ArrayList<String>(Arrays.asList(item.getGuid())));
+		intent.putStringArrayListExtra(ModelHelper.getStringType(item.getMType()), new ArrayList<String>(Arrays.asList(item.getGuid())));
 		context.startActivity(DimeIntentObjectHelper.populateIntent(intent, new DimeIntentObject()));
 	}
     
@@ -475,12 +514,12 @@ public class AndroidModelHelper {
 			}
 		}
     	for (TYPES key : hashMap.keySet()) {
-    		intent.putStringArrayListExtra(key.toString(), hashMap.get(key));
+    		intent.putStringArrayListExtra(ModelHelper.getStringType(key), hashMap.get(key));
 		}
 		context.startActivity(DimeIntentObjectHelper.populateIntent(intent, new DimeIntentObject()));
     }
     
-    public static void loadAdvisoryPropertiesAsyncronously(final Context context, final AdvisoryRequestItem ari, final List<AdvisoryProperties> advisoryItemsNotValidAgentsForSharing, final TextView noWarnings, final TextView labelWarnings, final LinearLayout warningsContainer) {
+    public static void loadAdvisoryPropertiesAsynchronously(final Context context, final AdvisoryRequestItem ari, final List<AdvisoryProperties> advisoryItemsNotValidAgentsForSharing, final TextView noWarnings, final TextView labelWarnings, final LinearLayout warningsContainer) {
 		new AsyncTask<Void, Void, List<AdvisoryProperties>>() {
 			@Override
 			protected List<AdvisoryProperties> doInBackground(Void... params) {
@@ -521,20 +560,23 @@ public class AndroidModelHelper {
 			@Override
             protected String doInBackground(Void... paramss) {
 				String result = "";
-				try {
+				int successfullyShared = 0;
+				int notSupportedCount = 0;
+				if(listOfSelectedAgentsTmp != null && listOfSelectedItemsTmp != null) {
 					for (AgentItem agent : listOfSelectedAgentsTmp) {
 	                    for (GenItem item : listOfSelectedItemsTmp) {
 	                    	try {
 								ModelHelper.shareItemToAgent(mrContext, item, agent, selectedProfile);
-								result = listOfSelectedItemsTmp.size() + " item(s) successfully shared to " + listOfSelectedAgentsTmp.size() + " receiver(s)!";
+								successfullyShared++;
 							} catch (SharingNotSupportedForSAIDException e) {
-								e.printStackTrace();
-								result  = "Sharing not supported for selected agents";
+								notSupportedCount++;
 							}
 	                    }
 	                }
-				} catch (Exception e) {
-					e.printStackTrace();
+					if(successfullyShared > 0) result = successfullyShared + " items successfully shared to " + listOfSelectedAgentsTmp.size() + " receivers!";
+					if(notSupportedCount > 0) result += "Not supported for " + notSupportedCount + " agents!";
+				} else {
+					result = "Error occurred during sharing request!";
 				}
                 return result;
             }
@@ -546,6 +588,40 @@ public class AndroidModelHelper {
                 if(!mActivity.get().isFinishing()) mActivity.get().finish();
                 List<GenItem> affectedItems = new ArrayList<GenItem>();
                 affectedItems.addAll(listOfSelectedItemsTmp);
+                affectedItems.addAll((List<GenItem>) (Object) listOfSelectedAgentsTmp);
+                sendEvaluationDataAsynchronously(affectedItems, mrContext, "Share");
+            }
+            
+        }).execute();
+    }
+    
+    public static void shareNewLivepostAsynchronously(Activity activity, final ModelRequestContext mrContext, final List<AgentItem> listOfSelectedAgentsTmp, final LivePostItem livepost, final ProfileItem selectedProfile){
+    	final WeakReference<Activity> mActivity = new WeakReference<Activity>(activity);
+    	(new AsyncTask<Void, Void, String>() {
+
+			@Override
+            protected String doInBackground(Void... params) {
+				String result = "";
+				try {
+					for (AgentItem agent : listOfSelectedAgentsTmp) {
+	                    livepost.addAccessingAgent(selectedProfile.getServiceAccountId(), agent.getGuid(), agent.getMType(), null);
+	                }
+					Model.getInstance().createItem(mrContext, livepost);
+					result = "Livepost successfully shared to " + listOfSelectedAgentsTmp.size() + " receiver(s)!";
+				} catch (Exception e) {
+					result = "Could not create and share livepost!";
+				}
+				
+                return result;
+            }
+
+			@SuppressWarnings("unchecked")
+            @Override
+            protected void onPostExecute(String result) {
+            	Toast.makeText(DimeClient.getAppContext(), result, Toast.LENGTH_LONG).show();
+                if(!mActivity.get().isFinishing()) mActivity.get().finish();
+                List<GenItem> affectedItems = new ArrayList<GenItem>();
+                affectedItems.addAll((List<GenItem>) (Object) Arrays.asList(livepost));
                 affectedItems.addAll((List<GenItem>) (Object) listOfSelectedAgentsTmp);
                 sendEvaluationDataAsynchronously(affectedItems, mrContext, "Share");
             }
@@ -629,7 +705,7 @@ public class AndroidModelHelper {
 		}).execute();
 	}
 	
-	public static void loadNotificationPropertiesAsyncronously(final Context context, final UserNotificationItem uni, final View view, final TextView message, final TextView sender, final ImageView iv) {
+	public static void loadNotificationPropertiesAsynchronously(final Context context, final UserNotificationItem uni, final View view, final TextView message, final TextView sender, final ImageView iv) {
 		new AsyncTask<Void, Void, NotificationProperties>() {
 			@Override
 			protected NotificationProperties doInBackground(Void... params) {

@@ -26,7 +26,6 @@ import eu.dime.model.specialitem.NotificationItem;
 public abstract class TabActivityDisplayableItemDetail extends TabActivityDime implements OnClickListener, NotificationListener {
 
 	protected DisplayableItem di;
-	protected boolean ownItem = false;
 	private boolean isLoading = false;
 	
 	@Override
@@ -43,7 +42,6 @@ public abstract class TabActivityDisplayableItemDetail extends TabActivityDime i
 			protected void onPostExecute(DisplayableItem result) {
 				if(result != null) {
 					di = result;
-					ownItem = result.getUserId().equals(Model.ME_OWNER);
 					initializeTabs();
 				} else {
 					Toast.makeText(getApplicationContext(), "Couldn´t load detail view of item!", Toast.LENGTH_LONG).show();
@@ -169,6 +167,10 @@ public abstract class TabActivityDisplayableItemDetail extends TabActivityDime i
 				}
 			});
 		}
+	}
+	
+	protected boolean isOwnItem() {
+		return di.getUserId().equals(Model.ME_OWNER);
 	}
 
 }

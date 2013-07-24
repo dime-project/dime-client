@@ -6,9 +6,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import eu.dime.mobile.R;
-import eu.dime.mobile.helper.ContextHelper;
 import eu.dime.mobile.helper.ImageHelper;
-import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.view.abstr.BaseAdapterDisplayableItem;
 import eu.dime.model.ComparatorHelper;
 import eu.dime.model.displayable.DisplayableItem;
@@ -19,38 +17,46 @@ public class BaseAdapter_Place extends BaseAdapterDisplayableItem {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View vi = convertView;
-        PlaceItem placeItem = (PlaceItem) mItems.get(position);
-        vi = mInflater.inflate(R.layout.adapter_place_item, null);
-        TextView name = (TextView) vi.findViewById(R.placeitem.name);
-        TextView dist = (TextView) vi.findViewById(R.placeitem.distance);
-        TextView favourite = (TextView) vi.findViewById(R.placeitem.favourite);
-        TextView current = (TextView) vi.findViewById(R.placeitem.current);
-        RatingBar ratingPublic = (RatingBar) vi.findViewById(R.placeitem.ratingPublic);
-        RatingBar ratingSocial = (RatingBar) vi.findViewById(R.placeitem.ratingSocial);
-        name.setText(placeItem.getName());
-        dist.setText("Distance " + placeItem.getDistance() * 1000 + "m");
-        ratingPublic.setRating((float) (placeItem.getYmRating() * 5.0));
-        ratingSocial.setRating((float) (placeItem.getSocRating() * 5.0));
+    	PlaceItem placeItem = (PlaceItem) mItems.get(position);
+    	// Keeps reference to avoid future findViewById()
+    	DimeViewHolder viewHolder;
+		if (convertView == null) {
+			viewHolder = new DimeViewHolder();
+			convertView = mInflater.inflate(R.layout.adapter_place_item, null);
+			viewHolder.name = (TextView) convertView.findViewById(R.placeitem.name);
+			viewHolder.image = (ImageView) convertView.findViewById(R.placeitem.image);
+			viewHolder.distance = (TextView) convertView.findViewById(R.placeitem.distance);
+			viewHolder.favourite = (TextView) convertView.findViewById(R.placeitem.favourite);
+			viewHolder.ratingPublic = (RatingBar) convertView.findViewById(R.placeitem.ratingPublic);
+			viewHolder.ratingSocial = (RatingBar) convertView.findViewById(R.placeitem.ratingSocial);
+	    	convertView.setTag(viewHolder);
+		} else {
+			viewHolder = (DimeViewHolder) convertView.getTag();
+		}
+		viewHolder.name.setText(placeItem.getName());
+		viewHolder.distance.setText("Distance " + placeItem.getDistance() * 1000 + "m");
+		viewHolder.ratingPublic.setRating((float) (placeItem.getYmRating() * 5.0));
+		viewHolder.ratingSocial.setRating((float) (placeItem.getSocRating() * 5.0));
         // hide favourite label if not favourite
-        if (!placeItem.getFavorite()) {
-            UIHelper.hideView(favourite);
-        }
-        // hide current label if not equal to currentPlace
-        if (ContextHelper.getCurrentPlace() != null && placeItem != null) {
-            if (!placeItem.getGuid().equals(ContextHelper.getCurrentPlace().getPlaceId())) {
-                UIHelper.hideView(current);
-            }
-        } else {
-            UIHelper.hideView(current);
-        }
-        ImageView image = (ImageView) vi.findViewById(R.placeitem.image);
-        ImageHelper.loadImageAsynchronously(image, placeItem, context);
-        return vi;
+        viewHolder.favourite.setVisibility((placeItem.getFavorite())? View.VISIBLE : View.GONE);
+        ImageHelper.loadImageAsynchronously(viewHolder.image, placeItem, context);
+        return convertView;
     }
     
 	@Override
     protected Comparator<DisplayableItem> createComparator() {
         return new ComparatorHelper.RatingComparator();
     }
+	
+	static class DimeViewHolder {
+		
+		TextView name;
+		ImageView image;
+		TextView distance;
+		TextView favourite;
+    	RatingBar ratingPublic;
+    	RatingBar ratingSocial;
+    	
+	}
+	
 }

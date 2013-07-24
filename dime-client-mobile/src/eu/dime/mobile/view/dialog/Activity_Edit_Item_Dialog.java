@@ -49,6 +49,7 @@ public class Activity_Edit_Item_Dialog extends ActivityDime implements OnClickLi
 	private TextView headerChangesMade;
 	private TextView seekHint;
 	private Button saveButton;
+	private View coloredBar;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -66,6 +67,7 @@ public class Activity_Edit_Item_Dialog extends ActivityDime implements OnClickLi
 		seek = (SeekBar) findViewById(R.edit.bar);
 		seekText = (TextView) findViewById(R.edit.bar_text);
 		seekHint = (TextView) findViewById(R.edit.bar_hint);
+		coloredBar = findViewById(R.edit.coloredBar);
 		Button uploadImage = (Button) findViewById(R.edit.button_upload_picture);
 		Button cancelButton = (Button) findViewById(R.edit.button_cancel);
 		saveButton = (Button) findViewById(R.edit.button_save);
@@ -93,10 +95,11 @@ public class Activity_Edit_Item_Dialog extends ActivityDime implements OnClickLi
 		headerName.setText(item.getName());
 		name.setText(item.getName());
 		headerModified.setText(UIHelper.formatDateByMillis(item.getLastUpdated()));
-		UIHelper.updateTrustOrPrivacyLevelTextView(this, seekText, item);
+		seekText.setText(UIHelper.getWarningText(item));
 		Integer level = AndroidModelHelper.getTrustOrPrivacyLevelForDisplayableItem(item);
 		if(!item.getMType().equals(TYPES.GROUP) && level != null) { 
-			seek.setProgress(level); 
+			seek.setProgress(level);
+			coloredBar.setBackgroundColor(UIHelper.getWarningColor(this, item));
 			seekLabel.setText(UIHelper.getTrustOrPrivacyLabelOfProgressBar(item));
 			seekHint.setText(UIHelper.updateEditTrustOrPrivacyLevelHint(this, item));
 		} else { 
@@ -139,7 +142,7 @@ public class Activity_Edit_Item_Dialog extends ActivityDime implements OnClickLi
 					break;
 				default: break;
 				}
-				AndroidModelHelper.updateGenItemAsyncronously(item, null, this, mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_edit_item_save));
+				AndroidModelHelper.updateGenItemAsynchronously(item, null, this, mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_edit_item_save));
 				finish();
 			} catch (Exception e) {
 				Toast.makeText(this, "Error!", Toast.LENGTH_LONG).show();
@@ -169,7 +172,8 @@ public class Activity_Edit_Item_Dialog extends ActivityDime implements OnClickLi
 		} else if(ModelHelper.isShareable(item.getMType())) {
 			((ShareableItem)item).setPrivacyLevel(AndroidModelHelper.normalizeTrustOrPrivacyLevelForDisplayableItem(seekBar.getProgress()));
 		}
-		UIHelper.updateTrustOrPrivacyLevelTextView(this, seekText, item);
+		seekText.setText(UIHelper.getWarningText(item));
+		coloredBar.setBackgroundColor(UIHelper.getWarningColor(this, item));
 	}
 
 	@Override

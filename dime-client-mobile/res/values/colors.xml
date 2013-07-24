@@ -22,10 +22,12 @@
     <color name="metabar_grey">#dddedd</color>
     <color name="dm_neutral">#939393</color>
     <!-- warning levels -->
-    <color name="warning_level_low">#d00d1d</color>
-    <color name="warning_level_neutral">#286496</color>
-    <color name="warning_level_medium">#f0c000</color>
-    <color name="warning_level_high">#649614</color>
+    <color name="trust_level_low">#ec1e32</color>
+    <color name="trust_level_medium">#ebe104</color>
+    <color name="trust_level_high">#649614</color>
+    <color name="privacy_level_low">#e3c3d2</color>
+    <color name="privacy_level_medium">#cb588b</color>
+    <color name="privacy_level_high">#843559</color>
     <!-- dividers -->
     <color name="divider_black">#000000</color>
     <color name="divider_grad2_top">#6b6b6b</color>

@@ -15,6 +15,8 @@ import eu.dime.model.GenItemI;
  */
 public interface ShareableItem extends GenItemI {
 	
+	public static final double STANDARD_PRIVACY_LEVEL = 0.5;
+	
 	public Double getPrivacyLevel();
 	public void setPrivacyLevel(Double privacyLevel);
 	

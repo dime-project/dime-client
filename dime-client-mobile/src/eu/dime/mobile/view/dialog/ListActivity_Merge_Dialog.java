@@ -74,7 +74,7 @@ public class ListActivity_Merge_Dialog extends ListActivityDisplayableItem imple
         	 UNEntryMergeRecommendation entry = (UNEntryMergeRecommendation)uni.getUnEntry();
         	 entry.setStatus(UNEntryMergeRecommendation.STATUS_TYPES[1]);
         	 uni.setUnEntry(entry);
-        	 AndroidModelHelper.updateGenItemAsyncronously(uni, null, this, mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_merge_save));
+        	 AndroidModelHelper.updateGenItemAsynchronously(uni, null, this, mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_merge_save));
              break;
 
          case R.merge.button_cancel: 

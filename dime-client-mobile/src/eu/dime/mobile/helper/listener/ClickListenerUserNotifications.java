@@ -28,7 +28,7 @@ public class ClickListenerUserNotifications implements OnClickListener {
 	    	context.startActivity(np.getIntent());
 	    	if(!uni.isRead()) {
 	    		uni.setRead(true);
-	    		AndroidModelHelper.updateGenItemAsyncronously(uni, null, (Activity) context, DimeClient.getMRC(new DummyLoadingViewHandler()), null);
+	    		AndroidModelHelper.updateGenItemAsynchronously(uni, null, (Activity) context, DimeClient.getMRC(new DummyLoadingViewHandler()), null);
 	    	}
 		} catch (Exception e) {
 			e.printStackTrace();

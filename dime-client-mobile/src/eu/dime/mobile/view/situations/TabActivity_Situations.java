@@ -5,6 +5,7 @@ import java.util.Arrays;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -25,13 +26,26 @@ import eu.dime.model.displayable.SituationItem;
 
 public class TabActivity_Situations extends TabActivityDime {
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		TAG = TabActivity_Situations.class.getSimpleName();
 		tabs.add(new DimeTabObject(getResources().getString(R.string.tab_situations), ListActivity_Situations.class, new DimeIntentObject(TYPES.SITUATION)));
-		if(ModelHelper.isFitbitAdapterConnected(mrContext)) tabs.add(new DimeTabObject(getResources().getString(R.string.tab_activities), ListActivity_Activities.class, new DimeIntentObject(TYPES.ACTIVITY)));
+		tabs.add(new DimeTabObject(getResources().getString(R.string.tab_activities), ListActivity_Activities.class, new DimeIntentObject(TYPES.ACTIVITY)));
 		super.init(true, false, false, true);
+		getTabWidget().getChildTabViewAt(1).setEnabled(false);
+		(new AsyncTask<Void, Void, Boolean>() {	
+			@Override
+			protected Boolean doInBackground(Void... params) {
+				return ModelHelper.isFitbitAdapterConnected(mrContext);
+			}
+			
+			@Override
+			protected void onPostExecute(Boolean result) {
+				getTabWidget().getChildTabViewAt(1).setEnabled(result);
+			}
+		}).execute();
 	}
 
 	@Override
@@ -62,7 +76,7 @@ public class TabActivity_Situations extends TabActivityDime {
 						public void onClick(final DialogInterface dialog, int which) {  
 							if(text != null && text.getText() != null && text.getText().length() > 0) {
 								SituationItem si = (SituationItem) ItemFactory.createNewDisplayableItemByType(TYPES.SITUATION, text.getText().toString());
-								AndroidModelHelper.createGenItemAsyncronously(si, dialog, currentActivity, mrContext, actionName);
+								AndroidModelHelper.createGenItemAsynchronously(si, dialog, currentActivity, mrContext, actionName);
 							} else {
 								UIHelper.createInfoDialog(TabActivity_Situations.this, "Please provide a situation name", "ok");
 							}

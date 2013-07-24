@@ -28,6 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 import eu.dime.control.LoadingViewHandler;
 import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
@@ -37,8 +38,10 @@ import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.objects.DimeIntentObject;
 import eu.dime.mobile.helper.objects.DimeTabObject;
 import eu.dime.mobile.view.Activity_Main;
+import eu.dime.mobile.view.Activity_Shutdown;
 import eu.dime.model.GenItem;
 import eu.dime.model.ModelRequestContext;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -72,6 +75,7 @@ public abstract class TabActivityDime extends TabActivity implements OnClickList
     }
     
 	protected void init(boolean showHomeButton, boolean showSearchButton, boolean showShareButton, boolean showActionButton) {
+		getTabHost().getTabContentView().removeAllViews();
     	if(!showHomeButton) { UIHelper.hideView(findViewById(R.tabframe.view_home)); }
         if(!showSearchButton) { UIHelper.hideView(findViewById(R.tabframe.view_search)); }
         if(!showShareButton) { UIHelper.hideView(findViewById(R.tabframe.view_share)); }
@@ -106,8 +110,16 @@ public abstract class TabActivityDime extends TabActivity implements OnClickList
     @Override
     public void onResume() {
     	super.onResume();
-    	currentActivity = getCurrentActivity();
-    	DimeClient.addStringToViewStack(TAG.substring(12)); //remove TabActivity_
+    	if(DimeClient.getSettings().getAuthItem() != null) {
+	    	currentActivity = getCurrentActivity();
+	    	try {
+	    		DimeClient.addStringToViewStack(TAG.substring(12)); //remove TabActivity_
+			} catch (Exception e) { }
+    	} else {
+        	Toast.makeText(getApplicationContext(), "Error occurred! Please login again...", Toast.LENGTH_SHORT).show();
+        	startActivity(new Intent(TabActivityDime.this, Activity_Shutdown.class));	                	
+        	finish();
+        }
     }
 
     @Override

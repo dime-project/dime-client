@@ -1,11 +1,9 @@
 package eu.dime.mobile.view;
 
+import eu.dime.control.DummyLoadingViewHandler;
 import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
 import eu.dime.mobile.helper.AndroidModelHelper;
-import eu.dime.model.Model;
-import eu.dime.model.specialitem.EvaluationItem;
-import eu.dime.restapi.RestApiAccess;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.graphics.Color;
@@ -28,16 +26,14 @@ public class Activity_Shutdown extends Activity {
 		super.onResume();
 		dialog = ProgressDialog.show(this, null, "Shutting down di.me...", true, false, null);
     	((TextView) dialog.findViewById(android.R.id.message)).setTextColor(Color.WHITE);
-    	EvaluationItem ei = AndroidModelHelper.createEvaluationItemWithClientData();
-		ei.setAction("action_logout");
-		RestApiAccess.postItemNew(DimeClient.getUserMainSaid(), Model.ME_OWNER, ei.getMType(), ei, DimeClient.getSettings().getRestApiConfiguration());
+    	AndroidModelHelper.sendEvaluationDataAsynchronously(null, DimeClient.getMRC(new DummyLoadingViewHandler()), "action_logout");
     	DimeClient.shutdown();
     	Handler handler = new Handler();
     	handler.postDelayed(new Runnable() {
     	    public void run() {
     	    	if(dialog != null && dialog.isShowing()) dialog.dismiss();
     	        finish();
-    	    }}, 1000); 
+    	    }}, 2000); 
 	}
 	
 	@SuppressWarnings("deprecation")

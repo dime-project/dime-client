@@ -24,7 +24,7 @@
     <string name="tab_places">Places</string>
     <string name="tab_placeDetail">Place detail: </string>
     <string name="tab_situations">Situations</string>
-    <string name="tab_activities">Activities</string>
+    <string name="tab_activities">Fitbit activities</string>
     <string name="tab_notifications">Notifications</string>
     <string name="tab_publicResolver">Public resolver</string>
     

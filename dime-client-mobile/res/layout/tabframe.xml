@@ -144,6 +144,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
+            
+            <View 
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/black" />
+            
+            <View 
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@drawable/actionbar_shadow" />
 
             <FrameLayout
                 android:id="@android:id/tabcontent"
