@@ -16,7 +16,6 @@ import eu.dime.model.storage.InitStorageFailedException;
 import eu.dime.model.storage.LoadListenerKey;
 import eu.dime.model.storage.MemoryWorker;
 import eu.dime.restapi.RestApiConfiguration;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sit.sstl.HashMapSet;
@@ -61,14 +60,7 @@ public class ModelContext {
     public ModelConfiguration getConfiguration() {
         return configuration;
     }
-
-    /**
-     * @param configuration the configuration to set
-     */
-    public void setConfiguration(ModelConfiguration configuration) {
-        this.configuration = configuration;
-    }
-
+ 
     /**
      * when called userStorage gets re-initialised! - calling this function
      * concurrently with other operations is not safe!!!
@@ -77,12 +69,12 @@ public class ModelContext {
      * @param configuration 
      * @throws InitStorageFailedException
      */
-    protected synchronized void updateSettingsOfOwnerStorage(String hoster, String owner, DimeMemory userStorage, ModelConfiguration configuration) throws InitStorageFailedException {
+    protected synchronized void updateSettingsOfOwnerStorage(String hoster, String owner, DimeMemory userStorage) throws InitStorageFailedException {
         if (userStorage == null) {
-            userStorage = new DimeMemory(hoster, owner, getRestApiConfiguration()); 
+            userStorage = new DimeMemory(hoster, owner); 
         }
         //clean up - re-init storage
-        userStorage.initStorage(hoster, owner, configuration.persistence, configuration.accessRemoteRestAPI);
+        userStorage.initStorage(configuration.persistence, configuration.accessRemoteRestAPI, getRestApiConfiguration()); 
     }
 
     public DimeMemory getOwnerStorage(String hoster, String owner) {
@@ -96,36 +88,30 @@ public class ModelContext {
             } catch (NullPointerException ex) {
                 Logger.getLogger(getClass().getName()).log(Level.FINE, "storage of " + hoster + " - " + owner + " not existing");
             }
-            
             //else - storage is not yet existing
-            
             //first make sure the hoster is provided ... or create one
             if (!storage.containsKey(hoster)) {
                 storage.put(hoster, new DimeHosterStorage());
             }
             //create new owner storage
-            result = new DimeMemory(hoster, owner, getRestApiConfiguration());
-            
+            result = new DimeMemory(hoster, owner);
             //initialize owner storage
-            updateSettingsOfOwnerStorage(hoster, owner, result, configuration);
-            
+            updateSettingsOfOwnerStorage(hoster, owner, result);
             //put owner storage to the hoster
             storage.get(hoster).put(owner, result);
             Logger.getLogger(getClass().getName()).log(Level.FINE, "created new storage for " + hoster + " - " + owner);
             return result;
-            
         } catch (InitStorageFailedException ex) {
             Logger.getLogger(ModelContext.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
-
     }
+    
     /**
      * @param storage the storage to set
      */
     public void setStorage(DimeStorage storage) {
         this.storage = storage;
-        
     }
     
      /**
@@ -139,13 +125,11 @@ public class ModelContext {
      *
      * Calling this function concurrently with other operations is not safe!!!
      */
-    public synchronized void resetStorage() throws InitStorageFailedException {
-        for (Map.Entry<String, DimeHosterStorage> hoster : storage.entrySet()) {
-            for (Map.Entry<String, DimeMemory> owner : hoster.getValue().entrySet()) {
-                updateSettingsOfOwnerStorage(hoster.getKey(), owner.getKey(), owner.getValue(), configuration);
-            }
-        }
-        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Initialization of Storage completed! Configuration:\n" + configuration.toString());
+    public synchronized void resetStorage(ModelConfiguration configuration)throws InitStorageFailedException {
+    	finalizeStorage();
+    	this.configuration = configuration;
+    	storage.clear();
+        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Storage cleared! Configuration:\n" + configuration.toString());
     }
 
     /**
@@ -158,5 +142,35 @@ public class ModelContext {
     void registerOnCacheLoad(LoadingViewHandler lvHandler, LoadListenerKey loadListenerKey) {
         memoryWorker.registerOnCacheLoad(lvHandler, loadListenerKey);
     }
+
+	public void finalizeStorage() {
+		for (DimeHosterStorage hoster : getStorage().values()) {
+            for (DimeMemory owner : hoster.values()) {
+                if (owner != null) {
+                    owner.finalizeStorage();
+                }
+            }
+        }
+	}
+	
+	/**
+	 * changes the password in the configuration without reseting the storage
+	 * 
+     * Calling this function concurrently with other operations is not safe!!!
+	 * 
+	 * @param password
+	 */	
+	public void updatePassword(String password){
+		this.memoryWorker.setPaused(true);
+		configuration = new ModelConfiguration(this.configuration, password);
+		for (DimeHosterStorage hoster : getStorage().values()) {
+            for (DimeMemory owner : hoster.values()) {
+                if (owner != null) {
+                    owner.updateConfigWithoutReset(configuration.getRestApiConfiguration());
+                }
+            }
+        }
+		this.memoryWorker.setPaused(false);
+	}
     
 }

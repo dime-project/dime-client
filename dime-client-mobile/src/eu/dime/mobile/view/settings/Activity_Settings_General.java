@@ -2,6 +2,7 @@ package eu.dime.mobile.view.settings;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,6 +16,7 @@ import eu.dime.mobile.Settings;
 import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.handler.LoadingViewHandlerFactory;
 import eu.dime.mobile.view.abstr.ActivityDime;
+import eu.dime.model.Model;
 import eu.dime.model.specialitem.NotificationItem;
 import eu.dime.restapi.RestApiAccess;
 
@@ -23,6 +25,8 @@ public class Activity_Settings_General extends ActivityDime implements OnClickLi
 	private Settings settings = null;
 	private ToggleButton contextCrawler;
 	private ToggleButton setButton;
+	boolean configurationChanged = false;
+	boolean passwordChanged = false;
 
     /**
      * Called when the activity is first created.
@@ -62,8 +66,34 @@ public class Activity_Settings_General extends ActivityDime implements OnClickLi
         }
     	if(setButton.isChecked() != settings.isSetPrefAccepted()) {
     		settings.getAuthItem().setEvaluationDataCapturingEnabled(setButton.isChecked());
+    		configurationChanged = true;
     	}
-    	RestApiAccess.postAuthItem(mrContext.hoster, settings.getAuthItem(), settings.getRestApiConfiguration());
+    	if(configurationChanged) {
+    		(new AsyncTask<Void, Void, String>() {	
+    			@Override
+    			protected String doInBackground(Void... params) {
+    				boolean result = RestApiAccess.postAuthItem(mrContext.hoster, settings.getAuthItem(), settings.getRestApiConfiguration());
+    				String message = "Settings successfully updated!";
+    				if(result) {
+        				configurationChanged = false;
+        				if(passwordChanged) {
+	    					settings.setPassword(settings.getAuthItem().getPassword());
+							Model.getInstance().updatePassword(settings.getPassword());
+							passwordChanged = false;
+							message += " Password set!";
+        				}
+    				} else {
+    					message = "Error occurred updating auth item! Please try again...";
+    				}
+
+					return message;
+    			}
+    			@Override
+    			protected void onPostExecute(String result) {
+    				Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+    			}
+    		}).execute();
+    	}
     }
 
     @Override
@@ -87,6 +117,7 @@ public class Activity_Settings_General extends ActivityDime implements OnClickLi
                     	Toast.makeText(Activity_Settings_General.this, "new passwords are different: please try again!", Toast.LENGTH_LONG).show();
                     } else {
                         settings.getAuthItem().setPassword(new_pw.getText().toString());
+                        passwordChanged = true;
                     }
 				}
 			});

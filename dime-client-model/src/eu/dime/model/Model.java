@@ -135,14 +135,16 @@ public class Model implements NotificationListener{
             if(NotificationManager.isRunning()) {                
                 NotificationManager.stop();
             }
-            context.setConfiguration(configuration);
-            resetStorage();
+            context.resetStorage(configuration);
             //control notification manager            
             if (configuration.fetchNotifications) {
                 NotificationManager.start(configuration.mainSAID);
                 NotificationManager.registerFirstLevel(this); //registering several times is no problem, since the listeners are handled in a set
             }
         }
+    }
+    public synchronized void updatePassword(String password) {
+    	context.updatePassword(password);
     }
     
     public synchronized ModelConfiguration getSettings() {
@@ -177,20 +179,14 @@ public class Model implements NotificationListener{
      */
     public synchronized void resetStorage() throws InitStorageFailedException {
         //clean up - re-init database
-        context.resetStorage();
+        context.resetStorage(context.getConfiguration()); //keep configuration, but clear content
     }
 
     /**
      * calling this function concurrently with other operations is not safe!!!
      */
     public synchronized void shutdownStorage() {
-        for (DimeHosterStorage hoster : context.getStorage().values()) {
-            for (DimeMemory owner : hoster.values()) {
-                if (owner != null) {
-                    owner.shutdownStorage();
-                }
-            }
-        }
+        context.finalizeStorage(); 
     }
 
     /**

@@ -575,9 +575,9 @@ public class UIHelper {
 		case PROFILE:
 			for (ProfileAttributeItem pai : (List<ProfileAttributeItem>) (Object) displayables) {
 				if (pai != null) {
-					TextView labelCat = createTextView(context, -1, Typeface.BOLD, 11, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT), false);
+					TextView labelCat = createTextView(context, -1, Typeface.BOLD, 11, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT), true);
 					labelCat.setText(pai.getCategory() + " (" + pai.getName() + ")");
-					labelCat.setPadding(10, 0, 0, 0);
+					labelCat.setPadding(10, 10, 0, 0);
 					boolean hasChild = false;
 					int index = 0;
 					for (String key : pai.getValue().keySet()) {
@@ -589,9 +589,9 @@ public class UIHelper {
 								index = previewContainer.getChildCount();
 							}
 							LinearLayout ll = createNewExpandedViewRow(context);
-							TextView labelTV = createTextView(context, R.style.dimeTheme, Typeface.NORMAL, -1, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f), true);
+							TextView labelTV = createTextView(context, R.style.dimeTheme, Typeface.NORMAL, 11, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f), true);
 							labelTV.setText(label);
-							TextView valueTV = createTextView(context, R.style.dimeTheme, Typeface.NORMAL, -1, null, true);
+							TextView valueTV = createTextView(context, R.style.dimeTheme, Typeface.NORMAL, 11, null, true);
 							valueTV.setFilters(new InputFilter[] { new InputFilter.LengthFilter(17) });
 							valueTV.setText(value);
 							ll.addView(labelTV);

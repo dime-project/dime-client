@@ -38,7 +38,7 @@ import sit.sstl.HashMapSet;
 public class DimeMemory {
 
     private static final int MAX_TRIES_FOR_COMMIT = 3;
-    private final RestApiConfiguration restConf;
+    private RestApiConfiguration restConf = null;
     private HashMapSet<TYPES, DimeTable> storage = new HashMapSet<TYPES, DimeTable>();
     public static final String path = "dime/dime.mem/";
     private final Object dirtyItemsLock = new Object();
@@ -48,12 +48,11 @@ public class DimeMemory {
     private boolean persistence = false;
     boolean remoteAccess = false;
     private FileHelper fh = new FileHelper();
-    private String hoster = null;
-    private String owner = null;
+    private final String hoster;
+    private final String owner;
     private RequestManager fetchRequests = null;
 
-    public DimeMemory(String hoster, String owner, RestApiConfiguration restConf) {
-        this.restConf = restConf;
+    public DimeMemory(String hoster, String owner) {
         if (hoster == null) {
             throw new RuntimeException("Illegal hoster! hoster:" + hoster + " owner:" + owner);
         }
@@ -78,15 +77,14 @@ public class DimeMemory {
      * @param remoteAccess
      * @throws InitStorageFailedException
      */
-    public synchronized void initStorage(String hoster, String owner, boolean persistence, boolean remoteAccess) throws InitStorageFailedException {
+    public synchronized void initStorage(boolean persistence, boolean remoteAccess, RestApiConfiguration restConf) throws InitStorageFailedException {
         synchronized (dirtyItemsLock) {
             // ############################################
             // storing done - now init new storage
             // ############################################
+            this.restConf = restConf;
             this.persistence = persistence;
             this.remoteAccess = remoteAccess;
-            this.hoster = hoster;
-            this.owner = owner;
             // clean old storage
             storage.clear();
             dirtyItems.clear();// should be empty anyway - but to be sure
@@ -104,7 +102,7 @@ public class DimeMemory {
         }// synchronize dirtyItemsLock
     }
 
-    public synchronized void shutdownStorage() {
+    public synchronized void finalizeStorage() {
         storeDirtyEntries();
     }
 
@@ -536,5 +534,14 @@ public class DimeMemory {
         }
         return result;
     }
+
+    /**
+     * updates the configuration without cleaning the memory - can be used for updating the password
+     * Only use this, if you know what you're doing
+     * @param restApiConfiguration new restConf
+     */
+	public void updateConfigWithoutReset(RestApiConfiguration restApiConfiguration) {
+		this.restConf = restApiConfiguration;
+	}
     
 }

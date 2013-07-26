@@ -382,8 +382,6 @@ public class AndroidModelHelper {
 					updateGenItemAsynchronously(profile, null, mActivity.get(), mrContext, actionName);
 				} catch (CreateItemFailedException e) {
 					result = "Error: Creation of the " + UIHelper.formatStringOnlyFirstCharUpperCase(pai.getType()) +" failed!";
-				} catch (Exception e) {
-					Log.e(mActivity.get().getClass().getSimpleName(), "Cast to ListActivityDime<GenItem> failed!");
 				}
                 return result;
             }

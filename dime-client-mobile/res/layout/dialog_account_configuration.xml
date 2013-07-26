@@ -71,6 +71,14 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp" >
         </LinearLayout>
+        
+        <TextView
+            android:id="@+account/no_settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nothing to configure."
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"/>
 
         <View
             android:layout_width="match_parent"

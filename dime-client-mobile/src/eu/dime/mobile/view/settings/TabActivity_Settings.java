@@ -20,13 +20,10 @@ import eu.dime.mobile.helper.objects.IResultOfStandardDialog;
 import eu.dime.mobile.view.abstr.TabActivityDime;
 import eu.dime.mobile.view.adapter.BaseAdapter_ServiceAdapter;
 import eu.dime.mobile.view.dialog.Activity_Account_Configuration_Dialog;
-import eu.dime.model.ItemFactory;
 import eu.dime.model.ModelHelper;
 import eu.dime.model.TYPES;
-import eu.dime.model.displayable.AccountItem;
 import eu.dime.model.displayable.DisplayableItem;
 import eu.dime.model.displayable.ServiceAdapterItem;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -106,13 +103,9 @@ public class TabActivity_Settings extends TabActivityDime implements IResultOfSt
 			if(service.getAuthUrl() != null && service.getAuthUrl().length() > 0) {
 				Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(service.getAuthUrl()));
     			startActivity(browserIntent);
-			} else if (service.isConfigurable()) {
+			} else {
 				Intent myIntent = new Intent(TabActivity_Settings.this, Activity_Account_Configuration_Dialog.class);
 		        startActivity(DimeIntentObjectHelper.populateIntent(myIntent, new DimeIntentObject(service)));
-			} else {
-				final String actionName = getResources().getResourceEntryName(R.string.action_connectServiceAdapter);
-				AccountItem account = ItemFactory.createAccountItem(service.getName(), service.getGuid(), service.getImageUrl());
-				AndroidModelHelper.createGenItemAsynchronously(account, null, currentActivity, mrContext, actionName);
 			}
 		}
 	}

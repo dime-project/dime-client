@@ -38,28 +38,26 @@ public class ListActivity_Settings_Services extends ListActivityDisplayableItem 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		final AccountItem account = (AccountItem) getListItems().get(position);
-		if(account.getSettings().size()>0) {
-			(new AsyncTask<Void, Void, ServiceAdapterItem>() {	
-				@Override
-				protected ServiceAdapterItem doInBackground(Void... params) {
-					ServiceAdapterItem sai;
-					try {
-						sai = (ServiceAdapterItem) Model.getInstance().getItem(mrContext, TYPES.SERVICEADAPTER, account.getServiceAdapterGUID());
-					} catch (RuntimeException e) {
-						sai = null;
-					}
-					return sai;
+		(new AsyncTask<Void, Void, ServiceAdapterItem>() {	
+			@Override
+			protected ServiceAdapterItem doInBackground(Void... params) {
+				ServiceAdapterItem sai;
+				try {
+					sai = (ServiceAdapterItem) Model.getInstance().getItem(mrContext, TYPES.SERVICEADAPTER, account.getServiceAdapterGUID());
+				} catch (RuntimeException e) {
+					sai = null;
 				}
-				@Override
-				protected void onPostExecute(ServiceAdapterItem result) {
-					if(result != null) {
-						Intent myIntent = new Intent(ListActivity_Settings_Services.this, Activity_Account_Configuration_Dialog.class);
-						myIntent.putExtra(Activity_Account_Configuration_Dialog.ACCOUNT_GUID_TAG, account.getGuid());
-				        startActivity(DimeIntentObjectHelper.populateIntent(myIntent, new DimeIntentObject(result)));
-					}
+				return sai;
+			}
+			@Override
+			protected void onPostExecute(ServiceAdapterItem result) {
+				if(result != null && !(result.getAuthUrl() != null && result.getAuthUrl().length() > 0)) {
+					Intent myIntent = new Intent(ListActivity_Settings_Services.this, Activity_Account_Configuration_Dialog.class);
+					myIntent.putExtra(Activity_Account_Configuration_Dialog.ACCOUNT_GUID_TAG, account.getGuid());
+			        startActivity(DimeIntentObjectHelper.populateIntent(myIntent, new DimeIntentObject(result)));
 				}
-			}).execute();
-		}
+			}
+		}).execute();
 	}
 
 	@Override

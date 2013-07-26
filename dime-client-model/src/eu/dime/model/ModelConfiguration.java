@@ -28,10 +28,7 @@ public class ModelConfiguration {
     public final String token;
     public final RestApiConfiguration restApiConfiguration;
 
-    public ModelConfiguration(String hostname, int port, boolean useHTTPS, 
-            String mainSAID, String username, String password, boolean persistence, 
-            boolean accessRemoteRestAPI, boolean fetchNotifications) {
-        
+    public ModelConfiguration(String hostname, int port, boolean useHTTPS, String mainSAID, String username, String password, boolean persistence, boolean accessRemoteRestAPI, boolean fetchNotifications) {
         this.hostname = hostname;
         this.port = port;
         this.useHTTPS = useHTTPS;
@@ -41,6 +38,20 @@ public class ModelConfiguration {
         this.persistence = persistence;
         this.accessRemoteRestAPI = accessRemoteRestAPI;
         this.fetchNotifications = fetchNotifications;
+        this.token = HttpHelper.getBase64UserNamePwdToken(username, password);
+        this.restApiConfiguration = new RestApiConfiguration(hostname, port, useHTTPS, token);
+    }
+    
+    public ModelConfiguration(ModelConfiguration oldConfig, String password) {
+        this.hostname = oldConfig.hostname;
+        this.port = oldConfig.port;
+        this.useHTTPS = oldConfig.useHTTPS;
+        this.mainSAID = oldConfig.mainSAID;
+        this.username = oldConfig.username;
+        this.password = password;
+        this.persistence = oldConfig.persistence;
+        this.accessRemoteRestAPI = oldConfig.accessRemoteRestAPI;
+        this.fetchNotifications = oldConfig.fetchNotifications;
         this.token = HttpHelper.getBase64UserNamePwdToken(username, password);
         this.restApiConfiguration = new RestApiConfiguration(hostname, port, useHTTPS, token);
     }

@@ -74,6 +74,7 @@ public final class AccountItem extends DisplayableItem {
          newJSONObject.addChild(getJSONValue(this.serviceAdapterGUID, SERVICE_ADAPTER_GUID_TAG));
          newJSONObject.addChild(getJSONValue(isActive, IS_ACTIVE_TAG));
          JSONObject child = new JSONObject(SETTINGS_TAG);
+         child.setType(JSONObject.JSON_TYPE_COLLECTION);
          for (AccountSettingsItem setting : settings) {
 				child.addItem(setting.createJSONObject());
 		 }

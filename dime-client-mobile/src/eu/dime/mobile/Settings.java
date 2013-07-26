@@ -116,7 +116,7 @@ public class Settings {
     }
     
     public synchronized ModelConfiguration getModelConfiguration() {
-        return new ModelConfiguration(hostname, port, useHTTPS, username,username, password, false, USE_REST_API, RETRIEVE_NOTIFICATIONS);
+        return new ModelConfiguration(hostname, port, useHTTPS, username, username, password, false, USE_REST_API, RETRIEVE_NOTIFICATIONS);
     }
     
     public synchronized RestApiConfiguration getRestApiConfiguration() {

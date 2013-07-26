@@ -51,6 +51,7 @@ public class Activity_Account_Configuration_Dialog extends ActivityDime implemen
 	private LinearLayout settingsContainer;
 	private TextView serviceName;
 	private TextView serviceDescription;
+	private TextView noSettings;
 	private ImageView serviceImage;
 	private String accountGuid;
 	private AccountItem account;
@@ -65,6 +66,7 @@ public class Activity_Account_Configuration_Dialog extends ActivityDime implemen
 		serviceImage = (ImageView) findViewById(R.account.service_icon);
 		serviceName = (TextView) findViewById(R.account.service_name);
 		serviceDescription = (TextView) findViewById(R.account.service_description);
+		noSettings = (TextView) findViewById(R.account.no_settings);
 		settingsContainer = (LinearLayout) findViewById(R.account.container_settings);
 		saveButton = (Button) findViewById(R.account.button_save);
 		saveButton.setOnClickListener(this);
@@ -92,63 +94,69 @@ public class Activity_Account_Configuration_Dialog extends ActivityDime implemen
 		serviceDescription.setText(serviceAdapter.getDescription());
 		ImageHelper.loadImageAsynchronously(serviceImage, serviceAdapter, this);
 		settingsContainer.removeAllViews();
-		for(AccountSettingsItem setting : oldSettings) {
-			View view = null;
-			if(setting.getType().equals(ACCOUNT_SETTINGS_TYPES.STRING.toString())) {
-				view = UIHelper.createEditText(this, InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS, setting.getName(), 1, false);
-				EditText edit = (EditText) view;
-				edit.setText(setting.getValue());
-			} else if(setting.getType().equals(ACCOUNT_SETTINGS_TYPES.BOOLEAN.toString())) {
-				view = new CheckBox(this);
-				CheckBox checkBox = (CheckBox) view;
-				checkBox.setText(setting.getName());
-				checkBox.setChecked(setting.getValue().equals("true"));
-			} else if(setting.getType().equals(ACCOUNT_SETTINGS_TYPES.PASSWORD.toString())) {
-				view = UIHelper.createEditText(this, InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD, setting.getName(), 1, false);
-				EditText edit = (EditText) view;
-				edit.setText(setting.getValue());
-			} else if(setting.getType().equals(ACCOUNT_SETTINGS_TYPES.LINK.toString())) {
-				view = UIHelper.createTextView(this, R.style.default_theme, -1, -1, null, false);
-				TextView text = (TextView) view;
-				text.setText(Html.fromHtml("<a href='"+setting.getValue()+"'><u>Usage Terms</u></a>"));
-				text.setLinksClickable(true);
-		        text.setMovementMethod(LinkMovementMethod.getInstance());
-			} else if(setting.getType().equals(ACCOUNT_SETTINGS_TYPES.ACCOUNT.toString())) {
-				view = new Spinner(this);
-				Spinner spinner = (Spinner) view;
-				spinner.setLayoutParams(new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1.0f));
-				List<ProfileItem> profileItems = ModelHelper.getAllValidProfilesForSharing(mrContext);
-				String selectedName = "";
-				for (ProfileItem profileItem : profileItems) {
-					if(profileItem.getServiceAccountId().equals(setting.getValue())) {
-						selectedName = profileItem.getName();
+		if(oldSettings.size() > 0) {
+			UIHelper.hideView(noSettings);
+			for(AccountSettingsItem setting : oldSettings) {
+				View view = null;
+				if(setting.getType().equals(ACCOUNT_SETTINGS_TYPES.STRING.toString())) {
+					view = UIHelper.createEditText(this, InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS, setting.getName(), 1, false);
+					EditText edit = (EditText) view;
+					edit.setText(setting.getValue());
+				} else if(setting.getType().equals(ACCOUNT_SETTINGS_TYPES.BOOLEAN.toString())) {
+					view = new CheckBox(this);
+					CheckBox checkBox = (CheckBox) view;
+					checkBox.setText(setting.getName());
+					checkBox.setChecked(setting.getValue().equals("true"));
+				} else if(setting.getType().equals(ACCOUNT_SETTINGS_TYPES.PASSWORD.toString())) {
+					view = UIHelper.createEditText(this, InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD, setting.getName(), 1, false);
+					EditText edit = (EditText) view;
+					edit.setText(setting.getValue());
+					edit.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+				} else if(setting.getType().equals(ACCOUNT_SETTINGS_TYPES.LINK.toString())) {
+					view = UIHelper.createTextView(this, R.style.default_theme, -1, -1, null, false);
+					TextView text = (TextView) view;
+					text.setText(Html.fromHtml("<a href='"+setting.getValue()+"'><u>Usage Terms</u></a>"));
+					text.setLinksClickable(true);
+			        text.setMovementMethod(LinkMovementMethod.getInstance());
+				} else if(setting.getType().equals(ACCOUNT_SETTINGS_TYPES.ACCOUNT.toString())) {
+					view = new Spinner(this);
+					Spinner spinner = (Spinner) view;
+					spinner.setLayoutParams(new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1.0f));
+					List<ProfileItem> profileItems = ModelHelper.getAllValidProfilesForSharing(mrContext);
+					String selectedName = "";
+					for (ProfileItem profileItem : profileItems) {
+						if(profileItem.getServiceAccountId().equals(setting.getValue())) {
+							selectedName = profileItem.getName();
+						}
 					}
+					List<String> stringProfiles = AndroidModelHelper.getListOfNamesOfDisplayableList((List<DisplayableItem>)(Object) ModelHelper.getAllValidProfilesForSharing(mrContext));
+					CharSequence[] cs = stringProfiles.toArray(new CharSequence[stringProfiles.size()]);
+					ArrayAdapter<CharSequence> profiles = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, cs);
+					profiles.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+					spinner.setAdapter(profiles);
+					if( selectedName.length() > 0) spinner.setSelection(profiles.getPosition(selectedName));
 				}
-				List<String> stringProfiles = AndroidModelHelper.getListOfNamesOfDisplayableList((List<DisplayableItem>)(Object) ModelHelper.getAllValidProfilesForSharing(mrContext));
-				CharSequence[] cs = stringProfiles.toArray(new CharSequence[stringProfiles.size()]);
-				ArrayAdapter<CharSequence> profiles = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, cs);
-				profiles.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-				spinner.setAdapter(profiles);
-				if( selectedName.length() > 0) spinner.setSelection(profiles.getPosition(selectedName));
-			}
-			if(view != null ) {
-				view.setTag(setting);
-				if(setting.isMandatory()) {
-					LinearLayout ll = new LinearLayout(this);
-					ll.setOrientation(LinearLayout.HORIZONTAL);
-					TextView text = new TextView(this);
-					text.setText("*");
-					text.setPadding(10, 0, 0, 0);
-					text.setTypeface(null, Typeface.BOLD);
-					ll.addView(view);
-					ll.addView(text);
-					settingsContainer.addView(ll);
+				if(view != null ) {
+					view.setTag(setting);
+					if(setting.isMandatory()) {
+						LinearLayout ll = new LinearLayout(this);
+						ll.setOrientation(LinearLayout.HORIZONTAL);
+						TextView text = new TextView(this);
+						text.setText("*");
+						text.setPadding(10, 0, 0, 0);
+						text.setTypeface(null, Typeface.BOLD);
+						ll.addView(view);
+						ll.addView(text);
+						settingsContainer.addView(ll);
+					} else {
+						settingsContainer.addView(view);
+					}
 				} else {
-					settingsContainer.addView(view);
+					Log.d(TAG, "error creating settings fields");
 				}
-			} else {
-				Log.d(TAG, "error creating settings fields");
 			}
+		} else {
+			UIHelper.showView(noSettings);
 		}
 	}
 
@@ -159,44 +167,46 @@ public class Activity_Account_Configuration_Dialog extends ActivityDime implemen
         case R.account.button_save:
         	List<AccountSettingsItem> newSettings = new Vector<AccountSettingsItem>();
         	try {
-	        	for(AccountSettingsItem setting : oldSettings) {
-	        		String value = "";
-        			if(setting.getType().equals(ACCOUNT_SETTINGS_TYPES.STRING.toString())) {
-        				EditText edit = (EditText) settingsContainer.findViewWithTag(setting);
-        				if(setting.isMandatory() && edit.getText().length() <= 0) {
-        					throw new MandatorySettingNotSetException();
-        				} else {
-        					value = edit.getText().toString();
-        				}
-        			} else if(setting.getType().equals(ACCOUNT_SETTINGS_TYPES.BOOLEAN.toString())) {
-        				CheckBox checkBox = (CheckBox) settingsContainer.findViewWithTag(setting);
-        				if(setting.isMandatory() && !checkBox.isChecked()) {
-        					throw new MandatorySettingNotSetException();
-        				} else {
-        					value = String.valueOf(checkBox.isChecked());
-        				}
-        			} else if(setting.getType().equals(ACCOUNT_SETTINGS_TYPES.PASSWORD.toString())) {
-        				EditText edit = (EditText) settingsContainer.findViewWithTag(setting);
-        				if(setting.isMandatory() && edit.getText().length() <= 0) {
-        					throw new MandatorySettingNotSetException();
-        				} else {
-        					value = edit.getText().toString();
-        				}
-        			} else if(setting.getType().equals(ACCOUNT_SETTINGS_TYPES.ACCOUNT.toString())) {
-        				Spinner spinner = (Spinner) settingsContainer.findViewWithTag(setting);
-        				if(setting.isMandatory() && spinner.getSelectedItem().toString().length() <= 0) {
-        					throw new MandatorySettingNotSetException();
-        				} else {
-        					value = ((ProfileItem) AndroidModelHelper.getDisplayableItemByName(this, mrContext, (List<DisplayableItem>) (Object) ModelHelper.getAllValidProfilesForSharing(mrContext), spinner.getSelectedItem().toString(), TYPES.PROFILE)).getServiceAccountId();
-        				}
-        			}
-	    			setting.setValue(value);
-	    			newSettings.add(setting);
-	    		}
-	        	account.setSettings(newSettings);
+        		if(oldSettings.size() > 0) {
+		        	for(AccountSettingsItem setting : oldSettings) {
+		        		String value = "";
+	        			if(setting.getType().equals(ACCOUNT_SETTINGS_TYPES.STRING.toString())) {
+	        				EditText edit = (EditText) settingsContainer.findViewWithTag(setting);
+	        				if(setting.isMandatory() && edit.getText().length() <= 0) {
+	        					throw new MandatorySettingNotSetException();
+	        				} else {
+	        					value = edit.getText().toString();
+	        				}
+	        			} else if(setting.getType().equals(ACCOUNT_SETTINGS_TYPES.BOOLEAN.toString())) {
+	        				CheckBox checkBox = (CheckBox) settingsContainer.findViewWithTag(setting);
+	        				if(setting.isMandatory() && !checkBox.isChecked()) {
+	        					throw new MandatorySettingNotSetException();
+	        				} else {
+	        					value = String.valueOf(checkBox.isChecked());
+	        				}
+	        			} else if(setting.getType().equals(ACCOUNT_SETTINGS_TYPES.PASSWORD.toString())) {
+	        				EditText edit = (EditText) settingsContainer.findViewWithTag(setting);
+	        				if(setting.isMandatory() && edit.getText().length() <= 0) {
+	        					throw new MandatorySettingNotSetException();
+	        				} else {
+	        					value = edit.getText().toString();
+	        				}
+	        			} else if(setting.getType().equals(ACCOUNT_SETTINGS_TYPES.ACCOUNT.toString())) {
+	        				Spinner spinner = (Spinner) settingsContainer.findViewWithTag(setting);
+	        				if(setting.isMandatory() && spinner.getSelectedItem().toString().length() <= 0) {
+	        					throw new MandatorySettingNotSetException();
+	        				} else {
+	        					value = ((ProfileItem) AndroidModelHelper.getDisplayableItemByName(this, mrContext, (List<DisplayableItem>) (Object) ModelHelper.getAllValidProfilesForSharing(mrContext), spinner.getSelectedItem().toString(), TYPES.PROFILE)).getServiceAccountId();
+	        				}
+	        			}
+		    			setting.setValue(value);
+		    			newSettings.add(setting);
+		    		}
+		        	account.setSettings(newSettings);
+        		}
 	        	if(accountGuid == null) {
 	        		AndroidModelHelper.createGenItemAsynchronously(account, null, this, mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_account_configuration_save));
-	        	} else {
+	        	} else if(oldSettings.size() > 0){
 	        		AndroidModelHelper.updateGenItemAsynchronously(account, null, this, mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_account_configuration_update));
 	        	}
 	        	finish();

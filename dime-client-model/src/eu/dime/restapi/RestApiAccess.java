@@ -17,11 +17,14 @@ import eu.dime.model.specialitem.advisory.AdvisoryRequestItem;
 import eu.dime.model.TYPES;
 import eu.dime.model.storage.DimeHosterStorage;
 import eu.dime.model.storage.DimeMemory;
+import eu.dime.model.storage.InitStorageFailedException;
+
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import sit.json.JSONObject;
 import sit.json.JSONPathAccessException;
 import sit.web.client.HttpHelper;
@@ -83,25 +86,32 @@ public class RestApiAccess {
             //we have not been able to fetch something
             return result;
         }
-        JSONObject dump = response.replyObjects.get(0);
-        for (Entry<String, JSONObject> ownerStorageJSON : dump) { // in the reply objects we have the DimeMemories of the various owners
-            DimeMemory ownerStorage = new DimeMemory(hoster, ownerStorageJSON.getKey(), conf);
-            result.put(ownerStorageJSON.getKey(), ownerStorage);
-            for (TYPES type : TYPES.values()) {
-                try {
-                    JSONObject typeJSON = ownerStorageJSON.getValue().getChild(ModelHelper.getNameOfType(type));
-
-                    for (JSONObject jsonObject : typeJSON.getItems()) {
-                        GenItem item = jsonToGenItem(type, jsonObject);
-                        if (item != null) {
-                            ownerStorage.updateItem(item); //TODO this is bad, in case the model is accessing a remote source, since this will cause an update of all items in the model!!!!
-                        }
-                    }
-                } catch (JSONPathAccessException ex) {
-                    Logger.getLogger(RestApiAccess.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
-                }
-            }
-        }
+        JSONObject dump = response.replyObjects.get(0); 
+        try {
+	        for (Entry<String, JSONObject> ownerStorageJSON : dump) { // in the reply objects we have the DimeMemories of the various owners
+	            DimeMemory ownerStorage = new DimeMemory(hoster, ownerStorageJSON.getKey());
+	           
+				ownerStorage.initStorage(Model.getInstance().getSettings().persistence, Model.getInstance().getSettings().accessRemoteRestAPI, conf);
+				
+	            result.put(ownerStorageJSON.getKey(), ownerStorage);
+	            for (TYPES type : TYPES.values()) {
+	                try{
+	                JSONObject typeJSON = ownerStorageJSON.getValue().getChild(ModelHelper.getNameOfType(type));
+	
+		                for (JSONObject jsonObject : typeJSON.getItems()) {
+		                    GenItem item = jsonToGenItem(type, jsonObject);
+		                    if (item != null) {
+		                        ownerStorage.updateItem(item); //TODO this is bad, in case the model is accessing a remote source, since this will cause an update of all items in the model!!!!
+		                    }
+		                }
+		            } catch (JSONPathAccessException ex) {
+		                Logger.getLogger(RestApiAccess.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+		            }
+	            }
+	        }
+        } catch (InitStorageFailedException ex) {
+			Logger.getLogger(RestApiAccess.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+		}    
         return result;
     }
 

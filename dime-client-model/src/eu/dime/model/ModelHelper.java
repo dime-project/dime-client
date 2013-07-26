@@ -307,6 +307,7 @@ public class ModelHelper {
                 ProfileItem profile = iter.next();
 	        	if(profile.getServiceAccountId() == null || profile.getServiceAccountId().length() == 0) {
 	        		iter.remove();
+	        		Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, null, "profile " + profile.getName() + " igonored because of missing said!");
 	        	}
             }
             return profiles;

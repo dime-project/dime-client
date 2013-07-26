@@ -43,7 +43,7 @@ public class ListActivity_Profile_Detail extends ListActivityDisplayableItem {
 
 	@Override
 	public void notificationReceived(String fromHoster, NotificationItem item) {
-    	if(item.getElement().getType().equalsIgnoreCase(TYPES.PROFILEATTRIBUTE.toString())){
+    	if(item.getElement().getType().equalsIgnoreCase(TYPES.PROFILEATTRIBUTE.toString()) || item.getElement().getType().equalsIgnoreCase(TYPES.PROFILE.toString())){
     		reloadList();
     	}
 	}

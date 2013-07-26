@@ -21,12 +21,15 @@ public class MemoryWorker implements Runnable, CacheLoadedHandler {
 
     private final long MAX_WORKER_DELAY = 50;
     private boolean stopping = false;
+    
     /**
      * listeners waiting for "loading ready notification".
      */
     private LoadingListeners listeners = new LoadingListeners();
     private final Object listenerLock = new Object();
     private final DimeStorage dimeStorage;
+    private final Object storageLock = new Object();
+	private boolean paused = false;
 
     public MemoryWorker(final DimeStorage dimeStorage) {
         this.dimeStorage = dimeStorage;
@@ -62,19 +65,22 @@ public class MemoryWorker implements Runnable, CacheLoadedHandler {
                 }
             }
             listeners.cleanUpForMemory(dimeMemory);
-
         }
     }
 
     private void handleMemory(DimeMemory dimeMemory) {
-        dimeMemory.storeDirtyEntries();
-        dimeMemory.fetchRequestedTypes();
-        notiyListeners(dimeMemory);
+    	synchronized (storageLock) {
+    		if (this.paused){
+    			return;
+    		}
+            dimeMemory.storeDirtyEntries();
+            dimeMemory.fetchRequestedTypes();
+            notiyListeners(dimeMemory);			
+		}
     }
 
     //continously store dump in case something was changed
     public void run() {
-
         while (!stopping) {
             //iterate through all hosters and owners
             for (DimeHosterStorage hoster : dimeStorage.values()) {
@@ -88,18 +94,22 @@ public class MemoryWorker implements Runnable, CacheLoadedHandler {
                     }
                 }
             }
-
             try {
                 Thread.sleep(MAX_WORKER_DELAY);
-
             } catch (InterruptedException ex) {
                 Logger.getLogger(DimeMemory.class.getName()).log(Level.SEVERE, null, ex);
             }
-
         }
     }
 
     public void stop() {
         stopping = true;
     }
+    
+    public void setPaused(boolean paused){
+    	synchronized (storageLock) {
+    		this.paused=paused;
+    	}
+    }
+    
 }
