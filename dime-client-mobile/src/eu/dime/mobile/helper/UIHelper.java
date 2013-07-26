@@ -124,6 +124,10 @@ public class UIHelper {
 			v.setVisibility(View.VISIBLE);
 		}
 	}
+	
+	private static int getDPvalue(int pixelValue) {
+		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, pixelValue, DimeClient.getAppContext().getResources().getDisplayMetrics());
+	}
 
 	public static TextView createTextView(Context context, int style, int typeface, int textSize, LayoutParams params, boolean isSingleLine) {
 		TextView textView = new TextView(context);
@@ -248,10 +252,12 @@ public class UIHelper {
 						searchArea.setVisibility(View.VISIBLE);
 						searchField.requestFocus();
 						showSoftKeyboard(activity, searchField);
+						v.setBackgroundColor(activity.getResources().getColor(android.R.color.black));
 					} else {
 						searchField.setText("");
 						searchField.clearFocus();
 						searchArea.setVisibility(View.GONE);
+						v.setBackgroundColor(activity.getResources().getColor(android.R.color.transparent));
 					}
 				}
 			});
@@ -263,9 +269,11 @@ public class UIHelper {
 					if (infoArea.getVisibility() == View.GONE) {
 						infoArea.setVisibility(View.VISIBLE);
 						DimeClient.getSettings().setDialogInfoAreaDisplayed(true);
+						v.setBackgroundColor(activity.getResources().getColor(android.R.color.black));
 					} else {
 						infoArea.setVisibility(View.GONE);
 						DimeClient.getSettings().setDialogInfoAreaDisplayed(false);
+						v.setBackgroundColor(activity.getResources().getColor(android.R.color.transparent));
 					}
 				}
 			});
@@ -380,7 +388,7 @@ public class UIHelper {
 		}
 		LinearLayout tl = (LinearLayout) dialog.findViewById(R.action_dialog.baselayout);
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		params.setMargins(9, 0, 9, 0);
+		params.setMargins(getDPvalue(10), 0, getDPvalue(10), 0);
 		tl.setLayoutParams(params);
 		for (String name : names) {
 			Button tmp = new Button(context);
@@ -391,7 +399,7 @@ public class UIHelper {
 			tmp.setCompoundDrawablesWithIntrinsicBounds(sld, null, null, null);
 			tmp.setCompoundDrawablePadding(10);
 			LinearLayout.LayoutParams lpms = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-			lpms.setMargins(0, 0, 0, 5);
+			lpms.setMargins(0, 0, 0, getDPvalue(5));
 			tmp.setLayoutParams(lpms);
 			tmp.setOnClickListener(listener);
 			if (selectedGUIDs != null && ((selectedGUIDs.isEmpty() && name.contains("select")) || (selectedGUIDs.size() < 2 && name.contains("Merge")))) {
@@ -480,9 +488,9 @@ public class UIHelper {
 	private static LinearLayout createNewExpandedViewRow(Context context) {
 		LinearLayout.LayoutParams lpmsLayout = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		LinearLayout ll = new LinearLayout(context);
-		lpmsLayout.setMargins(0, 5, 0, 5);
+		lpmsLayout.setMargins(0, 0, 0, getDPvalue(5));
 		ll.setLayoutParams(lpmsLayout);
-		ll.setPadding(10, 0, 10, 0);
+		ll.setPadding(getDPvalue(5), 0, getDPvalue(5), 0);
 		ll.setBackgroundColor(context.getResources().getColor(R.color.metabar_grey));
 		return ll;
 	}
@@ -497,7 +505,7 @@ public class UIHelper {
 		labelTV.setText("changed:");
 		TextView valueTV = createTextView(context, R.style.dimeTheme, Typeface.NORMAL, 11, null, true);
 		valueTV.setText(UIHelper.formatDateByMillis(di.getLastUpdated()));
-		valueTV.setPadding(15, 0, 0, 0);
+		valueTV.setPadding(getDPvalue(15), 0, 0, 0);
 		llchanged.addView(labelTV);
 		llchanged.addView(valueTV);
 		infoContainer.addView(llchanged);
@@ -509,13 +517,12 @@ public class UIHelper {
 			TextView barText = new TextView(context);
 			labelTVbar.setText(getTrustOrPrivacyLabelOfProgressBar(di));
 			barText.setTextSize(11);
-			barText.setPadding(15, 0, 0, 0);
+			barText.setPadding(getDPvalue(15), 0, 0, 0);
 			barText.setText(getWarningText(di));
 			View bar = new View(context);
 			bar.setBackgroundColor(getWarningColor(context, di));
-			int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, context.getResources().getDisplayMetrics());
-			LinearLayout.LayoutParams barParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, value);
-			barParams.setMargins(0, -5, 0, 5);
+			LinearLayout.LayoutParams barParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, getDPvalue(5));
+			barParams.setMargins(0, -getDPvalue(5), 0, getDPvalue(5));
 			bar.setLayoutParams(barParams);
 			llbar.addView(labelTVbar);
 			llbar.addView(barText);
@@ -558,12 +565,12 @@ public class UIHelper {
 			for (DisplayableItem pi : displayables) {
 				ImageView persimage = new ImageView(context);
 				ImageHelper.loadImageAsynchronously(persimage, pi, context);
-				LinearLayout.LayoutParams lpms = new LinearLayout.LayoutParams(50, 50);
-				lpms.setMargins(6, 0, 0, 0);
+				LinearLayout.LayoutParams lpms = new LinearLayout.LayoutParams(getDPvalue(40), getDPvalue(40));
+				lpms.setMargins(getDPvalue(5), 0, 0, 0);
 				persimage.setLayoutParams(lpms);
 				if (counter == 0 || counter % 6 == 0) {
 					llGroup = new LinearLayout(context);
-					llGroup.setPadding(0, 0, 0, 10);
+					llGroup.setPadding(0, 0, 0, getDPvalue(10));
 					llGroup.setGravity(Gravity.LEFT);
 					previewContainer.addView(llGroup);
 				}
@@ -577,7 +584,7 @@ public class UIHelper {
 				if (pai != null) {
 					TextView labelCat = createTextView(context, -1, Typeface.BOLD, 11, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT), true);
 					labelCat.setText(pai.getCategory() + " (" + pai.getName() + ")");
-					labelCat.setPadding(10, 10, 0, 0);
+					labelCat.setPadding(getDPvalue(10), getDPvalue(10), 0, 0);
 					boolean hasChild = false;
 					int index = 0;
 					for (String key : pai.getValue().keySet()) {
@@ -608,7 +615,7 @@ public class UIHelper {
 			break;
 		case LIVEPOST:
 			TextView text = createTextView(context, R.style.dimeTheme, Typeface.NORMAL, 11, null, false);
-			text.setPadding(10, 0, 10, 0);
+			text.setPadding(getDPvalue(10), 0, getDPvalue(10), 0);
 			text.setText(((LivePostItem) item).getText());
 			previewContainer.addView(text);
 			empty = "<empty>";
@@ -641,8 +648,9 @@ public class UIHelper {
 					break;
 				} else {
 					ImageView image = new ImageView(context);
-					LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
-					params.setMargins(0, 0, 10, 0);
+					int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 14, context.getResources().getDisplayMetrics());
+					LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(value, value);
+					params.setMargins(0, 1, getDPvalue(10), 0);
 					image.setLayoutParams(params);
 					ImageHelper.loadImageAsynchronously(image, di, context);
 					resourceName.setText((ModelHelper.isParentable(di)) ? di.getName() + " ("+di.getItems().size()+")": di.getName());
@@ -666,7 +674,7 @@ public class UIHelper {
 					ProfileItem profile = ModelHelper.getProfileWithSaid(DimeClient.getMRC(new DummyLoadingViewHandler()), acl.getSaidSender()); //FIXME Load async??
 					TextView profileHeadline = createTextView(context, 0, Typeface.BOLD, 11, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT), false);
 					profileHeadline.setText("@" + profile.getName());
-					profileHeadline.setPadding(10, 0, 0, 0);
+					profileHeadline.setPadding(getDPvalue(10), 0, 0, 0);
 					previewContainer.addView(profileHeadline);
 					int counter = 0;
 					for (ACLPerson persons : acl.getPersons()) {
@@ -721,13 +729,13 @@ public class UIHelper {
         emptyText.setVisibility(View.GONE);
         emptyText.setId(android.R.id.empty);
         emptyText.setGravity(Gravity.CENTER_HORIZONTAL);
-        emptyText.setPadding(0, 20, 0, 20);
+        emptyText.setPadding(0, getDPvalue(20), 0, getDPvalue(20));
         return emptyText;
 	}
 
 	public static LinearLayout createSharingWidget(final Context context, final DisplayableItem item, final List<DisplayableItem> items) {
 		final LinearLayout ll = new LinearLayout(context);
-		ll.setPadding(0, 0, 0, 10);
+		ll.setPadding(0, 0, 0, getDPvalue(10));
 		ImageView image = new ImageView(context);
 		int id = 0;
 		switch (item.getMType()) {
@@ -753,8 +761,7 @@ public class UIHelper {
 		Drawable drawable = context.getResources().getDrawable(id).mutate();
 		drawable.setColorFilter(getWarningColor(context, item), Mode.SRC_ATOP);
 		image.setImageDrawable(drawable);
-		int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, context.getResources().getDisplayMetrics());
-		image.setPadding(0, 0, value, 0);
+		image.setPadding(0, 0, getDPvalue(8), 0);
 		ImageButton recycleButton = new ImageButton(context);
 		recycleButton.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
 		recycleButton.setImageResource(R.drawable.icon_small_recycle);
@@ -786,11 +793,10 @@ public class UIHelper {
 	@SuppressWarnings("deprecation")
 	public static View createWarningWidget(final Context context, AdvisoryProperties advisoryProperty) {
 		LinearLayout llparent = createLinearLayout(context, LinearLayout.VERTICAL);
-		llparent.setPadding(0, 0, 0, 10);
+		llparent.setPadding(0, 0, 0, getDPvalue(10));
 		LinearLayout llchild = new LinearLayout(context);
 		final ImageView image = new ImageView(context);
-		int value = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, context.getResources().getDisplayMetrics());
-		image.setPadding(0, 0, value, 0);
+		image.setPadding(0, 0, getDPvalue(8), 0);
 		image.setImageResource(advisoryProperty.getDrawableId());
 		final ImageView expand = new ImageView(context);
 		expand.setBackgroundResource(R.drawable.button_expand_bar);
@@ -801,7 +807,7 @@ public class UIHelper {
 		text.setText(advisoryProperty.getAdvisoryText());
 		text.setVisibility(View.GONE);
 		llchild.setTag(true);
-		llchild.setPadding(0, 5, 0, 0);
+		llchild.setPadding(0, getDPvalue(5), 0, 0);
 		llchild.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {

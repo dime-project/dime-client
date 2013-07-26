@@ -412,6 +412,7 @@ public class AndroidModelHelper {
 		final String photoId = c.getString(c.getColumnIndex(ContactsContract.Contacts.PHOTO_ID));
 		final PersonItem pi = (PersonItem) ItemFactory.createNewDisplayableItemByType(TYPES.PERSON, name);
 		final WeakReference<Activity> mActivity = new WeakReference<Activity>(activity);
+		//TODO upload picture, create profilecard with contact details (phone number...), create person with profilecard assigned
 		(new AsyncTask<Void, Void, String>() {
     		
 			@Override

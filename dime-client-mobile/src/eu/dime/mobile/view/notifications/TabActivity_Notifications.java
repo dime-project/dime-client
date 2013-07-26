@@ -45,7 +45,7 @@ public class TabActivity_Notifications extends TabActivityDime {
             	//remove selected notifications
 				if (button.getText().equals(res.getString(R.string.action_removeSelectedNotifications))) {
 					actionDialog.dismiss();
-					AndroidModelHelper.deleteGenItemsAsynchronously(currentActivity, TYPES.NOTIFICATION, mrContext, res.getResourceEntryName(R.string.action_removeSelectedNotifications)); 
+					AndroidModelHelper.deleteGenItemsAsynchronously(currentActivity, TYPES.USERNOTIFICATION, mrContext, res.getResourceEntryName(R.string.action_removeSelectedNotifications)); 
 				}
 				//remove all notifications
 				else if (button.getText().equals(res.getString(R.string.action_removeAllNotifications))) {
