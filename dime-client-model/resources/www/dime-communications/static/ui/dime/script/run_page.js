@@ -1,9 +1,7 @@
-/* 
- *  Description of run_page
+/*
+ * (c) 2013 by the digital.me project (http:\\www.dime-project.eu).
  * 
- *  @author Simon Thiel
- *  @version $Revision: $
- *  @date 07.07.2012
+ *  Run the page
  */
 
 
