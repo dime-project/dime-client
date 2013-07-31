@@ -28,38 +28,30 @@ public class BaseAdapter_ProfileAttribute extends BaseAdapterDisplayableItem {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View vi = convertView;
-        vi = mInflater.inflate(R.layout.adapter_profileattribute_item, null);
-        ProfileAttributeItem pai = (ProfileAttributeItem) mItems.get(position);
-        LinearLayout tl = (LinearLayout) vi.findViewById(R.id.attributes);
-        tl.removeAllViews();
-        TextView labelCat = (TextView) vi.findViewById(R.id.attribute_category);
-        CheckBox cb = (CheckBox) vi.findViewById(R.id.attribute_checkBox);
-        if (profile.isEditable()) {
-            cb.setVisibility(View.VISIBLE);
-        } else {
-            cb.setVisibility(View.GONE);
-            labelCat.setPadding(0, 20, 0, 20);
-        }
-        labelCat.setText(pai.getCategory());
-        int counter = 0;
+    	ProfileAttributeItem pai = (ProfileAttributeItem) mItems.get(position);
+        convertView = mInflater.inflate(R.layout.adapter_profileattribute_item, null);
+        LinearLayout tl = (LinearLayout) convertView.findViewById(R.id.attributes);
+        TextView labelCat = (TextView) convertView.findViewById(R.id.attribute_category);
+        CheckBox cb = (CheckBox) convertView.findViewById(R.id.attribute_checkBox);
+        convertView.setBackgroundColor(context.getResources().getColor((position % 2 == 0) ? R.color.background_grey_metabar : android.R.color.white));
+        if (!profile.isEditable()) cb.setEnabled(false);
+        labelCat.setText(pai.getCaption());
         for (String key : pai.getValue().keySet()) {
         	String label = pai.getLabelForValueKey(key);
             String value = pai.getValue().get(key);
             LinearLayout line = new LinearLayout(context);
             line.setOrientation(LinearLayout.VERTICAL);
-            line.setPadding(0, 2, 0, 2);
+            line.setPadding(UIHelper.getDPvalue(10), UIHelper.getDPvalue(2), UIHelper.getDPvalue(10), UIHelper.getDPvalue(2));
             LinearLayout.LayoutParams lpms = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-            lpms.setMargins(10, 0, 0, 0);
+            lpms.setMargins(UIHelper.getDPvalue(10), 0, 0, 0);
             TextView labelTV = UIHelper.createTextView(context, R.style.dimeTheme, -1, 11, lpms, true);
             labelTV.setText(label);
             EditText valueET = new EditText(context);
             valueET.setText(value);
             valueET.setTextAppearance(context, R.style.dimeTheme);
             LinearLayout.LayoutParams lpms2 = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-            lpms2.setMargins(0, 0, 10, 0);
+            lpms2.setMargins(0, 0, UIHelper.getDPvalue(10), 0);
             valueET.setLayoutParams(lpms2);
-            valueET.setTextSize(14);
             if (profile.isEditable()) {
                 valueET.setInputType(UIHelper.switchInputType(key));
                 valueET.setEnabled(true);
@@ -69,16 +61,10 @@ public class BaseAdapter_ProfileAttribute extends BaseAdapterDisplayableItem {
             }
             line.addView(labelTV);
             line.addView(valueET);
-            if (counter % 2 == 0) {
-                line.setBackgroundColor(context.getResources().getColor(R.color.dm_row_alternate));
-            } else {
-                line.setBackgroundColor(context.getResources().getColor(R.color.dm_row_alternate_light));
-            }
             tl.addView(line, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-            counter++;
         }
         cb.setOnCheckedChangeListener(new CheckListener<DisplayableItem>(position, this));
-        return vi;
+        return convertView;
     }
 
     class DimeTextWatcher implements TextWatcher {

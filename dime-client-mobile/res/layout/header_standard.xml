@@ -46,7 +46,7 @@
                 android:id="@+header/changed_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/dm_col3_low"
+                android:textColor="@color/dm_text_restrained"
                 android:textSize="11sp" />
         </LinearLayout>
 
@@ -60,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:background="@color/metabar_grey"
+                android:background="@color/background_grey_metabar"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp" >
 
@@ -82,7 +82,7 @@
                 android:id="@+header/bar"
                 android:layout_width="match_parent"
                 android:layout_height="5dp"
-                android:background="@color/metabar_grey" />
+                android:background="@color/background_grey_metabar" />
         </LinearLayout>
 
         <TextView
@@ -90,7 +90,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:background="@color/metabar_grey"
+            android:background="@color/background_grey_metabar"
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"

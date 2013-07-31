@@ -191,10 +191,10 @@ public class Activity_Edit_Item_Dialog extends ActivityDime implements OnClickLi
 		int color = 0;
 		if(isChanged) {
 			string = "Changes not saved!";
-			color = R.color.dm_col2;
+			color = R.color.dm_text_highlighted_gold;
 		} else {
 			string = "No changes made!";
-			color = R.color.dm_col3;
+			color = R.color.dm_text_restrained;
 		}
 		headerChangesMade.setText(string);
 		headerChangesMade.setTextColor(color);

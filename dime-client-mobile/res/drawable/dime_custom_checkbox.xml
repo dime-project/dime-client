@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true" android:state_enabled="true" android:drawable="@drawable/shape_action_yellow" />
+    <item android:state_checked="false" android:state_enabled="true" android:drawable="@drawable/shape_action_white" />
+	<item android:state_checked="true" android:state_enabled="false" android:drawable="@drawable/shape_action_disabled" />
+	<item android:state_checked="false" android:state_enabled="false" android:drawable="@drawable/shape_action_disabled" />
+	<item android:drawable="@drawable/shape_action_white" /> <!-- default -->
+</selector>

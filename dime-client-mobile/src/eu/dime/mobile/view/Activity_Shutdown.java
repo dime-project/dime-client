@@ -26,7 +26,9 @@ public class Activity_Shutdown extends Activity {
 		super.onResume();
 		dialog = ProgressDialog.show(this, null, "Shutting down di.me...", true, false, null);
     	((TextView) dialog.findViewById(android.R.id.message)).setTextColor(Color.WHITE);
-    	AndroidModelHelper.sendEvaluationDataAsynchronously(null, DimeClient.getMRC(new DummyLoadingViewHandler()), "action_logout");
+    	try {
+    		AndroidModelHelper.sendEvaluationDataAsynchronously(null, DimeClient.getMRC(new DummyLoadingViewHandler()), "action_logout");
+		} catch (Exception e) {	}
     	DimeClient.shutdown();
     	Handler handler = new Handler();
     	handler.postDelayed(new Runnable() {

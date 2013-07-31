@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
@@ -38,8 +37,8 @@ import eu.dime.mobile.helper.objects.NotificationProperties;
 import eu.dime.mobile.view.Activity_Main;
 import eu.dime.mobile.view.abstr.ActivityDime;
 import eu.dime.mobile.view.abstr.ListActivityDime;
+import eu.dime.mobile.view.abstr.TabActivityDisplayableItemDetail;
 import eu.dime.mobile.view.dialog.Activity_Share_Dialog;
-import eu.dime.mobile.view.places.Activity_Place_Detail;
 import eu.dime.model.ComparatorHelper;
 import eu.dime.model.CreateItemFailedException;
 import eu.dime.model.GenItem;
@@ -255,17 +254,10 @@ public class AndroidModelHelper {
                 return result;
             }
 
-			@SuppressWarnings("unchecked")
 			@Override
             protected void onPostExecute(String result) {
 				if(mActivity.get() != null && !mActivity.get().isFinishing()) {
-					if(mActivity.get() instanceof ListActivityDime) {
-						((ListActivityDime<GenItem>) (Object) mActivity.get()).reloadList();
-						UIHelper.hideSoftKeyboard(mActivity.get().getParent(), mActivity.get().getParent().getCurrentFocus());
-					} else if(mActivity.get() instanceof ActivityDime) {
-						((Activity_Place_Detail) mActivity.get()).startTask("Refreshing view...");
-					}
-	            	if(dialog != null) dialog.dismiss();
+					refreshViewAfterModelChanges(mActivity.get(), dialog);
 				}
 				Toast.makeText(DimeClient.getAppContext(), result, Toast.LENGTH_LONG).show();
 				sendEvaluationDataAsynchronously(Arrays.asList(item), mrContext, actionName);
@@ -286,22 +278,15 @@ public class AndroidModelHelper {
 					String name = (item instanceof DisplayableItem) ? " " + ((DisplayableItem)item).getName() : "";
 					result = UIHelper.formatStringOnlyFirstCharUpperCase(item.getType()) + name + " updated!";
 				} catch (Exception e) {
-					Log.e(mActivity.get().getClass().getSimpleName(), "Cast to ListActivityDime<GenItem> failed!");
+					result= "Update of " + item.getType() + " failed!";
 				}
                 return result;
             }
 
-			@SuppressWarnings("unchecked")
 			@Override
             protected void onPostExecute(String result) {
 				if(mActivity.get() != null && !mActivity.get().isFinishing()) {
-					if(mActivity.get() instanceof ListActivityDime) {
-						((ListActivityDime<GenItem>) (Object) mActivity.get()).reloadList();
-						UIHelper.hideSoftKeyboard(mActivity.get().getParent(), mActivity.get().getParent().getCurrentFocus());
-					} else if(mActivity.get() instanceof ActivityDime) {
-						((ActivityDime) mActivity.get()).startTask("Refreshing view...");
-					}
-					if(dialog != null) dialog.dismiss();
+					refreshViewAfterModelChanges(mActivity.get(), dialog);
 				}
 				Toast.makeText(DimeClient.getAppContext(), result, Toast.LENGTH_LONG).show();
 				sendEvaluationDataAsynchronously(Arrays.asList(item), mrContext, actionName);
@@ -358,7 +343,7 @@ public class AndroidModelHelper {
             @Override
             protected void onPostExecute(String result) {
             	if(mActivity.get() != null && !mActivity.get().isFinishing()) {
-            		mActivity.get().reloadList();
+            		refreshViewAfterModelChanges(mActivity.get(), null);
             	}
             	Toast.makeText(DimeClient.getAppContext(), result, Toast.LENGTH_LONG).show();
             	sendEvaluationDataAsynchronously(getListOfItemsWithGuids((List<GenItem>)(Object)ModelHelper.getAllDisplayableItems(mrContext, type), mActivity.get().getSelectionGUIDS()), mrContext, actionName);
@@ -386,15 +371,10 @@ public class AndroidModelHelper {
                 return result;
             }
 
-			@SuppressWarnings("unchecked")
 			@Override
             protected void onPostExecute(String result) {
 				if(mActivity.get() != null && !mActivity.get().isFinishing()) {
-					if(mActivity.get() instanceof ListActivityDime) {
-						((ListActivityDime<GenItem>) (Object) mActivity.get()).reloadList();
-						UIHelper.hideSoftKeyboard(mActivity.get().getParent(), mActivity.get().getParent().getCurrentFocus());
-					}
-	            	if(dialog != null) dialog.dismiss();
+					refreshViewAfterModelChanges(mActivity.get(), dialog);
 				}
 				Toast.makeText(DimeClient.getAppContext(), result, Toast.LENGTH_LONG).show();
             	sendEvaluationDataAsynchronously(Arrays.asList((GenItem)pai), mrContext, "Create GenItem");
@@ -406,61 +386,96 @@ public class AndroidModelHelper {
     /** ------------------------------------------------------------------------------------------------------------------------------------------
 	 ** people view functions
 	 ** ------------------------------------------------------------------------------------------------------------------------------------------ */
-    @SuppressWarnings("unused")
-	public static void importContact(Activity activity, final ModelRequestContext mrContext, Cursor c) {
-		final String name = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-		final String photoId = c.getString(c.getColumnIndex(ContactsContract.Contacts.PHOTO_ID));
-		final PersonItem pi = (PersonItem) ItemFactory.createNewDisplayableItemByType(TYPES.PERSON, name);
-		final WeakReference<Activity> mActivity = new WeakReference<Activity>(activity);
-		//TODO upload picture, create profilecard with contact details (phone number...), create person with profilecard assigned
-		(new AsyncTask<Void, Void, String>() {
-    		
-			@Override
-            protected String doInBackground(Void... params) {
-				String result = "";
-				String filePath = null;
-				try {
-					Uri photoUri = ContentUris.withAppendedId(ContactsContract.Data.CONTENT_URI, Long.parseLong(photoId));
-					byte[] photoBytes = null;
-					Cursor c2 = mActivity.get().getContentResolver().query(photoUri, new String[] { ContactsContract.CommonDataKinds.Photo.PHOTO }, null, null, null);
-					filePath = FileHelper.parseUriToFilename(photoUri, mActivity.get());
-					if (c2.moveToFirst()) {
-						photoBytes = c2.getBlob(0);
+    public static void importAllContacts(Activity activity, final ModelRequestContext mrContext) {
+//    	Cursor c = null;
+//		try {
+//			//FIXME Import of all contacts doesn`t work
+//			Uri uri = ContactsContract.Contacts.CONTENT_URI;
+//			String[] projection = new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME };
+//			String selection = ContactsContract.Contacts.IN_VISIBLE_GROUP + " = '1'";
+//			String[] selectionArgs = null;
+//			String sortOrder = ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
+//			c = managedQuery(uri, projection, selection, selectionArgs, sortOrder);
+//			if (c.moveToFirst()) {
+//				do {
+//					AndroidModelHelper.importContact(activity, mrContext, c);
+//				} while (c.moveToNext());
+//			}
+//		} catch (Exception e) {	
+//			
+//		} finally {
+//			if(c != null) c.close();
+//		}
+    }
+    
+	@SuppressWarnings("deprecation")
+    public static void importSingleContact(Activity activity, final ModelRequestContext mrContext, Uri contactData) {
+		Cursor c = activity.managedQuery(contactData, null, null, null, null);
+		if (c.moveToFirst()) {
+			final String name = c.getString(c.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+			final String photoId = c.getString(c.getColumnIndex(ContactsContract.Contacts.PHOTO_ID));
+			final WeakReference<Activity> mActivity = new WeakReference<Activity>(activity);
+			(new AsyncTask<Void, Void, String>() {
+	    		
+				@Override
+	            protected String doInBackground(Void... params) {
+					return importContact(mActivity.get(), mrContext, name, photoId) ? "Contact " + name + " imported!" : "Import of contact " + name + " failed!";
+	            }
+	
+	            @SuppressWarnings("unchecked")
+				@Override
+	            protected void onPostExecute(String result) {
+	            	if(mActivity.get() != null && !mActivity.get().isFinishing()) {
+						refreshViewAfterModelChanges(mActivity.get(), null);
 					}
-				} catch(NumberFormatException e) {
-					
-				} catch(Exception e) {
-					
-				}
-				if (filePath != null) {
-					File file = new File(filePath);
-					MultiPartPostClient myClient = new MultiPartPostClient(getModelConfiguration());
-					try {
-						myClient.uploadFile(file);
-						pi.setImageUrl(filePath);
-					} catch (IOException ex) { }
-				}
-				try {
-					Model.getInstance().createItem(mrContext, pi);
-					result = "Contact " + name + " imported!";
-				} catch (CreateItemFailedException ex) {
-					result = "Import of contact " + name + " failed!";
-				}
-                return result;
-            }
-
-            @SuppressWarnings("unchecked")
-			@Override
-            protected void onPostExecute(String result) {
-            	Toast.makeText(DimeClient.getAppContext(), result, Toast.LENGTH_LONG).show();
-            	sendEvaluationDataAsynchronously((List<GenItem>) (Object) Arrays.asList(pi), mrContext, "Import contact");
-            }
-            
-        }).execute();
-		
+	            	Toast.makeText(DimeClient.getAppContext(), result, Toast.LENGTH_LONG).show();
+	            	sendEvaluationDataAsynchronously((List<GenItem>) (Object) Arrays.asList(new PersonItem()), mrContext, "Import contact");
+	            }
+	            
+	        }).execute();
+		}
+    }
+    
+    @SuppressWarnings({ "unused"})
+    //TODO upload picture, create profilecard with contact details (phone number...), create person with profilecard assigned
+	public static boolean importContact(Activity activity, final ModelRequestContext mrContext, String name, String photoId) {
+    	PersonItem pi = (PersonItem) ItemFactory.createNewDisplayableItemByType(TYPES.PERSON, name);
+		String filePath = null;
+		Cursor c2 = null;
+		try {
+			Uri photoUri = ContentUris.withAppendedId(ContactsContract.Data.CONTENT_URI, Long.parseLong(photoId));
+			byte[] photoBytes = null;
+			c2 = activity.getContentResolver().query(photoUri, new String[] { ContactsContract.CommonDataKinds.Photo.PHOTO }, null, null, null);
+			filePath = FileHelper.parseUriToFilename(photoUri, activity);
+			if (c2.moveToFirst()) {
+				photoBytes = c2.getBlob(0);
+			}
+		} catch(NumberFormatException e) {
+			
+		} catch(Exception e) {
+			
+		} finally {
+			if(c2 != null) c2.close();
+		}
+		if (filePath != null) {
+			File file = new File(filePath);
+			MultiPartPostClient myClient = new MultiPartPostClient(getModelConfiguration());
+			try {
+				myClient.uploadFile(file);
+				pi.setImageUrl(filePath);
+			} catch (IOException ex) { }
+		}
+		boolean success = true;
+		try {
+			Model.getInstance().createItem(mrContext, pi);
+		} catch (CreateItemFailedException ex) {
+			success = false;
+		}
+		return success;
 	}
 
-	public static void mergePersonsAsynchronously(final ModelRequestContext mrContext, final List<String> selectedGUIDs) {
+	public static void mergePersonsAsynchronously(Activity activity, final ModelRequestContext mrContext, final List<String> selectedGUIDs) {
+		final WeakReference<Activity> mActivity = new WeakReference<Activity>(activity);
 		(new AsyncTask<Void, Void, String>() {
     		
 			@Override
@@ -478,11 +493,30 @@ public class AndroidModelHelper {
             @SuppressWarnings("unchecked")
 			@Override
             protected void onPostExecute(String result) {
+            	if(mActivity.get() != null && !mActivity.get().isFinishing()) {
+					refreshViewAfterModelChanges(mActivity.get(), null);
+				}
             	Toast.makeText(DimeClient.getAppContext(), result, Toast.LENGTH_SHORT).show();
             	sendEvaluationDataAsynchronously(getListOfItemsWithGuids((List<GenItem>)(Object)ModelHelper.getAllDisplayableItems(mrContext, TYPES.PERSON), selectedGUIDs), mrContext, "Merge persons");
             }
             
         }).execute();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static void refreshViewAfterModelChanges(Activity activity, DialogInterface dialog) {
+		if(activity instanceof ListActivityDime) {
+			((ListActivityDime<GenItem>) activity).reloadList();
+		} else if(activity instanceof ActivityDime) {
+			((ActivityDime) activity).startTask("Refreshing view...");
+		}
+		if(activity.getParent() != null) {
+			UIHelper.hideSoftKeyboard(activity.getParent(), activity.getParent().getCurrentFocus());
+		}
+		if(activity.getParent() != null && activity.getParent() instanceof TabActivityDisplayableItemDetail) {
+			((TabActivityDisplayableItemDetail)activity.getParent()).refreshView();
+		}
+    	if(dialog != null) dialog.dismiss();
 	}
     
     /** ------------------------------------------------------------------------------------------------------------------------------------------

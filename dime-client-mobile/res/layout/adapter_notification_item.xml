@@ -32,22 +32,24 @@
             android:id="@+id/notification_sender"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/dm_col3_low"
+            android:textColor="@color/dm_text_restrained"
             android:textSize="11sp" />
 
         <TextView
             android:id="@+id/notification_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/dm_col3_low"
+            android:textColor="@color/dm_text_restrained"
             android:textSize="11sp" />
     </LinearLayout>
 
     <CheckBox
         android:id="@+id/notification_checkBox"
-        android:layout_width="wrap_content"
+        android:layout_width="30dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginRight="10dp" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:button="@drawable/dime_custom_checkbox" />
 
 </LinearLayout>

@@ -3,6 +3,7 @@ package eu.dime.mobile.view.places;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import eu.dime.control.LoadingViewHandler;
@@ -18,9 +19,8 @@ import eu.dime.mobile.view.abstr.TabActivityDime;
 import eu.dime.model.context.ContextItem;
 import eu.dime.model.context.constants.Scopes;
 import eu.dime.model.displayable.PlaceItem;
-
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 
 public class TabActivity_Place_Detail extends TabActivityDime {
 	
@@ -56,7 +56,7 @@ public class TabActivity_Place_Detail extends TabActivityDime {
 		String current = (isCurrentPlace) ? getResources().getString(R.string.action_removeCurrentPositionTag) : getResources().getString(R.string.action_setCurrentPositionTag);
 		String[] actionsForPlaceDetail = { favourite, current };
 		if (currentActivity instanceof Activity_Place_Detail) {
-			actionDialog = UIHelper.createActionDialog(this, Arrays.asList(actionsForPlaceDetail), this, new ArrayList<String>());
+			actionDialog = UIHelper.createActionDialog(this, Arrays.asList(actionsForPlaceDetail), this, null);
 			actionDialog.show();
 		}
 	}
@@ -91,7 +91,15 @@ public class TabActivity_Place_Detail extends TabActivityDime {
 				//set current position flag
 				if (button.getText().equals(res.getString(R.string.action_removeCurrentPositionTag)) || button.getText().equals(res.getString(R.string.action_setCurrentPositionTag))) {
 					actionDialog.dismiss();
-					ContextItem contextItem = ContextHelper.createCurrentPlaceContextItem(selectedPlace.getGuid(), selectedPlace.getName(), (isCurrentPlace) ? Integer.valueOf(1) : Integer.valueOf(600));
+					Calendar c = Calendar.getInstance();
+					c.add(Calendar.DAY_OF_MONTH, 1);
+			        c.set(Calendar.HOUR_OF_DAY, 0);
+			        c.set(Calendar.MINUTE, 0);
+			        c.set(Calendar.SECOND, 0);
+			        c.set(Calendar.MILLISECOND, 0);
+			        int millisUntilMidnight = (int) (c.getTimeInMillis() - System.currentTimeMillis());
+					ContextItem contextItem = ContextHelper.createCurrentPlaceContextItem(selectedPlace.getGuid(), selectedPlace.getName(), (isCurrentPlace) ? Integer.valueOf(1) : millisUntilMidnight);
+					Log.d(TAG, "place context set with the duration of " + millisUntilMidnight + " ms!");
 					DimeClient.contextCrawler.updateContext(Scopes.SCOPE_CURRENT_PLACE, contextItem);
 					((Activity_Place_Detail) currentActivity).startTask("Refreshing view...");
 				}

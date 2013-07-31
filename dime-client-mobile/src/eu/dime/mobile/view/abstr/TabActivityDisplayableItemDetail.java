@@ -31,6 +31,7 @@ public abstract class TabActivityDisplayableItemDetail extends TabActivityDime i
 	@Override
 	public void onCreate(android.os.Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		isLoading = true;
 		(new AsyncTask<Void, Void, DisplayableItem>() {
 			
 			@Override
@@ -43,13 +44,13 @@ public abstract class TabActivityDisplayableItemDetail extends TabActivityDime i
 				if(result != null) {
 					di = result;
 					initializeTabs();
+					isLoading = false;
 				} else {
 					Toast.makeText(getApplicationContext(), "Couldn´t load detail view of item!", Toast.LENGTH_LONG).show();
 					TabActivityDisplayableItemDetail.this.finish();
 				}
 			}
 		}).execute();
-		isLoading = true;
 	}
 	
 	@Override
@@ -64,7 +65,7 @@ public abstract class TabActivityDisplayableItemDetail extends TabActivityDime i
 		refreshView();
 	}
     
-    private void refreshView() {
+    public void refreshView() {
     	if(!isLoading) {
     		isLoading = true;
 	    	(new AsyncTask<Void, Void, DisplayableItem>() {
@@ -79,6 +80,7 @@ public abstract class TabActivityDisplayableItemDetail extends TabActivityDime i
 						di = result;
 						initializeHeader();
 					}
+					isLoading = false;
 				}
 			}).execute();
     	}
@@ -89,12 +91,6 @@ public abstract class TabActivityDisplayableItemDetail extends TabActivityDime i
     protected void onStop() {
     	super.onStop();
     	NotificationManager.unregisterSecondLevel(this);
-    }
-    
-    @Override
-    public void onPause() {
-    	super.onPause();
-    	isLoading = false;
     }
 
 	@Override

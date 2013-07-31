@@ -7,8 +7,6 @@ import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.InputType;
@@ -98,7 +96,7 @@ public class TabActivity_People extends TabActivityDime implements IResultOfStan
 					builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							AndroidModelHelper.mergePersonsAsynchronously(mrContext, selectedGUIDs);
+							AndroidModelHelper.mergePersonsAsynchronously(currentActivity, mrContext, selectedGUIDs);
 						}
 					});
 					UIHelper.displayAlertDialog(builder, false);
@@ -157,26 +155,9 @@ public class TabActivity_People extends TabActivityDime implements IResultOfStan
 					actionDialog.dismiss();
 					Builder builder = UIHelper.createAlertDialogBuilder(this, "Really import all contacts from phone book?", true);
 					builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-						@SuppressWarnings("deprecation")
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							try {
-								//FIXME Import of all contacts doesn`t work
-								Uri uri = ContactsContract.Contacts.CONTENT_URI;
-								String[] projection = new String[] { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME };
-								String selection = ContactsContract.Contacts.IN_VISIBLE_GROUP + " = '1'";
-								String[] selectionArgs = null;
-								String sortOrder = ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
-								Cursor c = managedQuery(uri, projection, selection, selectionArgs, sortOrder);
-								if (c != null) {
-									if (c.moveToFirst()) {
-										do {
-											AndroidModelHelper.importContact(TabActivity_People.this, mrContext, c);
-										} while (c.moveToNext());
-									}
-								}
-								c.close();
-							} catch (Exception e) {	}
+							AndroidModelHelper.importAllContacts(TabActivity_People.this, mrContext);
 						}
 					});
 					UIHelper.displayAlertDialog(builder, false);
@@ -226,27 +207,11 @@ public class TabActivity_People extends TabActivityDime implements IResultOfStan
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
 		case IMPORT_CONTACTS:
 			if (resultCode == Activity.RESULT_OK) {
-				try {
-					if (resultCode == Activity.RESULT_OK) {
-						Uri contactData = data.getData();
-						Cursor c = managedQuery(contactData, null, null, null, null);
-						if (c.moveToFirst()) {
-							AndroidModelHelper.importContact(this, mrContext, c);
-						}
-						c.close();
-					}
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-					Log.e("IllegalArgumentException: ", e.toString());
-				} catch (Exception e) {
-					e.printStackTrace();
-					Log.e("Error: ", e.toString());
-				}
+				AndroidModelHelper.importSingleContact(this, mrContext, data.getData());
 			}
 		}
 	}

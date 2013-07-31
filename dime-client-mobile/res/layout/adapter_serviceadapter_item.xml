@@ -42,7 +42,7 @@
                 android:ellipsize="marquee"
                 android:maxLines="3"
                 android:text="Default"
-                android:textColor="@color/dm_col3_low"
+                android:textColor="@color/dm_text_restrained"
                 android:textSize="11sp" />
         </LinearLayout>
 

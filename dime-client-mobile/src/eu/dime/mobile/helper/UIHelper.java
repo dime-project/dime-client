@@ -20,7 +20,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.text.Editable;
-import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.TextUtils.TruncateAt;
@@ -125,7 +124,7 @@ public class UIHelper {
 		}
 	}
 	
-	private static int getDPvalue(int pixelValue) {
+	public static int getDPvalue(int pixelValue) {
 		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, pixelValue, DimeClient.getAppContext().getResources().getDisplayMetrics());
 	}
 
@@ -377,42 +376,51 @@ public class UIHelper {
 		dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
 		dialog.setTitle("Select Action");
 		((TextView) dialog.findViewById(android.R.id.title)).setTextColor(Color.WHITE);
+		((TextView) dialog.findViewById(android.R.id.title)).setPadding(0, 0, 0, 0);
 		dialog.setContentView(R.layout.dialog_action);
 		dialog.setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.icon_bar_action);
 		TextView selection = (TextView) dialog.findViewById(R.action_dialog.selection_text);
 		if (selectedGUIDs != null) {
-			String text = selectedGUIDs.size() + " selected item(s)";
+			String text = String.valueOf(selectedGUIDs.size());
 			selection.setText(text);
 		} else {
 			selection.setVisibility(View.GONE);
+			dialog.findViewById(R.action_dialog.selection_bar).setVisibility(View.GONE);
 		}
-		LinearLayout tl = (LinearLayout) dialog.findViewById(R.action_dialog.baselayout);
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		params.setMargins(getDPvalue(10), 0, getDPvalue(10), 0);
-		tl.setLayoutParams(params);
+		LinearLayout generalContainer = (LinearLayout) dialog.findViewById(R.action_dialog.actions_general);
+		LinearLayout selectionContainer = (LinearLayout) dialog.findViewById(R.action_dialog.actions_selection);
+		int i = 0;
 		for (String name : names) {
 			Button tmp = new Button(context);
+			tmp.setBackgroundResource(R.drawable.button_col4_grey);
 			tmp.setText(name);
-			tmp.setTextSize(12);
 			tmp.setGravity(Gravity.CENTER_VERTICAL);
-			StateListDrawable sld = (StateListDrawable) context.getResources().getDrawable(UIHelper.getResourceIdByName(context.getResources(), name));
+			int id = UIHelper.getResourceIdByName(context.getResources(), name);
+			StateListDrawable sld = (StateListDrawable) context.getResources().getDrawable(id);
 			tmp.setCompoundDrawablesWithIntrinsicBounds(sld, null, null, null);
-			tmp.setCompoundDrawablePadding(10);
+			tmp.setCompoundDrawablePadding(getDPvalue(10));
+			tmp.setId(id);
 			LinearLayout.LayoutParams lpms = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-			lpms.setMargins(0, 0, 0, getDPvalue(5));
+			lpms.setMargins(0, getDPvalue(2), 0, 0);
 			tmp.setLayoutParams(lpms);
 			tmp.setOnClickListener(listener);
 			if (selectedGUIDs != null && ((selectedGUIDs.isEmpty() && name.contains("select")) || (selectedGUIDs.size() < 2 && name.contains("Merge")))) {
 				tmp.setEnabled(false);
-			} else if (name.equals(context.getResources().getString(R.string.action_editItem))) {
-				tmp.setId(R.string.action_editItem);
-			} else if (name.equals(context.getResources().getString(R.string.action_share))) {
-				tmp.setId(R.string.action_share);
-			} else if (name.equals(context.getResources().getString(R.string.action_unshare))) {
-				tmp.setId(R.string.action_unshare);
 			}
-			tl.addView(tmp);
+			if(name.contains("select")) {
+				selectionContainer.addView(tmp);
+				i++;
+			} else {
+				generalContainer.addView(tmp);
+			}
 		}
+		if(i == 0) selectionContainer.setVisibility(View.GONE);
+		WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+		Window window = dialog.getWindow();
+		lp.copyFrom(window.getAttributes());
+		lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+		lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+		window.setAttributes(lp);
 		return dialog;
 	}
 
@@ -420,7 +428,7 @@ public class UIHelper {
 		Resources res = context.getResources();
 		String[] actions = { res.getString(R.string.action_editItem), res.getString(R.string.action_share), res.getString(R.string.action_unshare) };
 		ItemActionListener listener = new ItemActionListener(context, new DimeIntentObject(item));
-		Dialog dialog = createActionDialog(context, Arrays.asList(actions), listener, Arrays.asList(item.getGuid()));
+		Dialog dialog = createActionDialog(context, Arrays.asList(actions), listener, null);
 		listener.setDialog(dialog);
 		dialog.show();
 		if(ModelHelper.isDisplayableItem(item.getMType())) {
@@ -491,7 +499,7 @@ public class UIHelper {
 		lpmsLayout.setMargins(0, 0, 0, getDPvalue(5));
 		ll.setLayoutParams(lpmsLayout);
 		ll.setPadding(getDPvalue(5), 0, getDPvalue(5), 0);
-		ll.setBackgroundColor(context.getResources().getColor(R.color.metabar_grey));
+		ll.setBackgroundColor(context.getResources().getColor(R.color.background_grey_metabar));
 		return ll;
 	}
 
@@ -584,7 +592,7 @@ public class UIHelper {
 				if (pai != null) {
 					TextView labelCat = createTextView(context, -1, Typeface.BOLD, 11, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT), true);
 					labelCat.setText(pai.getCategory() + " (" + pai.getName() + ")");
-					labelCat.setPadding(getDPvalue(10), getDPvalue(10), 0, 0);
+					labelCat.setPadding(getDPvalue(5), getDPvalue(5), 0, 0);
 					boolean hasChild = false;
 					int index = 0;
 					for (String key : pai.getValue().keySet()) {
@@ -598,8 +606,7 @@ public class UIHelper {
 							LinearLayout ll = createNewExpandedViewRow(context);
 							TextView labelTV = createTextView(context, R.style.dimeTheme, Typeface.NORMAL, 11, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f), true);
 							labelTV.setText(label);
-							TextView valueTV = createTextView(context, R.style.dimeTheme, Typeface.NORMAL, 11, null, true);
-							valueTV.setFilters(new InputFilter[] { new InputFilter.LengthFilter(17) });
+							TextView valueTV = createTextView(context, R.style.dimeTheme, Typeface.NORMAL, 11, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 2f), true);
 							valueTV.setText(value);
 							ll.addView(labelTV);
 							ll.addView(valueTV);
@@ -615,7 +622,7 @@ public class UIHelper {
 			break;
 		case LIVEPOST:
 			TextView text = createTextView(context, R.style.dimeTheme, Typeface.NORMAL, 11, null, false);
-			text.setPadding(getDPvalue(10), 0, getDPvalue(10), 0);
+			text.setPadding(getDPvalue(10), 0, getDPvalue(10), getDPvalue(5));
 			text.setText(((LivePostItem) item).getText());
 			previewContainer.addView(text);
 			empty = "<empty>";

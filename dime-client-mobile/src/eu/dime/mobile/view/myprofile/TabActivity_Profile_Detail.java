@@ -81,15 +81,15 @@ public class TabActivity_Profile_Detail extends TabActivityDisplayableItemDetail
 				startActivity(DimeIntentObjectHelper.populateIntent(intent, new DimeIntentObject(di)));
 			}
 		});
-		ImageView image = (ImageView) header.findViewById(R.id.imageView);
 		LinearLayout readOnly = (LinearLayout) header.findViewById(R.profile.read_only);
-		if(isEditable) readOnly.setVisibility(View.GONE);
+		ImageView image = (ImageView) header.findViewById(R.id.imageView);
+		LinearLayout sharingNotSupported = (LinearLayout) header.findViewById(R.id.sharing_not_supported);
 		TextView name = (TextView) header.findViewById(R.id.textView_name);
+//		TextView standard = (TextView) header.findViewById(R.profile.standard);
+		readOnly.setVisibility(isEditable ? View.GONE : View.VISIBLE);
 		name.setText(di.getName());
-		TextView standard = (TextView) header.findViewById(R.profile.standard);
-//		if(!profile.isStandard()) { TODO implement standard profile
-			standard.setVisibility(View.GONE);
-//		}
+		sharingNotSupported.setVisibility(((ProfileItem)di).supportsSharing() ? View.GONE : View.VISIBLE);
+//		standard.setVisibility(((ProfileItem)di).isStandard() ? View.VISIBLE : View.GONE);
 		ImageHelper.loadImageAsynchronously(image, di, this);
 	}
 
@@ -192,6 +192,7 @@ public class TabActivity_Profile_Detail extends TabActivityDisplayableItemDetail
                 }
                 //add existing attribute
                 else if (button.getText().equals(res.getString(R.string.action_addExistingAttribute))) {
+                	//TODO create adapter for profile attributes and build standard dialog
                 	final String actionName = res.getResourceEntryName(R.string.action_addExistingAttribute);
                 	actionDialog.dismiss();
                 	ArrayList<String> tmpItemsAL = new ArrayList<String>();
@@ -210,7 +211,7 @@ public class TabActivity_Profile_Detail extends TabActivityDisplayableItemDetail
 					String[] tmpItems = new String[tmpItemsAL.size()];
 					tmpItems = tmpItemsAL.toArray(tmpItems);
 					final String[] items = tmpItems;
-                	Builder builder = UIHelper.createAlertDialogBuilder(this, "Select attribute category", true);
+                	Builder builder = UIHelper.createAlertDialogBuilder(this, "Select detail category", true);
             		builder.setItems(items, new DialogInterface.OnClickListener() {
             		    public void onClick(DialogInterface dialog, final int item) {  
             				di.addItem(attributes.get(item).getGuid());

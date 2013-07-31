@@ -224,7 +224,7 @@ public class ModelHelper {
         try {
             return (List<DisplayableItem>) (Object) Model.getInstance().getAllItems(mrContext, type); //HACK free cast
         } catch (ClassCastException ex) {
-            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage(), ex.getCause());
         }
         return new Vector<DisplayableItem>();
     }
@@ -233,7 +233,7 @@ public class ModelHelper {
         try {
             return (List<PersonItem>) (Object) Model.getInstance().getAllItems(mrContext, TYPES.PERSON); //HACK free cast
         } catch (ClassCastException ex) {
-            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage(), ex.getCause());
         }
         return new Vector<PersonItem>();
     }
@@ -258,7 +258,7 @@ public class ModelHelper {
         try {
             return (List<GroupItem>) (Object) Model.getInstance().getAllItems(mrContext, TYPES.GROUP); //HACK free cast
         } catch (ClassCastException ex) {
-            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage(), ex.getCause());
         }
         return new Vector<GroupItem>();
     }
@@ -267,7 +267,7 @@ public class ModelHelper {
         try {
             return (List<ResourceItem>) (Object) Model.getInstance().getAllItems(mrContext, TYPES.RESOURCE); //HACK free cast
         } catch (ClassCastException ex) {
-            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage(), ex.getCause());
         }
         return new Vector<ResourceItem>();
     }
@@ -276,7 +276,7 @@ public class ModelHelper {
         try {
             return (List<ResourceItem>) (Object) Model.getInstance().getAllAllItems(mrContext, TYPES.RESOURCE); //HACK free cast
         } catch (ClassCastException ex) {
-            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage(), ex.getCause());
         }
         return new Vector<ResourceItem>();
     }
@@ -285,7 +285,7 @@ public class ModelHelper {
         try {
             return (List<DataboxItem>) (Object) Model.getInstance().getAllItems(mrContext, TYPES.DATABOX); //HACK free cast
         } catch (ClassCastException ex) {
-            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage(), ex.getCause());
         }
         return new Vector<DataboxItem>();
     }
@@ -294,7 +294,7 @@ public class ModelHelper {
         try {
             return (List<DataboxItem>) (Object) Model.getInstance().getAllAllItems(mrContext, TYPES.DATABOX); //HACK free cast
         } catch (ClassCastException ex) {
-            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage(), ex.getCause());
         }
         return new Vector<DataboxItem>();
     }
@@ -307,12 +307,13 @@ public class ModelHelper {
                 ProfileItem profile = iter.next();
 	        	if(profile.getServiceAccountId() == null || profile.getServiceAccountId().length() == 0) {
 	        		iter.remove();
-	        		Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, null, "profile " + profile.getName() + " igonored because of missing said!");
+	        		String profileName = (profile != null) ? profile.getName() + " " : "";
+	        		Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, "profile " + profileName + " igonored because of missing said!");
 	        	}
             }
             return profiles;
         } catch (ClassCastException ex) {
-            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage(), ex.getCause());
         }
         return new Vector<ProfileItem>();
     }
@@ -321,7 +322,7 @@ public class ModelHelper {
         try {
             return (List<ProfileItem>) (Object) Model.getInstance().getAllAllItems(mrContext, TYPES.PROFILE); //HACK free cast
         } catch (ClassCastException ex) {
-            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage(), ex.getCause());
         }
         return new Vector<ProfileItem>();
 
@@ -331,7 +332,7 @@ public class ModelHelper {
         try {
             return (List<LivePostItem>) (Object) Model.getInstance().getAllItems(mrContext, TYPES.LIVEPOST); //HACK free cast
         } catch (ClassCastException ex) {
-            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage(), ex.getCause());
         }
         return new Vector<LivePostItem>();
     }
@@ -340,7 +341,7 @@ public class ModelHelper {
         try {
             return (List<LivePostItem>) (Object) Model.getInstance().getAllAllItems(mrContext, TYPES.LIVEPOST); //HACK free cast
         } catch (ClassCastException ex) {
-            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage(), ex.getCause());
         }
         return new Vector<LivePostItem>();
     }
@@ -349,7 +350,7 @@ public class ModelHelper {
         try {
             return (List<EventItem>) (Object) Model.getInstance().getAllItems(mrContext, TYPES.EVENT); //HACK free cast
         } catch (ClassCastException ex) {
-            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage(), ex.getCause());
         }
         return new Vector<EventItem>();
     }
@@ -358,7 +359,7 @@ public class ModelHelper {
         try {
             return (List<EventItem>) (Object) Model.getInstance().getAllAllItems(mrContext, TYPES.EVENT); //HACK free cast
         } catch (ClassCastException ex) {
-            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage(), ex.getCause());
         }
         return new Vector<EventItem>();
     }
@@ -367,7 +368,7 @@ public class ModelHelper {
         try {
             return (List<PlaceItem>) (Object) Model.getInstance().getAllItems(mrContext, TYPES.PLACE); //HACK free cast
         } catch (ClassCastException ex) {
-            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage(), ex.getCause());
         }
         return new Vector<PlaceItem>();
     }
@@ -376,7 +377,7 @@ public class ModelHelper {
         try {
             return (List<ServiceAdapterItem>) (Object) Model.getInstance().getAllItems(mrContext, TYPES.SERVICEADAPTER); //HACK free cast
         } catch (ClassCastException ex) {
-            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ModelHelper.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage(), ex.getCause());
         }
         return new Vector<ServiceAdapterItem>();
     }

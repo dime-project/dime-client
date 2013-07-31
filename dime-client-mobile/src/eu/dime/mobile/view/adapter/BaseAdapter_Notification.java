@@ -46,7 +46,7 @@ public class BaseAdapter_Notification extends BaseAdapterDime<UserNotificationIt
 		}
 		AndroidModelHelper.loadNotificationPropertiesAsynchronously(context, uni, convertView, viewHolder.message, viewHolder.sender, viewHolder.image);
 		viewHolder.selectedCB.setChecked(selection.contains(uni.getGuid()));
-        convertView.setBackgroundColor((!uni.isRead()) ? context.getResources().getColor(R.color.dm_row_alternate) : context.getResources().getColor(android.R.color.white));
+        convertView.setBackgroundColor((!uni.isRead()) ? context.getResources().getColor(R.color.background_grey_bright) : context.getResources().getColor(android.R.color.white));
         viewHolder.date.setText(UIHelper.formatDateByMillis(uni.getCreated()));
         viewHolder.selectedCB.setOnCheckedChangeListener(new CheckListener<UserNotificationItem>(position, this));
         return convertView;

@@ -1,27 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp"
-    android:layout_marginTop="-5dp" >
-    
-    <TextView 
-        android:id="@+action_dialog/selection_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:maxLength="50"
-        android:ellipsize="end"
-        android:layout_marginBottom="8dp"
-        android:paddingLeft="10dp"
-        android:textColor="@android:color/white"/>
+    android:background="@android:color/white" >
 
     <LinearLayout
-        android:id="@+action_dialog/baselayout"
+        android:id="@+action_dialog/actions_general"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical" >
     </LinearLayout>
 
-</LinearLayout>
+    <LinearLayout
+        android:id="@+action_dialog/actions_selection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@action_dialog/actions_general"
+        android:layout_marginTop="26dp" >
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+action_dialog/selection_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_below="@action_dialog/actions_general" >
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="12dp"
+            android:layout_weight="1"
+            android:layout_marginTop="9dp"
+            android:background="@color/dm_yellow_action" />
+
+        <TextView
+            android:id="@+action_dialog/selection_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_action_yellow"
+            android:gravity="center_horizontal"
+            android:minWidth="30dp"
+            android:padding="6dp"
+            android:text="0"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+</RelativeLayout>

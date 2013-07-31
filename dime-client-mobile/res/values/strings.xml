@@ -26,22 +26,11 @@
     <string name="tab_situations">Situations</string>
     <string name="tab_activities">Fitbit activities</string>
     <string name="tab_notifications">Notifications</string>
-    <string name="tab_publicResolver">Public resolver</string>
     
     <!-- buttons -->
-    <string name="peopleBtnText">People</string>
-    <string name="myProfileBtnText">myProfile</string>
-    <string name="communicateBtnText">Communicate</string>
-    <string name="dataBtnText">Data</string>
-    <string name="situationsBtnText">Situations/Places</string>
-    <string name="shareBtnText">Share</string>
     <string name="clearCredentialsBtnText">Clear stored credentials</string>
-    <string name="exitSystemBtnText">Exit di.me</string>
-    <string name="autoDetectionBtnOn">turn crawling sensor data on</string>
-    <string name="autoDetectionBtnOff">turn crawling sensor data off</string>
     
     <!-- hints -->
-    <string name="emptySearchText">search</string>
     
     <!-- labels and captions -->
     <string name="people_view_caption">People</string>
@@ -52,13 +41,9 @@
     <string name="situation_view_caption">Situations</string>
     <string name="no_notifications_pending">no notifications</string>
     <string name="autoDetectionDialogTitle">Crawling settings</string>
-    <string name="acceptTermsAndConditions">By login into the system, you accept the &lt;a href=\"http://dimedns.bdigital.org:8080/UserInformationAndUsageTerms.html\"&gt;User Information and Usage Terms&lt;/a&gt;</string>
-    <string name="autoDetectionDialogText">If you switch on this setting, sensor data from your device will be crawled and sent to the personal server. Some services will use this data to provide automatic suggestions. A complete list of services which are using this data is available on the &lt;a href=\"http://dimedns.bdigital.org:8080/UserInformationAndUsageTerms.html\"&gt;Di.me documentation&lt;/a&gt;.</string>
 	<string name="account_configuration_label">Settings</string>
 	
 	<!-- settings -->
-	<string name="settings_view_terms">Terms and conditions</string>
-	<string name="settings_view_howto">How-to</string>
 	<string name="settings_view_functionalities">Add-on functionalities</string>
 	<string name="settings_view_password">Password settings</string>
 	<string name="settings_view_toggleContextCrawlingBtn_label">Store Android sensor data:</string>
@@ -81,7 +66,6 @@
 	<string name="info_dialog_feeback_link">di.me Questionnaire (English)</string>
     <string name="info_dialog_bugs_label">This is a demonstration prototype</string>
     <string name="info_dialog_bugs_text">so you will find many bugs and issues. Please report them on: &lt;a href=\"https://github.com/dime-project/meta/issues\"&gt;Github&lt;/a&gt;</string>
-    <string name="info_dialog_about_label">About</string>
     <string name="info_dialog_about_trial_homepage">The test trial &lt;a href=\"http://dimetrials.bdigital.org\"&gt;homepage&lt;/a&gt;.</string>
     <string name="info_dialog_about_os_homepage">di.me open spurce: coming soon</string>
     <string name="info_dialog_about_project_homepage">The research project &lt;a href=\"http://di.me-project.eu\"&gt;homepage&lt;/a&gt;.</string>
@@ -90,21 +74,21 @@
 	
     <!-- items of action menu -->
     <string name="action_addPeopleToGroup">Add selected people to group</string>
-    <string name="action_addPeopleToGroupDetail">Add people to group</string>
-    <string name="action_removeSelectedPeopleFromGroup">Remove selected people from group</string>
+    <string name="action_addPeopleToGroupDetail">Add person(s) to group</string>
+    <string name="action_removeSelectedPeopleFromGroup">Remove selected person(s) from group</string>
     <string name="action_renameGroup">Rename group</string>
-    <string name="action_mergeSelection">Merge selected people</string>
+    <string name="action_mergeSelection">Merge selected person(s)</string>
     <string name="action_shareSelectedItems">Share selected</string>
     <string name="action_share">Share</string>
     <string name="action_unshare">Unshare</string>
     <string name="action_saveAsNewGroup">Save as new group</string>
     <string name="action_addNewGroup">Add new group</string>
     <string name="action_deleteSelectedGroups">Delete selected group(s)</string>
-    <string name="action_searchPublicResolverService">Search Di.me User Directory</string>
+    <string name="action_searchPublicResolverService">Search di.me user directory</string>
     <string name="action_importSpecificContactFromPhoneBook">Import contact from phone book</string>
     <string name="action_importAllContactsFromPhoneBook">Import all contacts from phone book</string>
-    <string name="action_addToNewGroup">Add selected people to new group</string>
-    <string name="action_uploadFile">Upload file</string>
+    <string name="action_addToNewGroup">Add selected person(s) to new group</string>
+    <string name="action_uploadFile">Upload resource</string>
     <string name="action_uploadImage">Upload image</string>
     <string name="action_assignToNewDatabox">Assign selected resource(s) to new databox</string>
     <string name="action_assignToDatabox">Assign selected resource(s) to databox</string>
@@ -122,13 +106,12 @@
     <string name="action_logout">Logout</string>
     <string name="action_newSituation">New situation</string>
     <string name="action_deleteSituation">Delete selected situation(s)</string>
-    <string name="action_setCurrentPositionTag">Set manually as current position</string>
+    <string name="action_setCurrentPositionTag">Set as current place (valid today)</string>
     <string name="action_removeCurrentPositionTag">Remove current position tag</string>
     <string name="action_setFavouriteTag">Set favourite tag</string>
     <string name="action_removeFavouriteTag">Remove favourite tag</string>
     <string name="action_removeSelectedNotifications">Remove selected notifications</string>
     <string name="action_removeAllNotifications">Remove all notifications</string>
-    <string name="action_renameResource">Rename resource</string>
     <string name="action_removeLivepost">Delete selected livepost(s)</string>
     <string name="action_removeSelectedResources">Delete selected resource(s)</string>
     <string name="action_connectServiceAdapter">Connect service</string>

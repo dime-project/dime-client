@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/info_dialog_getting_started_link"
-                android:textColor="@color/text_url" />
+                android:textColor="@color/dm_text_url" />
         </LinearLayout>
 
         <TextView
@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:text="@string/info_dialog_feeback_link"
-            android:textColor="@color/text_url" />
+            android:textColor="@color/dm_text_url" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -104,7 +104,7 @@
             android:layout_height="match_parent"
             android:paddingTop="4dp"
             android:text="@string/info_dialog_about_usage"
-            android:textColor="@color/text_url" />
+            android:textColor="@color/dm_text_url" />
 
         <TextView
             android:id="@+info/privacy_declaration"
@@ -113,7 +113,7 @@
             android:layout_marginBottom="10dp"
             android:paddingTop="4dp"
             android:text="@string/info_dialog_about_privacy"
-            android:textColor="@color/text_url" />
+            android:textColor="@color/dm_text_url" />
 
         <TextView
             android:layout_width="wrap_content"

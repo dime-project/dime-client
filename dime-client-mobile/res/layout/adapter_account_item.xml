@@ -30,7 +30,7 @@
                 android:id="@+account/isActive"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/dm_col3_low"
+                android:textColor="@color/dm_text_restrained"
                 android:textSize="11sp"
                 android:text="active" />
     </LinearLayout>
@@ -44,9 +44,11 @@
 
     <CheckBox
         android:id="@+account/checkBox"
-        android:layout_width="wrap_content"
+        android:layout_width="30dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginRight="10dp" />
+        android:button="@drawable/dime_custom_checkbox"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="2dp" />
 
 </LinearLayout>

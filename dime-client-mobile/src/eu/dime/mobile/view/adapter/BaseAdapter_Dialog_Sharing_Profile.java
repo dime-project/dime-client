@@ -90,9 +90,9 @@ public class BaseAdapter_Dialog_Sharing_Profile extends BaseAdapterDisplayableIt
 							valueTV.setGravity(Gravity.RIGHT);
 							line.addView(valueTV);
 							if(counter % 2 == 0) {
-								line.setBackgroundColor(context.getResources().getColor(R.color.dm_row_alternate));
+								line.setBackgroundColor(context.getResources().getColor(R.color.background_grey_bright));
 							} else {
-								line.setBackgroundColor(context.getResources().getColor(R.color.dm_row_alternate_light));
+								line.setBackgroundColor(context.getResources().getColor(android.R.color.white));
 							}
 							layout.addView(line, new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
 							counter++;

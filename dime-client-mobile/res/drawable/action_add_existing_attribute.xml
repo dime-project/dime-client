@@ -5,10 +5,10 @@
         <bitmap android:src="@drawable/action_add_existing_attribute_pressed" />
     </item>
     
-    <item android:state_focused="true">
+    <item android:state_enabled="false">
         <bitmap android:src="@drawable/action_add_existing_attribute_pressed" />
     </item>
-    
+    	
     <item>
         <bitmap android:src="@drawable/action_add_existing_attribute_normal" />
     </item>

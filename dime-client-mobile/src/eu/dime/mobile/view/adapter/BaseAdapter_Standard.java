@@ -43,7 +43,6 @@ public class BaseAdapter_Standard extends BaseAdapterDisplayableItem {
 			viewHolder.attribute2 = (TextView) convertView.findViewById(R.adapter.attribute2);
 			viewHolder.selectedCB = (CheckBox) convertView.findViewById(R.adapter.checkBox);
 			viewHolder.expander = (ImageButton) convertView.findViewById(R.id.buttonExp);
-			viewHolder.lockedIcon = (ImageView) convertView.findViewById(R.id.locked);
 			viewHolder.validForSharingIcon = (ImageView) convertView.findViewById(R.id.is_valid_for_sharing);
 			viewHolder.expandedArea = (LinearLayout) convertView.findViewById(R.id.expandedArea);
 			viewHolder.sharedArea = (LinearLayout) convertView.findViewById(R.adapter.sharedArea);
@@ -64,7 +63,6 @@ public class BaseAdapter_Standard extends BaseAdapterDisplayableItem {
 			ImageHelper.loadImageAsynchronously(viewHolder.image, di, context);
 		}
 		viewHolder.selectedCB.setChecked(selection.contains(di.getGuid()));
-		viewHolder.lockedIcon.setVisibility(di.getUserId().equals(Model.ME_OWNER) ? View.GONE : View.VISIBLE);
 		boolean isValidForSharing = false;
 		//initialize values of GroupItem
 		switch (di.getMType()) {
@@ -73,12 +71,11 @@ public class BaseAdapter_Standard extends BaseAdapterDisplayableItem {
 			GroupItem group = (GroupItem) di;
 			viewHolder.attribute1.setText(di.getType());
 			if (group.getGroupType().equals(GroupItem.VALID_GROUP_TYPE_VALUES[0])){
-				convertView.setBackgroundColor(context.getResources().getColor(R.color.dm_col2_alt));
+				convertView.setBackgroundColor(context.getResources().getColor(R.color.background_yellow));
 			} else if (group.getGroupType().equals(GroupItem.VALID_GROUP_TYPE_VALUES[1])) {
-				convertView.setBackgroundColor(context.getResources().getColor(R.color.dm_col5));
-			}
-			if(!group.isEditable()){
-				viewHolder.lockedIcon.setVisibility(View.VISIBLE);
+				convertView.setBackgroundColor(context.getResources().getColor(R.color.background_green));
+			} else {
+				convertView.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
 			}
 			break;
 		case PERSON:
@@ -161,7 +158,6 @@ public class BaseAdapter_Standard extends BaseAdapterDisplayableItem {
 		TextView attribute2;
 		CheckBox selectedCB;
 		ImageButton expander;
-		ImageView lockedIcon;
 		ImageView validForSharingIcon;
     	LinearLayout expandedArea;
     	LinearLayout previewArea;

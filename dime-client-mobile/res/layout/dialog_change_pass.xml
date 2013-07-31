@@ -15,7 +15,7 @@
             android:minWidth="150dp"
             android:text="Old password:"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/dm_back" />
+            android:textColor="@android:color/white" />
 
         <EditText
             android:id="@+changePass/editText_oldpw"
@@ -36,7 +36,7 @@
             android:minWidth="150dp"
             android:text="New password:"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/dm_back" />
+            android:textColor="@android:color/white" />
 
         <EditText
             android:id="@+changePass/editText_newpw"
@@ -57,7 +57,7 @@
             android:minWidth="150dp"
             android:text="Re-type new:"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/dm_back" />
+            android:textColor="@android:color/white" />
 
         <EditText
             android:id="@+changePass/editText_newpw_retype"

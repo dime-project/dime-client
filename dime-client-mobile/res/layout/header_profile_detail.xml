@@ -2,68 +2,77 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/people_detail_header"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:background="@drawable/border_item_round"
+    android:orientation="horizontal"
+    android:padding="10dp" >
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="70dip"
+        android:layout_height="70dip"
+        android:src="@drawable/icon_black_person" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/border_item_round"
-        android:padding="10dp"
-        android:layout_margin="10dp" >
+        android:layout_marginLeft="16dp"
+        android:orientation="vertical" >
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="70dip"
-            android:layout_height="70dip"
-            android:src="@drawable/icon_black_person" />
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/textView_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginLeft="16dp" >
+            android:tag="name"
+            android:text=""
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <LinearLayout
+            android:id="@+profile/read_only"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/icon_small_lock" />
 
             <TextView
-                android:id="@+id/textView_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:tag="name"
-                android:textAppearance="?android:attr/textAppearanceLarge"  />
-
-            <LinearLayout
-                android:id="@+profile/read_only"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:text="read-only" />
-                
-                <ImageView 
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/icon_small_lock" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+profile/standard"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Standard profile"
-                android:textSize="11sp"
-                android:textColor="@color/dm_col2" />
+                android:layout_marginLeft="5dp"
+                android:text="read-only" />
         </LinearLayout>
-    </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/dm_text" >
-    </View>
+        <LinearLayout
+            android:id="@+id/sharing_not_supported"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/icon_black_sharing_not_possible" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="sharing not supported" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+profile/standard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Standard profile"
+            android:textColor="@color/dm_text_highlighted_gold"
+            android:textSize="11sp"
+            android:visibility="gone" />
+    </LinearLayout>
 
 </LinearLayout>

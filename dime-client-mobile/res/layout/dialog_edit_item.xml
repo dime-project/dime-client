@@ -139,7 +139,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="5dp"
                             android:layout_marginTop="1dp"
-                            android:background="@color/metabar_grey" />
+                            android:background="@color/background_grey_metabar" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

@@ -49,14 +49,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
                         android:text="favourite"
-                        android:textColor="@color/dm_col4_low" />
+                        android:textColor="@color/dm_text_highlighted_red" />
 
                     <TextView
                         android:id="@+placedetail/current"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="current"
-                        android:textColor="@color/dm_col2_low" />
+                        android:textColor="@color/dm_text_restrained" />
                 </LinearLayout>
 
                 <TableLayout

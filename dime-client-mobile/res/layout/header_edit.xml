@@ -52,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="no changes made"
-            android:textColor="@color/dm_col3"
+            android:textColor="@color/dm_text_restrained"
             android:textSize="11sp" />
     </LinearLayout>
 

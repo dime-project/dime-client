@@ -38,16 +38,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Description "
-                android:textColor="@color/dm_col3_low"
+                android:textColor="@color/dm_text_restrained"
                 android:textSize="11sp" />
         </LinearLayout>
 
-        <CheckBox
-            android:id="@+activity/checkBox_activity_item"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="10dip" />
     </LinearLayout>
 
     <LinearLayout

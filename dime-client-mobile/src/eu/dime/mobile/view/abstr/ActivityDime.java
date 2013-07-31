@@ -43,8 +43,13 @@ public abstract class ActivityDime extends Activity implements NotificationListe
     }
     
     private void init(Intent intent) {
-    	dio = DimeIntentObjectHelper.readIntent(intent);
-    	mrContext = DimeClient.getMRC(dio.getOwnerId(), lvHandler);
+    	if(DimeClient.getAppContext() != null && DimeClient.getSettings() != null) {
+	    	dio = DimeIntentObjectHelper.readIntent(intent);
+	    	mrContext = DimeClient.getMRC(dio.getOwnerId(), lvHandler);
+    	} else {
+    		startActivity(new Intent(ActivityDime.this, Activity_Shutdown.class));	                	
+        	finish();
+    	}
     }
     
     @Override

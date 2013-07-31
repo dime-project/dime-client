@@ -100,7 +100,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#101410"
+        android:background="@color/background_dark_dialog"
         android:padding="6dp" >
 
         <AutoCompleteTextView
@@ -164,7 +164,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:background="@color/dm_col1_low" />
+                android:background="@color/dm_blue_dark" />
 
             <LinearLayout
                 android:layout_width="match_parent"

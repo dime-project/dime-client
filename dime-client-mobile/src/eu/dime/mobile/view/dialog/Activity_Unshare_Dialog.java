@@ -131,7 +131,7 @@ public class Activity_Unshare_Dialog extends ActivityDime implements OnClickList
     		TextView tv = new TextView(this);
     		String text = "No items shared to agent!";
     		tv.setText(text);
-    		tv.setTextColor(getResources().getColor(R.color.dm_col3));
+    		tv.setTextColor(getResources().getColor(R.color.dm_text_restrained));
     		ll.addView(tv);
     	}
     }
@@ -149,7 +149,7 @@ public class Activity_Unshare_Dialog extends ActivityDime implements OnClickList
     		TextView tv = new TextView(this);
     		String text = "Item not shared to anybody!";
     		tv.setText(text);
-    		tv.setTextColor(getResources().getColor(R.color.dm_col3));
+    		tv.setTextColor(getResources().getColor(R.color.dm_text_restrained));
     		ll.addView(tv);
     	}
     }

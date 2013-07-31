@@ -20,36 +20,54 @@ public class BaseAdapter_ProfileCard extends BaseAdapterDisplayableItem {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		View view = mInflater.inflate(R.layout.adapter_profilecard_item, null);
-		ImageButton expander = (ImageButton) view.findViewById(R.id.buttonExp);
-    	LinearLayout layout = (LinearLayout) view.findViewById(R.id.expanded_adapter);
-    	TextView previewNoItems = (TextView) view.findViewById(R.adapter.preview_noitems);
-    	ImageView image = (ImageView) view.findViewById(R.id.imageViewProfile);
-    	ImageView img = (ImageView) view.findViewById(R.id.locked);
-    	CheckBox cb = (CheckBox) view.findViewById(R.id.checkBoxProfile);
-    	LinearLayout previewContainer = (LinearLayout) view.findViewById(R.profile.previewContainer);
-    	TextView name = (TextView) view.findViewById(R.id.textViewProfileName);
 		ProfileItem profile = (ProfileItem) mItems.get(position);
-		if(profile.isEditable()){
-			img.setVisibility(View.GONE);
+		// Keeps reference to avoid future findViewById()
+		DimeViewHolder viewHolder;
+    	if (convertView == null) {
+			viewHolder = new DimeViewHolder();
+			convertView = mInflater.inflate(R.layout.adapter_profilecard_item, null);
+			viewHolder.name = (TextView) convertView.findViewById(R.id.textViewProfileName);
+			viewHolder.image = (ImageView) convertView.findViewById(R.id.imageViewProfile);
+			viewHolder.previewNoItems = (TextView) convertView.findViewById(R.profile.preview_noitems);
+			viewHolder.selectedCB = (CheckBox) convertView.findViewById(R.id.checkBoxProfile);
+			viewHolder.expander = (ImageButton) convertView.findViewById(R.id.buttonExp);
+			viewHolder.layout = (LinearLayout) convertView.findViewById(R.id.expanded_adapter);
+	    	viewHolder.previewContainer = (LinearLayout) convertView.findViewById(R.profile.previewContainer);
+	    	viewHolder.sharingNotSupported = (LinearLayout) convertView.findViewById(R.id.sharing_not_supported);
+	    	convertView.setTag(viewHolder);
 		} else {
-			img.setVisibility(View.VISIBLE);
-			view.setBackgroundColor(context.getResources().getColor(R.color.dm_col5));
+			viewHolder = (DimeViewHolder) convertView.getTag();
+			viewHolder.selectedCB.setOnCheckedChangeListener(null);
 		}
-		name.setText(profile.getName());
-		ImageHelper.loadImageAsynchronously(image, profile, context);
+		convertView.setBackgroundColor(context.getResources().getColor(profile.isEditable() ? android.R.color.transparent : R.color.background_green));
+		viewHolder.sharingNotSupported.setVisibility(profile.supportsSharing() ? View.GONE : View.VISIBLE);
+		viewHolder.name.setText(profile.getName());
+		ImageHelper.loadImageAsynchronously(viewHolder.image, profile, context);
 		if (expandedListItemId == position) {
-			layout.setVisibility(View.VISIBLE);
-    		expander.setBackgroundResource(R.drawable.button_collapse);
-			AndroidModelHelper.loadChildrenOfDisplayableItemAsynchronously(context, mrContext.owner, previewContainer, profile, previewNoItems);
+			viewHolder.layout.setVisibility(View.VISIBLE);
+    		viewHolder.expander.setBackgroundResource(R.drawable.button_collapse);
+			AndroidModelHelper.loadChildrenOfDisplayableItemAsynchronously(context, mrContext.owner, viewHolder.previewContainer, profile, viewHolder.previewNoItems);
 		} else {
-			layout.setVisibility(View.GONE);
-    		expander.setBackgroundResource(R.drawable.button_expand);
+			viewHolder.layout.setVisibility(View.GONE);
+    		viewHolder.expander.setBackgroundResource(R.drawable.button_expand);
 		}
-        cb.setChecked(selection.contains(profile.getGuid()));
-		cb.setOnCheckedChangeListener(new CheckListener<DisplayableItem>(position, this));
-	    expander.setOnClickListener(new ExpandClickListener<DisplayableItem>(position, this));
-		return view;
+        viewHolder.selectedCB.setChecked(selection.contains(profile.getGuid()));
+		viewHolder.selectedCB.setOnCheckedChangeListener(new CheckListener<DisplayableItem>(position, this));
+	    viewHolder.expander.setOnClickListener(new ExpandClickListener<DisplayableItem>(position, this));
+		return convertView;
+	}
+	
+	static class DimeViewHolder {
+		
+		TextView name;
+		ImageView image;
+		TextView previewNoItems;
+		CheckBox selectedCB;
+		ImageButton expander;
+		LinearLayout layout;
+		LinearLayout previewContainer;
+		LinearLayout sharingNotSupported;
+    	
 	}
 
 }

@@ -36,7 +36,7 @@ public class TabActivity_Place extends TabActivityDime implements NotificationLi
 		super.onCreate(savedInstanceState);
 		TAG = TabActivity_Place.class.getSimpleName();
 		tabs.add(new DimeTabObject(getResources().getString(R.string.tab_places), ListActivity_Place.class, new DimeIntentObject(TYPES.PLACE)));
-		super.init(true, false, false, false);
+		super.init(true, true, false, false);
 	}
 	
 	@Override
@@ -100,8 +100,8 @@ public class TabActivity_Place extends TabActivityDime implements NotificationLi
 		ImageView image = (ImageView) findViewById(R.place.placeImage);
         TextView dist = (TextView) header.findViewById(R.place.distance);
         TextView favourite = (TextView) header.findViewById(R.place.favourite);
-        RatingBar ratingPublic = (RatingBar) header.findViewById(R.place.ratingPublic);
         RatingBar ratingSocial = (RatingBar) header.findViewById(R.place.ratingSocial);
+        RatingBar ratingOwn = (RatingBar) header.findViewById(R.place.ratingOwn);
 		if (currentPlace != null && currentPlace.getName().length() > 0) {
 			header.setOnClickListener(new OnClickListener() {
 				@Override
@@ -112,8 +112,8 @@ public class TabActivity_Place extends TabActivityDime implements NotificationLi
 			});
 	        name.setText(currentPlace.getName());
 	        dist.setText("Distance " + currentPlace.getDistance() * 1000 + " m");
-	        ratingPublic.setRating((float) (currentPlace.getYmRating() * 5.0));
 	        ratingSocial.setRating((float) (currentPlace.getSocRating() * 5.0));
+	        ratingOwn.setRating((float) (currentPlace.getUserRating() * 5.0));
 	        favourite.setVisibility(currentPlace.getFavorite() ? View.VISIBLE : View.GONE);
 	        ImageHelper.loadImageAsynchronously(image, currentPlace, this);
 		} else {
@@ -122,14 +122,14 @@ public class TabActivity_Place extends TabActivityDime implements NotificationLi
 			image.setImageDrawable(ImageHelper.getDefaultImageDrawable(currentPlace, this));
 			dist.setText("-");
 			UIHelper.hideView(favourite);
-			ratingPublic.setRating(0);
+			ratingOwn.setRating(0);
 			ratingSocial.setRating(0);
 		}
 	}
     
     @Override
 	public void notificationReceived(String fromHoster, NotificationItem item) {
-		if(currentPlace.getType().equals(item.getElement().getType())) {
+		if(item.getElement().getType().equals(dio.getItemType().toString())) {
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {

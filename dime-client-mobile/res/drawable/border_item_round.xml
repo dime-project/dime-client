@@ -4,5 +4,3 @@
     <stroke android:color="@color/dm_neutral" android:width="2dip"/>
 	<corners android:radius="@dimen/corner_roundness"/>
 </shape>
-
-

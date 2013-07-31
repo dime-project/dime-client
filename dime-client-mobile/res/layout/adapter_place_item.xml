@@ -23,12 +23,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:paddingLeft="5dp" >
+            android:paddingLeft="10dp" >
 
             <TextView
                 android:id="@+placeitem/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
                 android:text="Place unknown"
                 android:textStyle="bold" />
 
@@ -36,7 +38,7 @@
                 android:id="@+placeitem/distance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Distance 200m" />
+                android:text="200m" />
 
             <TextView
                 android:id="@+placeitem/favourite"
@@ -44,12 +46,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="10dp"
                 android:text="favourite"
-                android:textColor="@color/dm_col4_low" />
+                android:textColor="@color/dm_text_highlighted_red" />
 
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp" >
+                android:layout_marginTop="5dp" >
 
                 <TableRow
                     android:layout_width="match_parent"
@@ -59,13 +61,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Recommendation" />
+                        android:text="Social rating" />
 
                     <RatingBar
                         android:id="@+placeitem/ratingSocial"
                         style="?android:attr/ratingBarStyleSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:layout_marginLeft="8dp"
                         android:isIndicator="true"
                         android:numStars="5"
@@ -79,13 +82,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Public rating" />
+                        android:text="Own rating" />
 
                     <RatingBar
-                        android:id="@+placeitem/ratingPublic"
+                        android:id="@+placeitem/ratingOwn"
                         style="?android:attr/ratingBarStyleSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:layout_marginLeft="8dp"
                         android:isIndicator="true"
                         android:numStars="5"

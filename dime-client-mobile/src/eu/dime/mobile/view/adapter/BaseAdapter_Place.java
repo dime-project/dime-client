@@ -27,16 +27,16 @@ public class BaseAdapter_Place extends BaseAdapterDisplayableItem {
 			viewHolder.image = (ImageView) convertView.findViewById(R.placeitem.image);
 			viewHolder.distance = (TextView) convertView.findViewById(R.placeitem.distance);
 			viewHolder.favourite = (TextView) convertView.findViewById(R.placeitem.favourite);
-			viewHolder.ratingPublic = (RatingBar) convertView.findViewById(R.placeitem.ratingPublic);
 			viewHolder.ratingSocial = (RatingBar) convertView.findViewById(R.placeitem.ratingSocial);
+			viewHolder.ratingOwn = (RatingBar) convertView.findViewById(R.placeitem.ratingOwn);
 	    	convertView.setTag(viewHolder);
 		} else {
 			viewHolder = (DimeViewHolder) convertView.getTag();
 		}
 		viewHolder.name.setText(placeItem.getName());
 		viewHolder.distance.setText("Distance " + placeItem.getDistance() * 1000 + "m");
-		viewHolder.ratingPublic.setRating((float) (placeItem.getYmRating() * 5.0));
 		viewHolder.ratingSocial.setRating((float) (placeItem.getSocRating() * 5.0));
+		viewHolder.ratingOwn.setRating((float) (placeItem.getUserRating() * 5.0));
         // hide favourite label if not favourite
         viewHolder.favourite.setVisibility((placeItem.getFavorite())? View.VISIBLE : View.GONE);
         ImageHelper.loadImageAsynchronously(viewHolder.image, placeItem, context);
@@ -54,8 +54,8 @@ public class BaseAdapter_Place extends BaseAdapterDisplayableItem {
 		ImageView image;
 		TextView distance;
 		TextView favourite;
-    	RatingBar ratingPublic;
     	RatingBar ratingSocial;
+    	RatingBar ratingOwn;
     	
 	}
 	

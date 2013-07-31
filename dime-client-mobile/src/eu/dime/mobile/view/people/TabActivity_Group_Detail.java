@@ -73,7 +73,7 @@ public class TabActivity_Group_Detail extends TabActivityDisplayableItemDetail i
 					builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							AndroidModelHelper.mergePersonsAsynchronously(mrContext, selectedGUIDs);
+							AndroidModelHelper.mergePersonsAsynchronously(currentActivity, mrContext, selectedGUIDs);
 						}
 					});
 					UIHelper.displayAlertDialog(builder, false);

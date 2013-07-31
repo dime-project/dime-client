@@ -2,25 +2,24 @@
 <resources>
     <!-- text -->
     <color name="dm_text">#303030</color>
-    <color name="dm_back">#ffffff</color>
-    <color name="text_url">#5c5cff</color>
-    <!-- backgrounds -->
-    <color name="dm_col1">#9cc4e4</color>
-    <color name="dm_col1_low">#60a0d4</color>
-    <color name="dm_col2">#f0c000</color>
-    <color name="dm_col2_alt">#ffe681</color>
-    <color name="dm_col2_low">#a48300</color>
-    <color name="dm_col3">#888784</color>
-    <color name="dm_col3_low">#61615e</color>
-    <color name="dm_col4">#e49ca0</color>
-    <color name="dm_col4_low">#d9747a</color>
-    <color name="dm_col5">#9ce4bc</color>
-    <color name="dm_trans_low">#44000000</color>
-    <color name="dm_focus">#58e49cc4</color>
-    <color name="dm_row_alternate">#DFDFDF</color>
-    <color name="dm_row_alternate_light">#ececec</color>
-    <color name="metabar_grey">#dddedd</color>
+    <color name="dm_text_restrained">#61615e</color>
+    <color name="dm_text_highlighted_red">#d9747a</color>
+    <color name="dm_text_highlighted_gold">#a48300</color>
+    <color name="dm_text_url">#5c5cff</color>
     <color name="dm_neutral">#939393</color>
+    <color name="dm_focus">#58e49cc4</color>
+    <color name="dm_trans_low">#44000000</color>
+    <!--  colors  -->
+    <color name="dm_blue_bright">#9cc4e4</color>
+    <color name="dm_blue_dark">#60a0d4</color>
+    <color name="dm_yellow_action">#F6C200</color>
+    <!-- backgrounds -->
+    <color name="background_yellow">#ffe681</color>
+    <color name="background_green">#9ce4bc</color>
+    <color name="background_grey_metabar">#dddedd</color>
+    <color name="background_grey_bright">#efefef</color>
+    <color name="background_grey_dark">#333333</color>
+    <color name="background_dark_dialog">#101410</color>
     <!-- warning levels -->
     <color name="trust_level_low">#ec1e32</color>
     <color name="trust_level_medium">#ebe104</color>
@@ -47,4 +46,7 @@
     <color name="button_grey_bottom">#606060</color>
     <color name="button_shadow_top">#96000000</color>
     <color name="button_shadow_bottom">#32000000</color>
+    <color name="button_col4_grey_normal">#d7d9d7</color>
+    <color name="button_col4_grey_pressed">#8f8e8f</color>
+    <color name="button_col4_grey_disabled">#efefef</color>
 </resources>

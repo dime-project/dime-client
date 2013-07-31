@@ -33,9 +33,9 @@
             <LinearLayout
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:paddingLeft="5dip" >
+                android:orientation="vertical" >
 
                 <TextView
                     android:id="@+adapter/name"
@@ -49,7 +49,7 @@
                     android:id="@+adapter/attribute1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/dm_col3_low"
+                    android:textColor="@color/dm_text_restrained"
                     android:textSize="11sp" />
 
                 <TextView
@@ -58,38 +58,33 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="2"
-                    android:textColor="@color/dm_col3_low"
+                    android:textColor="@color/dm_text_restrained"
                     android:textSize="11sp"
                     android:visibility="gone" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:orientation="vertical" >
 
-                <ImageView
-                    android:id="@+id/locked"
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
-                    android:layout_marginTop="5dp"
-                    android:src="@drawable/icon_small_lock" />
+                <CheckBox
+                    android:id="@+adapter/checkBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/dime_custom_checkbox" />
 
                 <ImageView
                     android:id="@+id/is_valid_for_sharing"
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
-                    android:layout_marginTop="5dp"
-                    android:src="@drawable/icon_black_sharing_not_possible" />
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_margin="3dp"
+                    android:src="@drawable/icon_black_sharing_not_possible"
+                    android:visibility="gone" />
             </LinearLayout>
-
-            <CheckBox
-                android:id="@+adapter/checkBox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginRight="10dip"
-                android:text="" />
         </LinearLayout>
     </LinearLayout>
 

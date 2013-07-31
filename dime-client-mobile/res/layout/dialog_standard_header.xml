@@ -9,7 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="#333333" >
+        android:background="@color/background_grey_dark" >
 
         <TextView
             android:id="@+dialog/title"
@@ -63,17 +63,18 @@
     <View 
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="#525452"/>
+        android:background="@android:color/black" />
 
     <LinearLayout
         android:id="@+dialog/info_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#252525"
+        android:background="@color/background_dark_dialog"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:paddingTop="6dp"
-        android:paddingBottom="6dp" >
+        android:paddingBottom="6dp"
+        android:visibility="gone" >
 
         <TextView
             android:id="@+dialog/info_text"
@@ -89,7 +90,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="6dp"
-        android:background="#252525"
+        android:background="@color/background_dark_dialog"
         android:visibility="gone" >
 
         <AutoCompleteTextView
