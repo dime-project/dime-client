@@ -397,6 +397,7 @@ DimeView = {
     },
     
     handleSearchResultForContainer: function(type, entries, jContainerElement, isGroupContainer){
+
         if (!entries || entries.length===0){
             jContainerElement.addClass('hidden');
             return;
@@ -1275,8 +1276,8 @@ DimeView = {
                         };
                     });
         }else{
-            //default
-            addRmvBtn.empty().click();
+            //remove the click event
+            addRmvBtn.empty().unbind("click");
         }
     },
 
@@ -1360,7 +1361,8 @@ DimeView = {
             $('#searchText').attr('placeholder', 'find my profile cards');
         }else if (DimeView.groupType===Dime.psMap.TYPE.GROUP){
             Dime.Navigation.setButtonsActive("navButtonPeople");
-            $('#searchText').attr('placeholder', 'find persons and groups (single search-word, avoid incomplete names)');
+            //$('#searchText').attr('placeholder', 'find persons and groups (single search-word, avoid incomplete names)');
+            $('#searchText').attr('placeholder', 'search in your contacts and Di.me User directory');
         }else if (DimeView.groupType===Dime.psMap.TYPE.LIVESTREAM){
             Dime.Navigation.setButtonsActive("navButtonMessages");
             $('#searchText').attr('placeholder', 'find liveposts');
@@ -1894,11 +1896,12 @@ Dime.Settings = {
     dropdownOnClick: function(event, jqueryItem, serviceAdapter) {
         
         if (serviceAdapter.authUrl) {
-            window.open(serviceAdapter.authUrl, "_blank", "");
+            //showing service description before open in new window
+            var dialog = new Dime.ConfigurationDialog(this, this.configurationSubmitHandler);
+            dialog.showAuth(serviceAdapter.name, serviceAdapter.description, serviceAdapter.authUrl);
         } else {
             //create account item
             var newAccountItem = Dime.Settings.createAccount(serviceAdapter);
-
             var dialog = new Dime.ConfigurationDialog(this, this.configurationSubmitHandler);
             dialog.show(serviceAdapter.name, serviceAdapter.description, newAccountItem, true);
         }
@@ -1911,7 +1914,6 @@ Dime.Settings = {
             callBack = function(response) {
                 console.log("NEW ACCOUNT: ", response);
                 if (!response|| response.length<1){
-
                     (new Dime.Dialog.Toast("Creation of "+serviceAccount.name+" failed!")).show();
                 }else{
                     (new Dime.Dialog.Toast(serviceAccount.name+ " created successfully.")).show();

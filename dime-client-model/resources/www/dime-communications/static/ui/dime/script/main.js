@@ -926,28 +926,28 @@ Dime.privacyTrust={
         pCaption:"low",
         tCaption:"low",
         limit: 0.0,
-        pClass: "greenPTColor",
-        tClass: "redPTColor",
-        pClassThin: "greenPTColorThin",
-        tClassThin: "redPTColorThin"
+        pClass: "privacyLevelLow",
+        tClass: "trustLevelLow",
+        pClassThin: "privacyLevelLowThin",
+        tClassThin: "trustLevelLowThin"
     },
     {
         pCaption:"medium",
         tCaption:"medium",
         limit: 0.5,
-        pClass: "orangePTColor",
-        tClass: "orangePTColor",
-        pClassThin: "orangePTColorThin",
-        tClassThin: "orangePTColorThin"
+        pClass: "privacyLevelMedium",
+        tClass: "trustLevelMedium",
+        pClassThin: "privacyLevelMediumThin",
+        tClassThin: "trustLevelMediumThin"
     },
     {
         pCaption:"high",
         tCaption:"high",
         limit: 1.0,
-        pClass: "redPTColor",
-        tClass: "greenPTColor",
-        pClassThin: "redPTColorThin",
-        tClassThin: "greenPTColorThin"
+        pClass: "privacyLevelHigh",
+        tClass: "trustLevelHigh",
+        pClassThin: "privacyLevelHighThin",
+        tClassThin: "trustLevelHighThin"
     }
     ],
     
@@ -2557,7 +2557,7 @@ Dime.psHelper = {
         myReq.send();
 
     },
-            
+     
     postCurrentContext: function(latitude, longitude, accuracy){
 
         var path = Dime.ps_configuration.getUserUrlString()+"/context/@me";
@@ -2565,12 +2565,23 @@ Dime.psHelper = {
         var expireMinutes = 240;
         var locMode = accuracy<15000?"GPS":"NET";
         
+        //timestamp date
+        var timestamp = new Date();
+        timestamp.setMilliseconds(0);
+        
+        //expires date (midnight)
+        var date = new Date();
+        date.setHours(23);
+        date.setMinutes(59);
+        date.setSeconds(59);
+        date.setMilliseconds(0);
+        
         var entry ={
                     "guid": JSTool.randomGUID(),
                     "type": "context",
                     //TODO: time format
-                    "timestamp": "2013-08-01T18:58:27+02:00",
-                    "expires": "2014-08-01T18:58:27+02:00", 
+                    "timestamp": timestamp.toISOString().replace("Z","+02:00").replace(".000",""),
+                    "expires": date.toISOString().replace("Z","+02:00").replace(".000",""), 
                     "scope": "position",
                     "entity": {
                         "id": "@me",
@@ -2589,7 +2600,7 @@ Dime.psHelper = {
         };
         
         var callback = function(response){
-            console.log("POST Success!");
+            console.log(response);
         };
         
         var request = Dime.psHelper.prepareRequest(entry);
@@ -4308,7 +4319,7 @@ Dime.DetailDialog.prototype = {
         .append('<span >'+(currPrivTrust.isPrivacy?"How private is this:":"Trust:")+'</span>');
         if (!readOnly){
             result.append(BSTool.createDropdown(createButtonLabel(currPrivTrust),
-                dropDownElements, "btn"))
+                dropDownElements, "btn"));
         }else{
             result.append(createButtonLabel(currPrivTrust));
         }
@@ -4517,7 +4528,7 @@ Dime.DetailDialog.prototype = {
             }else if (!sendIsHidden){
                 dialogRef.dialog.okButton.addClass('inactiveButton');
                 dialogRef.dialog.okButton.text("Share");
-                dialogRef.dialog.footerElement.append($('<span/>').addClass('livePostHint').text('Please select "From" and "Recipients" to share livepost!'))
+                dialogRef.dialog.footerElement.append($('<span/>').addClass('livePostHint').text('Please select "From" and "Recipients" to share livepost!'));
                 sendIsHidden=true;
             }
         };
@@ -4544,7 +4555,7 @@ Dime.DetailDialog.prototype = {
             });
 
             senderDropdown = BSTool.createDropdown("Select Profile Card", profileDropdown, "btn-large");
-            livePostSender.append(senderDropdown)
+            livePostSender.append(senderDropdown);
         };
 
 
@@ -4559,7 +4570,7 @@ Dime.DetailDialog.prototype = {
                 //update items
                 Dime.psHelper.addAccessForItem(sortedAgents.pAgents, sortedAgents.gAgents, sortedAgents.sAgents, item, fromSaid);
             }
-        }
+        };
 
         var receiverList= $('<div/>').addClass('livePostReceiverList').click(addRemoveClick);
 
@@ -5363,6 +5374,35 @@ Dime.ConfigurationDialog = function(handlerSelf, okHandler){
 };
 
 Dime.ConfigurationDialog.prototype = {
+    
+    //FIX: refactor -> better solution in show()?!
+    showAuth: function(adapterName, adapterDescription, adapterAuthUrl){
+        
+        this.modal = document.createElement("div");
+        this.modal.setAttribute("id", "ConfigServiceWrapperID");
+        $(this.modal)
+            .append(
+                $("<div></div>").addClass("ConfigServiceDescription")
+                //.append('<img src="' + serviceAccount.imageUrl + '" alt="service logo">')
+                .append("<b>" + adapterName + "</b></br>")
+                .append(adapterDescription)
+                .append(
+                    $("<p></p>").append('</br>If you click on "Ok" you will be redirected to ' + adapterName + '.')
+                )
+            );
+                
+        var myOkHandler = function(){
+            window.open(adapterAuthUrl, "_blank", "");
+            $('#ConfigServiceDialogID').remove();
+        };
+
+        var myCancelHandler = function() {
+            $('#ConfigServiceDialogID').remove();
+        };
+               
+        var dialog = new Dime.BasicDialog('ServiceModal', "Create new account", 'ConfigServiceDialogID', 'ConfigServiceBodyID', this.modal, myCancelHandler , myOkHandler, this);
+        $('body').append(dialog.dialog);
+    },
 
     show: function(adapterName, adapterDescription, serviceAccount, isNewAccount) {
 
