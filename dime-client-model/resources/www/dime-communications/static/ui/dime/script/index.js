@@ -36,6 +36,17 @@ DimeView = {
     currentGuid: null,
     pushState:{}, //browser history to manage back-button
     
+    getShortNameForLocation: function(name){
+        var myName = name;
+        
+        if(myName.length>40){
+            myName = myName.substr(0, 40);
+            myName = myName + " ..";
+        }
+        
+        return myName;
+    },
+    
     getShortName: function(name){
         var myName = name;
         
@@ -240,10 +251,19 @@ DimeView = {
         var jChildItem = $("<div/>");
         var itemClass = entry.type + "Item childItem";
         
+        jChildItem.attr("id", entry.guid + "Div");
         jChildItem.addClass(itemClass);
+        
+        //get current placeGuid stored in #currentPlaceGuid
+        var currentPlaceGuid = document.getElementById("currentPlaceGuid").getAttribute("data-guid");
+        if(entry.guid == currentPlaceGuid){
+            jChildItem.addClass("highlightCurrentPlaceItem");
+        }
+        
         jChildItem.append('<img src="'+ Dime.psHelper.guessLinkURL(entry.imageUrl)+ '" />');
         jChildItem.append(DimeView.createMark(entry, "", false));
-        jChildItem.append('<h4>'+ DimeView.getShortName(entry.name) + '</h4>');
+        //jChildItem.append('<h4>'+ DimeView.getShortName(entry.name) + '</h4>');
+        jChildItem.append('<h4 title="' + entry.name + '"><b>'+ DimeView.getShortNameForLocation(entry.name) +  '</b></h4>');
         if(fav){
             jChildItem.append('<p>' + fav + '</p>');
         }
@@ -1032,7 +1052,7 @@ DimeView = {
     },
     
     cleanUpView: function(){
-        //clear container 
+        //clear container
         $('#groupNavigation').empty();
         $('#itemNavigation').empty();
 
@@ -1097,7 +1117,13 @@ DimeView = {
                 if(!connected){
                     //(new Dime.Dialog.Toast('To activate support for places, please connect to the YellowMapPlaceService in the settings tab!')).show(10*1000);
                     //window.alert('To activate support for places, please connect to the YellowMapPlaceService in the settings tab!');
-                    (new Dime.Dialog.Alert('To activate support for places, please connect to the YellowMapPlaceService in the settings tab!')).show();
+                    //(new Dime.Dialog.Alert('To activate support for places, please connect to the YellowMapPlaceService in the settings tab!')).show();
+                    $("#alertStatusNavigation")
+                            .removeClass("hidden")
+                            //.append($('<img/>').attr('src','img/warn/share_state_severe.png'))
+                            .append('To see places nearby to you, please')
+                            .append('<br>1. go to Settings and add the "YellowmapPlaceService"')
+                            .append('<br>2. get your current location (buttons bar on the right "Get location")');
                     continueSearch=false;
                 }
             },this);
@@ -1272,7 +1298,7 @@ DimeView = {
                                 Dime.psHelper.postCurrentContext(lat, lon, acc);
                             }); 
                         }else{
-                            alert("Geolocation services are not supported by your browser.");
+                            (new Dime.Dialog.Toast("Geolocation services are not supported by your browser.")).show();
                         };
                     });
         }else{
@@ -1314,6 +1340,9 @@ DimeView = {
      *
      */
     updateView: function(groupType, viewType, avoidPushingHistory){
+        
+        //to remove/empty the alert in another view
+        $("#alertStatusNavigation").addClass("hidden").empty();
 
         if (!viewType){
             viewType = DimeView.GROUP_CONTAINER_VIEW;
@@ -1369,6 +1398,8 @@ DimeView = {
         }else if (DimeView.groupType===Dime.psMap.TYPE.EVENT){
             Dime.Navigation.setButtonsActive("navButtonEvent");
             $('#searchText').attr('placeholder', 'find events');
+            //added alert for not supported calendar
+            $("#alertStatusNavigation").removeClass("hidden").text("Oups! The calendar is not yet supported in the research prototype, sorry.");
         }else if (DimeView.groupType===Dime.psMap.TYPE.USERNOTIFICATION){
             Dime.Navigation.setButtonsActive("notificationIcon");
             $('#searchText').attr('placeholder', 'find notifications');
@@ -1393,7 +1424,7 @@ DimeView = {
         DimeView.updateMetaBar(groupType);
         DimeView.resetSearch();
         
-        //in order to avoid "disabled"-class
+        //placed here in order to avoid "disabled"-class
         DimeView.updateAddRemoveButton(groupType);
     },
 
