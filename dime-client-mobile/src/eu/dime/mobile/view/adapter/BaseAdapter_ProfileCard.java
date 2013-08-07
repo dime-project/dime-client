@@ -39,6 +39,7 @@ public class BaseAdapter_ProfileCard extends BaseAdapterDisplayableItem {
 		} else {
 			viewHolder = (DimeViewHolder) convertView.getTag();
 			viewHolder.selectedCB.setOnCheckedChangeListener(null);
+			viewHolder.previewContainer.removeAllViews();
 		}
 		convertView.setBackgroundColor(context.getResources().getColor(profile.isEditable() ? android.R.color.transparent : R.color.background_green));
 		viewHolder.sharingNotSupported.setVisibility(profile.supportsSharing() ? View.GONE : View.VISIBLE);
