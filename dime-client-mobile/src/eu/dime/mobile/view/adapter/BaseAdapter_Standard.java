@@ -59,10 +59,7 @@ public class BaseAdapter_Standard extends BaseAdapterDisplayableItem {
 		}
     	//initialize values of all DisplayableItems
 		viewHolder.name.setText((ModelHelper.isParentable(di)) ? di.getName() + " ("+di.getItems().size()+")": di.getName());
-		if (viewHolder.image != null) {
-			ImageHelper.loadImageAsynchronously(viewHolder.image, di, context);
-		}
-		viewHolder.selectedCB.setChecked(selection.contains(di.getGuid()));
+		ImageHelper.loadImageAsynchronously(viewHolder.image, di, context);
 		boolean isValidForSharing = false;
 		//initialize values of GroupItem
 		switch (di.getMType()) {
@@ -144,8 +141,12 @@ public class BaseAdapter_Standard extends BaseAdapterDisplayableItem {
 			viewHolder.expandedArea.setVisibility(View.GONE);
 			viewHolder.expander.setBackgroundResource(R.drawable.button_expand);
 		}
-		viewHolder.selectedCB.setEnabled(di.getUserId().equals(Model.ME_OWNER));
-		if(di.getUserId().equals(Model.ME_OWNER)) viewHolder.selectedCB.setOnCheckedChangeListener(new CheckListener<DisplayableItem>(position, this));
+		boolean isEditable = di.getUserId().equals(Model.ME_OWNER);
+		viewHolder.selectedCB.setEnabled(isEditable);
+		if(isEditable) {
+			viewHolder.selectedCB.setChecked(selection.contains(di.getGuid()));
+			viewHolder.selectedCB.setOnCheckedChangeListener(new CheckListener<DisplayableItem>(position, this));
+		}
 		viewHolder.expander.setOnClickListener(new ExpandClickListener<DisplayableItem>(position, this));
 		return convertView;
 	}

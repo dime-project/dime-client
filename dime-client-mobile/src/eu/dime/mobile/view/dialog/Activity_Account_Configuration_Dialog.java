@@ -121,7 +121,6 @@ public class Activity_Account_Configuration_Dialog extends ActivityDime implemen
 				} else if(setting.getType().equals(ACCOUNT_SETTINGS_TYPES.ACCOUNT.toString())) {
 					view = new Spinner(this);
 					Spinner spinner = (Spinner) view;
-					spinner.setLayoutParams(new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1.0f));
 					List<ProfileItem> profileItems = ModelHelper.getAllValidProfilesForSharing(mrContext);
 					String selectedName = "";
 					for (ProfileItem profileItem : profileItems) {
@@ -145,6 +144,7 @@ public class Activity_Account_Configuration_Dialog extends ActivityDime implemen
 						text.setText("*");
 						text.setPadding(10, 0, 0, 0);
 						text.setTypeface(null, Typeface.BOLD);
+						view.setLayoutParams(new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1));
 						ll.addView(view);
 						ll.addView(text);
 						settingsContainer.addView(ll);

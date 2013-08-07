@@ -13,6 +13,7 @@ import eu.dime.mobile.helper.ImageHelper;
 import eu.dime.mobile.helper.listener.CheckListener;
 import eu.dime.mobile.helper.listener.ExpandClickListener;
 import eu.dime.mobile.view.abstr.BaseAdapterDisplayableItem;
+import eu.dime.model.Model;
 import eu.dime.model.displayable.DisplayableItem;
 import eu.dime.model.displayable.ProfileItem;
 
@@ -51,8 +52,12 @@ public class BaseAdapter_ProfileCard extends BaseAdapterDisplayableItem {
 			viewHolder.layout.setVisibility(View.GONE);
     		viewHolder.expander.setBackgroundResource(R.drawable.button_expand);
 		}
-        viewHolder.selectedCB.setChecked(selection.contains(profile.getGuid()));
-		viewHolder.selectedCB.setOnCheckedChangeListener(new CheckListener<DisplayableItem>(position, this));
+		boolean isEditable = profile.getUserId().equals(Model.ME_OWNER);
+		viewHolder.selectedCB.setEnabled(isEditable);
+		if(isEditable) {
+			viewHolder.selectedCB.setChecked(selection.contains(profile.getGuid()));
+			viewHolder.selectedCB.setOnCheckedChangeListener(new CheckListener<DisplayableItem>(position, this));
+		}
 	    viewHolder.expander.setOnClickListener(new ExpandClickListener<DisplayableItem>(position, this));
 		return convertView;
 	}

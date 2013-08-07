@@ -33,6 +33,7 @@ import java.util.logging.Logger;
 
 import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.helper.objects.DimeIntentObject;
+import eu.dime.mobile.view.UploadPictureToPS;
 import eu.dime.mobile.view.abstr.ListActivityDime;
 import eu.dime.mobile.view.data.TabActivity_Data;
 import eu.dime.model.GenItem;

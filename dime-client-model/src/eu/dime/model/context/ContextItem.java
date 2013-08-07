@@ -30,13 +30,10 @@ import sit.sstl.StringEnumMap;
 public class ContextItem extends GenItem {
 
     public static enum CONTEXT_ITEM_FIELDS {
-
         TIMESTAMP, EXPIRES, SCOPE, ENTITY, CONTEXTSOURCE, DATAPART
     };
-    public static final StringEnumMap<CONTEXT_ITEM_FIELDS> ContextItemFieldMap =
-            new StringEnumMap(CONTEXT_ITEM_FIELDS.class, CONTEXT_ITEM_FIELDS.values(),
-            new String[]{"timestamp", "expires", "scope",
-                "entity", "source", "dataPart"});
+    public static final StringEnumMap<CONTEXT_ITEM_FIELDS> ContextItemFieldMap = new StringEnumMap<CONTEXT_ITEM_FIELDS>(CONTEXT_ITEM_FIELDS.class, CONTEXT_ITEM_FIELDS.values(),
+		    new String[]{"timestamp", "expires", "scope", "entity", "source", "dataPart"});
     private final String pattern = "yyyy-MM-dd'T'HH:mm:ssZ";
     private final SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
     private long timestamp = -1;
@@ -44,10 +41,9 @@ public class ContextItem extends GenItem {
     private String scope = "";
     private ContextEntity entity = new ContextEntity();
     private ContextSource contextSource = new ContextSource();
-    private Map<String, ContextData> dataPart = new HashMap();
+    private Map<String, ContextData> dataPart = new HashMap<String, ContextData>();
 
-    public ContextItem() {
-    }
+    public ContextItem() { }
 
     public ContextItem(String guid) {
         super(guid);
@@ -55,7 +51,6 @@ public class ContextItem extends GenItem {
 
     @Override
     protected void wipeItemForItem() {
-       
         //contextItem
         timestamp = -1;
         expires = -1;
@@ -90,10 +85,17 @@ public class ContextItem extends GenItem {
         }
         return -1;
     }
+    
+    public String getFormattedTimestamp(long millis) {
+//    	long timezoneOffset = TimeZone.getDefault().getOffset(millis);
+//    	Date date = new Date(millis - timezoneOffset);
+    	String result = dateFormat.format(new Date(millis));
+    	result = result.substring(0, result.length()-2) + ":" + result.substring(result.length()-2, result.length());
+    	return result;
+    }
 
     @Override
-    public void readJSONObjectForItem(JSONObject jsonObject) {
-                
+    public void readJSONObjectForItem(JSONObject jsonObject) {        
         //ContextItem
         this.timestamp = getTimeStampFromString(getStringValueOfJSONO(jsonObject, ContextItemFieldMap.get(CONTEXT_ITEM_FIELDS.TIMESTAMP)));
         this.expires = getTimeStampFromString(getStringValueOfJSONO(jsonObject, ContextItemFieldMap.get(CONTEXT_ITEM_FIELDS.EXPIRES)));
@@ -107,41 +109,31 @@ public class ContextItem extends GenItem {
                 dataPart.put(entry.getKey(), ContextDataFactory.createContextData(entry.getKey(), dataEntries/*entry.getValue()*/));
             }
         }
-
-
     }
 
     protected JSONObject getJSONValue(String value, CONTEXT_ITEM_FIELDS field) {
         return getJSONValue(value, ContextItemFieldMap.get(field));
     }
 
-    protected JSONObject getJSONObject(JSONItem item, CONTEXT_ITEM_FIELDS field) {
+    @SuppressWarnings("rawtypes")
+	protected JSONObject getJSONObject(JSONItem item, CONTEXT_ITEM_FIELDS field) {
         return getJSONObject(item, ContextItemFieldMap.get(field));
     }
 
     @Override
     public JSONObject createJSONObjectForItem(JSONObject newJSONObject) {
-        
-        String ts = dateFormat.format(new Date(this.timestamp));
-        ts = ts.substring(0,ts.length()-2) + ":" + ts.substring(ts.length()-2,ts.length());
-        String exp = dateFormat.format(new Date(this.expires));
-        exp = exp.substring(0,exp.length()-2) + ":" + exp.substring(exp.length()-2,exp.length());
-
         //ContextItem
-        newJSONObject.addChild(getJSONValue(ts, CONTEXT_ITEM_FIELDS.TIMESTAMP));
-        newJSONObject.addChild(getJSONValue(exp, CONTEXT_ITEM_FIELDS.EXPIRES));
+        newJSONObject.addChild(getJSONValue(getFormattedTimestamp(this.timestamp), CONTEXT_ITEM_FIELDS.TIMESTAMP));
+        newJSONObject.addChild(getJSONValue(getFormattedTimestamp(this.expires), CONTEXT_ITEM_FIELDS.EXPIRES));
         newJSONObject.addChild(getJSONValue(this.scope, CONTEXT_ITEM_FIELDS.SCOPE));
-
         newJSONObject.addChild(getJSONObject(this.entity, CONTEXT_ITEM_FIELDS.ENTITY));
         newJSONObject.addChild(getJSONObject(this.contextSource, CONTEXT_ITEM_FIELDS.CONTEXTSOURCE));
-
         //data
         JSONObject dataEntries = new JSONObject(ContextItemFieldMap.get(CONTEXT_ITEM_FIELDS.DATAPART));
         for (Map.Entry<String, ContextData> entry : dataPart.entrySet()) {
             dataEntries.addChild(getJSONObject(entry.getValue(), entry.getKey()));
         }
         newJSONObject.addChild(dataEntries);
-
         return newJSONObject;
     }
 
@@ -236,4 +228,5 @@ public class ContextItem extends GenItem {
         this.changed = true; 
         this.dataPart.put(key, dataPart);
     }
+    
 }

@@ -28,17 +28,16 @@ import java.util.Vector;
 public class ContextHelper {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static ContextItem createContextData(String scope, Map<String,Object> data, int validity) {
+	public static ContextItem createContextData(String scope, Map<String,Object> data, int validityInSeconds) {
 		ContextItem result = new ContextItem(UUID.randomUUID().toString());//TODO use factory method instead
 		result.setMType(TYPES.CONTEXT);
-		
 		// To Be Revised
 		result.getContextSource().id = Constants.SOURCE_NAME;
 		result.getContextSource().version = "0.9";
 		result.getEntity().id = Model.getInstance().getSettings().mainSAID;
 		result.getEntity().type = eu.dime.model.context.constants.Constants.USER;
 		result.setTimestamp(System.currentTimeMillis());
-		result.setExpires(System.currentTimeMillis() + (validity * 1000));
+		result.setExpires(System.currentTimeMillis() + (validityInSeconds * 1000));
 		result.setScope(scope);
 		Set keys = data.keySet();
 		Vector<String> fields = new Vector();

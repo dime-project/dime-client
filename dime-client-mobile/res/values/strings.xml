@@ -98,7 +98,7 @@
     <string name="action_removeResourcesFromDatabox">Remove selected resource(s) from databox</string>
     <string name="action_newMessage">New livepost</string>
     <string name="action_newProfile">New profile</string>
-    <string name="action_deleteSelectedProfiles">Delete selected profile(s)</string>
+    <string name="action_deleteSelectedProfiles">Delete selected profile card(s)</string>
     <string name="action_addExistingAttribute">Add existing profile detail</string>
     <string name="action_addNewAttribute">Add new profile detail</string>
     <string name="action_deleteSelectedAttributeCategories">Delete selected profile detail(s)</string>

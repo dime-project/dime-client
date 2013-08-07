@@ -61,7 +61,7 @@ public abstract class ActivityDime extends Activity implements NotificationListe
 	@Override
 	protected void onResume() {
 		super.onResume();
-		if(DimeClient.getSettings().getAuthItem() == null) {
+		if(DimeClient.getSettings() == null || DimeClient.getSettings().getAuthItem() == null) {
         	Toast.makeText(getApplicationContext(), "Error occurred! Please login again...", Toast.LENGTH_SHORT).show();
         	startActivity(new Intent(ActivityDime.this, Activity_Shutdown.class));	                	
         	finish();

@@ -123,7 +123,7 @@ public class ContextCrawler implements IContextCrawler {
 			Log.d(Constants.LOG_TAG,"No local sensors support scope --> invoking PS for " + scope + "..");
 			JSONResponse result = helper.doDIMEJSONGET(DimeHelper.DIME_BASIC_PATH 
                                 + DimeClient.getUserMainSaid() + "/context/" + Model.ME_OWNER + "/" 
-                                + Scopes.SCOPE_CURRENT_PLACE, "", AndroidModelHelper.getModelConfiguration().restApiConfiguration);
+                                + Scopes.SCOPE_CURRENT_PLACE, "", DimeClient.getSettings().getRestApiConfiguration());
 			if (result == null) {
 	            return null;
 	        }

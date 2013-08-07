@@ -1,4 +1,4 @@
-package eu.dime.mobile.helper;
+package eu.dime.mobile.view;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -7,7 +7,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Toast;
 import eu.dime.mobile.DimeClient;
+import eu.dime.mobile.helper.FileHelper;
+import eu.dime.mobile.helper.UIHelper;
 import eu.dime.model.specialitem.AuthItem;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

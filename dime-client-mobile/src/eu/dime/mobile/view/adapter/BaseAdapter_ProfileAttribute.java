@@ -34,7 +34,6 @@ public class BaseAdapter_ProfileAttribute extends BaseAdapterDisplayableItem {
         TextView labelCat = (TextView) convertView.findViewById(R.id.attribute_category);
         CheckBox cb = (CheckBox) convertView.findViewById(R.id.attribute_checkBox);
         convertView.setBackgroundColor(context.getResources().getColor((position % 2 == 0) ? R.color.background_grey_metabar : android.R.color.white));
-        if (!profile.isEditable()) cb.setEnabled(false);
         labelCat.setText(pai.getCaption());
         for (String key : pai.getValue().keySet()) {
         	String label = pai.getLabelForValueKey(key);
@@ -63,7 +62,12 @@ public class BaseAdapter_ProfileAttribute extends BaseAdapterDisplayableItem {
             line.addView(valueET);
             tl.addView(line, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         }
-        cb.setOnCheckedChangeListener(new CheckListener<DisplayableItem>(position, this));
+        boolean isEditable = profile.getUserId().equals(Model.ME_OWNER) && profile.isEditable();
+		cb.setEnabled(isEditable);
+		if(isEditable) {
+			cb.setChecked(selection.contains(profile.getGuid()));
+			cb.setOnCheckedChangeListener(new CheckListener<DisplayableItem>(position, this));
+		}
         return convertView;
     }
 

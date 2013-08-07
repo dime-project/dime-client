@@ -307,7 +307,7 @@ public class AndroidModelHelper {
 				} catch (Exception ex) {
 					result = "Exception " + ex.toString() + " posting context: " + item.getScope();
 				}
-				if(response == null) result = "Error occurred trying to send context data!";
+				if(response == null) result = "Error occurred trying to send " + item.getScope() + " context data!";
                 return result;
             }
 

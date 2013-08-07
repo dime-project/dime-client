@@ -129,7 +129,7 @@ public class TabActivity_Place extends TabActivityDime implements NotificationLi
     
     @Override
 	public void notificationReceived(String fromHoster, NotificationItem item) {
-		if(item.getElement().getType().equals(dio.getItemType().toString())) {
+		if(item.getElement().getType().equals(TYPES.CONTEXT.toString())) {
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {

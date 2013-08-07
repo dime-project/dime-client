@@ -97,9 +97,9 @@ public class TabActivity_Place_Detail extends TabActivityDime {
 			        c.set(Calendar.MINUTE, 0);
 			        c.set(Calendar.SECOND, 0);
 			        c.set(Calendar.MILLISECOND, 0);
-			        int millisUntilMidnight = (int) (c.getTimeInMillis() - System.currentTimeMillis());
-					ContextItem contextItem = ContextHelper.createCurrentPlaceContextItem(selectedPlace.getGuid(), selectedPlace.getName(), (isCurrentPlace) ? Integer.valueOf(1) : millisUntilMidnight);
-					Log.d(TAG, "place context set with the duration of " + millisUntilMidnight + " ms!");
+			        int secondsUntilMidnight = (int) ((c.getTimeInMillis() - System.currentTimeMillis()) / 1000);
+					ContextItem contextItem = ContextHelper.createCurrentPlaceContextItem(selectedPlace.getGuid(), selectedPlace.getName(), (isCurrentPlace) ? Integer.valueOf(1) : secondsUntilMidnight);
+					Log.d(TAG, "place context is valid until " + contextItem.getFormattedTimestamp(contextItem.getExpires()) + "!");
 					DimeClient.contextCrawler.updateContext(Scopes.SCOPE_CURRENT_PLACE, contextItem);
 					((Activity_Place_Detail) currentActivity).startTask("Refreshing view...");
 				}

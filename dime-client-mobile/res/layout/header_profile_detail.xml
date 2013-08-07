@@ -24,8 +24,9 @@
             android:id="@+id/textView_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:tag="name"
-            android:text=""
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <LinearLayout
@@ -43,7 +44,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:text="read-only" />
+                android:text="read-only"
+                android:textSize="11sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -62,7 +64,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:text="sharing not supported" />
+                android:text="sharing not supported"
+                android:textSize="11sp" />
         </LinearLayout>
 
         <TextView

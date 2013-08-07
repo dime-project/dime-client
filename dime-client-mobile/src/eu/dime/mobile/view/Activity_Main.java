@@ -87,7 +87,7 @@ public class Activity_Main extends ActivityDime implements OnClickListener, OnLo
         try {
 	        DimeClient.addStringToViewStack(TAG.substring(9)); //remove Activity_
 	        dimeUser.setText(DimeClient.getUserMainSaid());
-        	startTask("Initializing...");
+        	startTask("");
         } catch (Exception e) {	
 			finish();
 		}
@@ -105,6 +105,8 @@ public class Activity_Main extends ActivityDime implements OnClickListener, OnLo
 		        Place placeTmp = ContextHelper.getCurrentPlace();
 		        if (placeTmp != null) {
 		            currentPlace = (PlaceItem) Model.getInstance().getItem(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler()), TYPES.PLACE, placeTmp.getPlaceId());
+		        } else {
+		        	currentPlace = null;
 		        }
 	        }
 		}
