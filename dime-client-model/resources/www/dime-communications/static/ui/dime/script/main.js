@@ -2601,7 +2601,14 @@ Dime.psHelper = {
         
         var callback = function(response){
             console.log(response);
-            //TODO check response for errors
+            
+            //check response for errors
+            if(response.response.meta.status.toLowerCase()!=="ok"){
+                var error = response.response.meta.msg;
+                (new Dime.Dialog.Toast('An Error occured: ' + error)).showLong();
+                return;
+            }
+            
             if(restoreLocation){
                 (new Dime.Dialog.Toast('Removing "' + item.name + '" as your current location was successfully!')).showLong();
             }else{
@@ -2613,10 +2620,11 @@ Dime.psHelper = {
         var request = Dime.psHelper.prepareRequest(entry);
         $.postJSON(path, request, callback);
         
+        //this.removeDialog();
     },
      
     postCurrentContext: function(latitude, longitude, accuracy){
-
+        
         var path = Dime.ps_configuration.getUserUrlString()+"/context/@me";
         
         var expireMinutes = 240;
@@ -2658,7 +2666,14 @@ Dime.psHelper = {
         
         var callback = function(response){
             console.log(response);
-            //TODO check response for errors
+            
+            //check response for errors
+            if(response.response.meta.status.toLowerCase()!=="ok"){
+                var error = response.response.meta.msg;
+                (new Dime.Dialog.Toast('An Error occured: ' + error)).showLong();
+                return;
+            }
+            
             (new Dime.Dialog.Toast("Getting current geolocation was successfully!")).showLong();
         };
         
@@ -3471,7 +3486,7 @@ Dime.Navigation = {
             
             for (var i=0; i<usernotificationsNotifications.length;i++){
                 var myGuid = usernotificationsNotifications[i].element.guid;
-                var operation = usernotificationsNotifications[i].operation
+                var operation = usernotificationsNotifications[i].operation;
                 for (var j=0; j<response.length;j++){
                     if ((response[j].guid===myGuid)
                         && (!response[j].read)){
@@ -3481,7 +3496,7 @@ Dime.Navigation = {
                 }
             }
             Dime.Navigation.updateNotificationBar(usernotifications);
-        }         
+        };         
 
          
         Dime.REST.getAll(Dime.psMap.TYPE.USERNOTIFICATION, handleResponse); 
@@ -3563,10 +3578,10 @@ Dime.Navigation = {
         var handleCurrentPlaceCallBack=function(placeGuidAndNameObject){
             
             var updateCurPlaceElement=function(placeName, placeId){
-                var placeElement = document.getElementById('currentPlace');                
+                var placeElement = document.getElementById('currentPlace');
                 placeElement.innerHTML =  '<div class="places">'
-                + '<div class="placesIcon" id="currentPlaceGuid" data-guid="' + placeId + '"></div>'
-                + placeName+'</div>';                
+                + '<div class="placesIcon" id="currentPlaceGuid" data-guid="' + placeId + '" title="' + placeName + '"></div>'
+                + DimeView.getShortNameWithLength(placeName, 34)+'</div>';                
             };
             
             if (!placeGuidAndNameObject || !placeGuidAndNameObject.placeName || placeGuidAndNameObject.placeName===0){
@@ -3817,6 +3832,16 @@ Dime.BasicDialog = function(title, caption, dialogId, bodyId, body, cancelHandle
         )
     //footer
     .append(this.footerElement);
+    
+    //TODO?
+    //add ESC-key-event on dialogs to return
+    var thisDialog = this.dialog;
+    $(document).keyup(thisDialog, function(e) {
+        if (e.keyCode == 27) {
+            thisDialog.remove();
+        }
+        $(document).unbind("keyup");
+    });
 
 };
 
@@ -3931,7 +3956,7 @@ Dime.SelectDialog.prototype = {
     },
     
     
-    removeSelectionDialog:function(){
+    removeSelectionDialog: function(){
         //remove dialog if existing
         var dialog = document.getElementById(this.dialogId);
         if (dialog){
@@ -4074,7 +4099,7 @@ Dime.SelectDialog.prototype = {
             this,
             "OK",
             "SelectDialog"
-        );
+        ); 
         
         this.removeSelectionDialog();
         
@@ -4199,7 +4224,7 @@ Dime.DetailDialog.prototype = {
         return nameInput;
     },
      
-    removeDialog:function(){
+    removeDialog: function(){
         //remove dialog if existing
         var dialog = document.getElementById(this.dialogId);
         if (dialog){
@@ -4512,7 +4537,7 @@ Dime.DetailDialog.prototype = {
             $("<li></li>")
                 .addClass("DimeDetailDialogPAValueListItem")
                 //add CSS, refactor?
-                .attr("style", "display: -webkit-inline-box; margin-top: 5px;")
+                .attr("style", "display: -webkit-box; margin-top: 5px;")
                 .append(
                     $('<span class="dimeDetailDialogKeyValueCaption"></span>').text("Rate this location: ")
                 )
@@ -4928,7 +4953,7 @@ Dime.DetailDialog.prototype = {
                     addAgentsToContainer(profileContainerList, aclPackage.personItems);
                     addAgentsToContainer(profileContainerList, aclPackage.serviceItems);
 
-                    var profileContainer = createAgentListItem("shared as:", pName, pImage, "metaDataShareProfile")
+                    var profileContainer = createAgentListItem("shared with:", pName, pImage, "metaDataShareProfile")
                     .append(profileContainerList);
 
                     editDlgRef.itemsItemSection.append(profileContainer);
@@ -5158,7 +5183,7 @@ Dime.ShareDialog.prototype={
         this.warnings.empty();
         
         if (!this.checkValidity()){
-            this.warnings.append($('<div>Please select sender, recipient and items ...</div>').addClass("shareDlgWarn"));
+            //this.warnings.append($('<div>Please select sender, recipient and items ...</div>').addClass("shareDlgWarn"));
             
             this.warningsLabel.text("Warnings (0)");
             return;
@@ -5913,7 +5938,7 @@ Dime.Dialog={
             //update items
             Dime.psHelper.addAgentAccessForItemsAndUpdateServer(selectedReceivers, selectedItems, said, function(sharingSuccessful){
                 if(sharingSuccessful){
-                    (new Dime.Dialog.Toast("Sharing accomplished!")).showLong();
+                    (new Dime.Dialog.Toast("Sharing done!")).showLong();
                 }else{
                     (new Dime.Dialog.Toast("Sharing failed!")).showLong();
                 }
