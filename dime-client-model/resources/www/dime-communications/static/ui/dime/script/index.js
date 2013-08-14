@@ -93,7 +93,17 @@ DimeView = {
             result.addClass('noActionMark');
             return result;
         }//else
-
+        
+        //new behaviour of selection (old: switching a group led to lost of selection)
+        if(!isGroup){
+            var allSelectedItems = JSTool.getDefinedMembers(DimeView.selectedItems);
+            for(var j=0; j<allSelectedItems.length; j++){
+                if(entry.guid == allSelectedItems[j].guid){
+                    result.addClass("ItemChecked");
+                }
+            }
+        }
+        
         result.clickExt(DimeView, DimeView.selectItem, entry, isGroup);
         return result;
     },
@@ -102,7 +112,8 @@ DimeView = {
        
         jElement.mouseoverExt(DimeView, DimeView.showMouseOver, entry, isGroupItem);
         jElement.mouseoutExt(DimeView, DimeView.hideMouseOver, entry);
-
+        
+        //FIX: add additional handler for situations
         if(isGroupItem){
             jElement.clickExt(DimeView, DimeView.showGroupMembers, entry);
         }else if (entry.type===Dime.psMap.TYPE.PERSON){
@@ -125,10 +136,26 @@ DimeView = {
                 )
                 .append('<div class="groupItemCounter" ><h1>'+ entry.items.length + '</h1></div>')
                 .append('<div class="clear"></div>')
+        
+                //additional hint: "click to edit"
                 .append(
-                    $('<h4>'+ DimeView.getShortName(entry.name) + '</h4>')
+                    $('<div/>')
+                        .addClass('captionForGroupElement')
+                        .attr('title', entry.name)
+                        .append(
+                            $('<h4>'+ DimeView.getShortNameWithLength(entry.name, 11) + '</h4>')
+                        )
+                        .append(
+                            $('<div class="editHintGroupElement"></div>')  
+                        )
+                        .hover(function(){
+                                $(this).children('.editHintGroupElement').append('(click to edit)');
+                            }, function(){
+                                $(this).children('.editHintGroupElement').empty();
+                        })
                         .clickExt(DimeView, DimeView.editItem, entry)
-                ));
+                )
+        );
    
 
         DimeView.setActionAttributeForElements(entry, jGroupItem, true, false);
@@ -567,19 +594,33 @@ DimeView = {
     },
     
     selectItem: function(event, element, entry, isGroupItem){
+        
         if (event){
             event.stopPropagation();
         }
         var guid=entry.guid;
         
-        //item was selected --> unselect item       
-        if (DimeView.selectedItems[guid]){     
+        //new behaviour of selection
+        var selectedItemsAll = JSTool.getDefinedMembers(DimeView.selectedItems);
+        var lastMemberCount = selectedItemsAll.length;
+        if(DimeView.selectedItems[guid]){
             DimeView.selectedItems[guid] = null;
             $(element).removeClass("ItemChecked");
-            
-        }else{
+        }else if(lastMemberCount == 0 || entry.type == selectedItemsAll[lastMemberCount-1].type){
             DimeView.selectedItems[guid] = { //FIXME refactor - only use a hash with guid as key for all items!!!
-                guid:guid, 
+                guid:guid,
+                userId:entry.userId,
+                type:entry.type,
+                isGroupItem:isGroupItem,
+                element:element
+            };
+            $(element).addClass("ItemChecked");
+        }else{
+            DimeView.selectedItems = {};
+            $(".groupChecked").removeClass("ItemChecked");
+            $(".personItem").removeClass("ItemChecked");
+            DimeView.selectedItems[guid] = { //FIXME refactor - only use a hash with guid as key for all items!!!
+                guid:guid,
                 userId:entry.userId,
                 type:entry.type,
                 isGroupItem:isGroupItem,
@@ -862,20 +903,16 @@ DimeView = {
         
     updateItemContainerFromArray: function(entries, selectingGroupName){
 
-         DimeView.initContainer($('#itemNavigation'), 
+        DimeView.initContainer($('#itemNavigation'), 
             Dime.psHelper.getPluralCaptionForItemType(DimeView.itemType),
             selectingGroupName);
 
-
         var itemContainer = $('#itemNavigation');
         for (var i=0; i<entries.length; i++){ 
-            if (entries[i].name.toLowerCase().indexOf(DimeView.searchFilter.toLowerCase())!==-1){            
-                
-                
+            if (entries[i].name.toLowerCase().indexOf(DimeView.searchFilter.toLowerCase())!==-1){              
                 DimeView.addItemElement(itemContainer, entries[i]);
-                 
             }
-        }
+        }  
     },
     
     showGroupMembers: function(event, element, groupEntry){
@@ -893,7 +930,7 @@ DimeView = {
         };
 
         Dime.REST.getItems(groupEntry.items,Dime.psHelper.getChildType(groupEntry.type), updateGroupMembers, groupEntry.userId, this);
-                    
+                           
     }, 
     
     editItem: function(event, element, entry, message){
@@ -1170,7 +1207,7 @@ DimeView = {
 
                 var pACategory = this;
                 var link= $('<a tabindex="-1" href="#" />')
-                .text('New '+pACategory.caption+' ..')
+                .append('<span style="margin-left: 5px;">- '+pACategory.caption+' ..</span>')
                 .clickExt(Dime.Dialog,function(){
                         var newItem = Dime.psHelper.createNewItem(type, "My "+pACategory.caption);
                         newItem.category=pACategory.name;
@@ -1601,7 +1638,7 @@ DimeView = {
                 )
                 .append($('<p/>')
                     .append($('<span/>').text('The research project:'))
-                    .addHrefOpeningInNewWindow('http://www.di.me-project.eu','www.di.me-project.eu','orangeBubbleLink')
+                    .addHrefOpeningInNewWindow('http://www.dime-project.eu','www.dime-project.eu','orangeBubbleLink')
                 )
                 .append($('<p/>')
                     .append($('<span/>').text('Your dime-server @ '+serverInfo.affiliation+":"))
@@ -1689,14 +1726,14 @@ Dime.Settings = {
 
     createServiceAccountElement: function(item) {
         
-        return $('<div></div>')
+        return $('<div title="' + item.name + '"></div>')
                 .addClass("wrapConnect")
                 .clickExt(Dime.Settings, Dime.Settings.editServiceAccount, item)
                 .append(
                     $('<img></img>')                    
                     .attr("src", Dime.psHelper.guessLinkURL(item.imageUrl))                    
                    )
-                .append("<b>" + item.name.substr(0,17) + "</b></br>")
+                .append("<b>" + DimeView.getShortNameWithLength(item.name, 22) + "</b></br>")
                 .append(
                     $("<span></span>")
                     .addClass("serviceActiveMessage")

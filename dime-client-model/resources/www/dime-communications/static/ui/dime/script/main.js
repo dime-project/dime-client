@@ -3605,8 +3605,9 @@ Dime.Navigation = {
             var updateCurPlaceElement=function(placeName, placeId){
                 var placeElement = document.getElementById('currentPlace');
                 placeElement.innerHTML =  '<div class="places">'
-                + '<div class="placesIcon" id="currentPlaceGuid" data-guid="' + placeId + '" title="' + placeName + '"></div>'
-                + DimeView.getShortNameWithLength(placeName, 34)+'</div>';                
+                + '<div class="placesIcon" id="currentPlaceGuid" data-guid="' + placeId + '"></div>'
+                + DimeView.getShortNameWithLength(placeName, 34)+'</div>';
+                $("#currentPlace").attr("title", placeName);
             };
             
             if (!placeGuidAndNameObject || !placeGuidAndNameObject.placeName || placeGuidAndNameObject.placeName===0){
@@ -3672,7 +3673,7 @@ Dime.Navigation = {
 
         var navigation = $('<div/>').addClass('nav-collapse')
         .append($('<ul/>').addClass('nav')
-            .append(Dime.Navigation.createMenuLiButton("navButtonMessages","" ,Dime.psMap.TYPE.LIVESTREAM))
+            .append(Dime.Navigation.createMenuLiButton("navButtonMessages","Livepost" ,Dime.psMap.TYPE.LIVESTREAM))
             .append(Dime.Navigation.createMenuLiButton("navButtonPeople","People" ,Dime.psMap.TYPE.GROUP))
             .append(Dime.Navigation.createMenuLiButton("navButtonData","My Data" ,Dime.psMap.TYPE.DATABOX))
             .append(Dime.Navigation.createMenuLiButton("navButtonProfile","My Profile Cards" ,Dime.psMap.TYPE.PROFILE))
@@ -4001,9 +4002,6 @@ Dime.SelectDialog.prototype = {
         return entry;
     },
     
-    
-   
-
     updateItemSelection: function(entry, select){
         
         if (entry.selected===select){
@@ -4039,8 +4037,6 @@ Dime.SelectDialog.prototype = {
         this.resultFunction.call(this.handlerSelf, selectedItems, true);       
     },
     
-    
-    
     addItemsToList: function(items){
         
         if (!items){
@@ -4072,7 +4068,17 @@ Dime.SelectDialog.prototype = {
                 );
             listItem.clickExt(this, toggleSelectFunction, items[i].guid);
             listItem.mouseover(function(){
-                $(this).removeClass("selectedImageListSelected");       
+                $(this).removeClass("selectedImageListSelected");
+            });
+            listItem.append($('<div class="selectHintShareDialog"></div>'));
+            listItem.hover(function(){
+                if($(this).hasClass('selectedImageList')){
+                    $(this).children('.selectHintShareDialog').append('(click to remove)');
+                }else{
+                    $(this).children('.selectHintShareDialog').append('(click to add)');
+                }
+            }, function(){
+                $('.selectHintShareDialog').empty();
             });
             var entry = {
                 item: items[i],
@@ -4910,7 +4916,12 @@ Dime.DetailDialog.prototype = {
             .click(function(){
                 (new Dime.Dialog.Toast('Function not yet available. Please use the "Share..." button for sharing.')).showLong();
             })
-            .append(editDlgRef.itemsItemSection);
+            .append(editDlgRef.itemsItemSection)
+            
+            //additional hint for sharing items
+            .append(
+                $('<div/>').addClass('changeDetailsHintshareDialog').append("click to change items")
+            );
       
     },            
 
@@ -4978,7 +4989,7 @@ Dime.DetailDialog.prototype = {
                     addAgentsToContainer(profileContainerList, aclPackage.personItems);
                     addAgentsToContainer(profileContainerList, aclPackage.serviceItems);
 
-                    var profileContainer = createAgentListItem("shared with:", pName, pImage, "metaDataShareProfile")
+                    var profileContainer = createAgentListItem("shared as:", pName, pImage, "metaDataShareProfile")
                     .append(profileContainerList);
 
                     editDlgRef.itemsItemSection.append(profileContainer);
@@ -4995,6 +5006,11 @@ Dime.DetailDialog.prototype = {
                 (new Dime.Dialog.Toast('Function not yet available. Please use the "Share..." button for sharing.')).showLong();
             })
             .append(editDlgRef.itemsItemSection);
+    
+        //additional hint for sharing
+        agentsSection.append(
+            $('<div/>').addClass('changeDetailsHintshareDialog').append("click to change receivers")
+        );
 
         return agentsSection;
     },
@@ -5055,6 +5071,11 @@ Dime.DetailDialog.prototype = {
         };
         if (!this.readonly){
             memberSection.clickExt(this, showAddMembersDlg);
+            
+            //additional hint for "click to change"
+            memberSection.append(
+                $('<div/>').addClass('changeDetailsHintshareDialog').append("click to change " + childCaption)
+            );
         }else{
             memberSection.click(function(){
                 (new Dime.Dialog.Toast(editDlgRef.caption + " ... is readonly and can not be updated.")).showLong();
@@ -5400,6 +5421,9 @@ Dime.ShareDialog.prototype={
         
         receiverSection.clickExt(this, showAddReceiverDlg);
         
+        receiverSection.append(
+                $('<div/>').addClass('changeDetailsHintshareDialog').append("click to change recipients")
+            );
         
         return receiverSection;
     },
@@ -5444,6 +5468,9 @@ Dime.ShareDialog.prototype={
         
         itemSection.clickExt(this, showAddItemsDlg);
         
+        itemSection.append(
+                $('<div/>').addClass('changeDetailsHintshareDialog').append("click to change items")
+            );
         
         return itemSection;
     },

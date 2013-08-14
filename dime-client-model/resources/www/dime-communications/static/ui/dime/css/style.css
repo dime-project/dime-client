@@ -154,8 +154,8 @@ body {
 }
 
 .mark:hover {
-    background-color: #F6C200;
-    border: 2px solid #ffffff;
+    background-color: #FFFFFF;
+    border: 2px solid #F6C200;
     cursor: pointer;
     height: 18px;
     width: 18px;
@@ -557,6 +557,14 @@ input[type="file"] {
     width: 18px;
 }
 
+.ItemChecked:hover {
+    background-color: #F6C200;
+    border: 2px solid #F6C200;
+    cursor: pointer;
+    height: 18px;
+    width: 18px;
+}
+
 .groupChecked.groupItem{
     background-color: #DDDEDD;   
 }
@@ -667,7 +675,6 @@ input[type="file"] {
     border-radius: 0 0 5px 5px;
     border-top: 1px solid white;
     text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
-
 }
 
 
@@ -1360,7 +1367,7 @@ input[type="checkbox"] {
     color: darkgray;
     border-bottom: 1px solid silver;
     margin-top: 5px;
-    text-align: center;
+    padding-left: 15px;
 }
 
 .newScreenButton {
@@ -2056,10 +2063,7 @@ input[type="checkbox"] {
 }
 
 .metaDataShareProfile{
-    border-top: 1px solid #5A9DD5;
-    border-left: 1px solid #5A9DD5;
     background-color: #EFEFEF;
-
     height: 100%;
     max-height: 125px;
     overflow-y: hidden;
@@ -2138,7 +2142,7 @@ input[type="checkbox"] {
 
 .selectionDialogBodyList:first-of-type{
     background-color: #F5F5F5;
-    max-height: 109px;
+    max-height: 116px;
 }
 
 .loadImageListItem {
@@ -3385,4 +3389,45 @@ input[type="checkbox"].dimeDetailDialogKeyValueValue {
 textarea[readonly].dimeDetailDialogKeyValueValue,
 input[readonly].dimeDetailDialogKeyValueValue {
     cursor: auto;
+}
+
+/***** additional hint "click to edit" *****/
+.editHintGroupElement {
+    text-decoration: none;
+    text-align: center;
+    color: lightgray;
+    font-size: 12px;
+}
+
+.captionForGroupElement {
+    position: relative;
+    top: -50px;
+    height: 38px;
+    width: 100%;
+    cursor: url("../img/edit_16.ico"),auto;
+}
+
+.captionForGroupElement > h4 {  
+    line-height: 12px;
+    padding: 5px 5px 0px 5px;
+    border-radius: 0 0 5px 5px;
+    border-top: 1px solid white;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+}
+
+.changeDetailsHintshareDialog {
+    float: right;
+    margin-right: 10px;
+    position: inherit;
+    margin-top: 10px;
+    color: lightgray;
+    font-size: 12px;
+}
+
+.selectHintShareDialog {
+    position: relative;
+    top: -5px;
+    float: right;
+    margin-right: 10px;
+    font-size: 12px;
 }
