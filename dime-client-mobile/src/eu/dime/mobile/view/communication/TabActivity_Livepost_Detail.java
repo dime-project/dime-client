@@ -1,17 +1,21 @@
 package eu.dime.mobile.view.communication;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
 import android.os.Bundle;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import eu.dime.control.LoadingViewHandler;
 import eu.dime.mobile.R;
+import eu.dime.mobile.helper.AndroidModelHelper;
 import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.handler.LoadingViewHandlerFactory;
 import eu.dime.mobile.helper.objects.DimeTabObject;
 import eu.dime.mobile.view.abstr.TabActivityDisplayableItemDetail;
+import eu.dime.model.displayable.PersonItem;
 
 public class TabActivity_Livepost_Detail extends TabActivityDisplayableItemDetail {
 	
@@ -24,7 +28,7 @@ public class TabActivity_Livepost_Detail extends TabActivityDisplayableItemDetai
 	@Override
 	protected void initializeTabs() {
     	tabs.add(new DimeTabObject(getResources().getString(R.string.tab_communicationDetail) + " " + di.getName(), Activity_Livepost_Detail.class, dio));
-    	TabActivity_Livepost_Detail.this.init(true, false, isOwnItem(), isOwnItem());
+    	TabActivity_Livepost_Detail.this.init(true, false, isOwnItem(), true);
 	}
 
 	@Override
@@ -34,7 +38,11 @@ public class TabActivity_Livepost_Detail extends TabActivityDisplayableItemDetai
 
 	@Override
 	protected List<String> getActionsForDetailView() {
-		return new ArrayList<String>();
+		ArrayList<String> actions = new ArrayList<String>();
+		if(!isOwnItem()) {
+			actions.add(getString(R.string.action_answerLivepost));
+		}
+		return actions;
 	}
 
 	@Override
@@ -47,6 +55,26 @@ public class TabActivity_Livepost_Detail extends TabActivityDisplayableItemDetai
 			header = (LinearLayout) getLayoutInflater().inflate(R.layout.header_standard, headerContainer);
 		}
 		UIHelper.inflateStandardHeader(this, di, mrContext, header);
+	}
+	
+	@Override
+	public void onClick(View view) {
+		super.onClick(view);
+		if (view instanceof Button) {
+            Button button = (Button) view;
+			/**
+             * ---------------------------------------------------------------------------------------------------------------------------
+             * Actions for Activity_Livepost_Detail
+             * ---------------------------------------------------------------------------------------------------------------------------
+             */
+			if (currentActivity instanceof Activity_Livepost_Detail) {
+				//Search public resolver
+				if (button.getText().equals(getString(R.string.action_answerLivepost))) {
+					actionDialog.dismiss();
+					AndroidModelHelper.answerLivepost(currentActivity, Arrays.asList((PersonItem) AndroidModelHelper.getOwnItemFromStorage(di.getUserId(), false)));
+				}
+			}
+		}
 	}
 	
 }

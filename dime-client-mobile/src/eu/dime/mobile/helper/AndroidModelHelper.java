@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
@@ -39,6 +40,7 @@ import eu.dime.mobile.view.abstr.ActivityDime;
 import eu.dime.mobile.view.abstr.ListActivityDime;
 import eu.dime.mobile.view.abstr.TabActivityDisplayableItemDetail;
 import eu.dime.mobile.view.dialog.Activity_Share_Dialog;
+import eu.dime.mobile.view.dialog.Activity_Share_New_Livepost_Dialog;
 import eu.dime.model.ComparatorHelper;
 import eu.dime.model.CreateItemFailedException;
 import eu.dime.model.GenItem;
@@ -551,6 +553,16 @@ public class AndroidModelHelper {
 		}
 		context.startActivity(DimeIntentObjectHelper.populateIntent(intent, new DimeIntentObject()));
     }
+    
+    public static void answerLivepost(Context context, List<PersonItem> items) {
+		Intent intent = new Intent(context, Activity_Share_New_Livepost_Dialog.class);
+		ArrayList<String> persons = new ArrayList<String>();
+		for (PersonItem personItem : items) {
+			persons.add(personItem.getGuid());
+		}
+		intent.putStringArrayListExtra(ModelHelper.getStringType(TYPES.PERSON), persons);
+		context.startActivity(DimeIntentObjectHelper.populateIntent(intent, new DimeIntentObject()));
+	}
     
     public static void loadAdvisoryPropertiesAsynchronously(final Context context, final AdvisoryRequestItem ari, final List<AdvisoryProperties> advisoryItemsNotValidAgentsForSharing, final TextView noWarnings, final TextView labelWarnings, final LinearLayout warningsContainer) {
 		new AsyncTask<Void, Void, List<AdvisoryProperties>>() {

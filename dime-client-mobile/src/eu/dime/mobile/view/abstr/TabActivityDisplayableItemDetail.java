@@ -112,8 +112,10 @@ public abstract class TabActivityDisplayableItemDetail extends TabActivityDime i
 		} else if(currentActivity instanceof ActivityDime) {
 			selectedGUIDs = Arrays.asList(di.getGuid());
 		}
-		actions.add(getString(R.string.action_editItem));
-		actions.add(getString(R.string.action_unshare));
+		if(isOwnItem()) {
+			actions.add(getString(R.string.action_editItem));
+			actions.add(getString(R.string.action_unshare));
+		}
 		actionDialog = UIHelper.createActionDialog(this, actions, this, selectedGUIDs);
 		actionDialog.show();
 	}

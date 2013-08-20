@@ -51,12 +51,13 @@ public class BaseAdapter_ProfileAttribute extends BaseAdapterDisplayableItem {
             LinearLayout.LayoutParams lpms2 = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
             lpms2.setMargins(0, 0, UIHelper.getDPvalue(10), 0);
             valueET.setLayoutParams(lpms2);
-            if (profile.isEditable()) {
+            if (profile.getUserId().equals(Model.ME_OWNER) && profile.isEditable()) {
                 valueET.setInputType(UIHelper.switchInputType(key));
                 valueET.setEnabled(true);
                 valueET.addTextChangedListener(new DimeTextWatcher(pai, key));
             } else {
                 valueET.setEnabled(false);
+                valueET.setFocusable(false);
             }
             line.addView(labelTV);
             line.addView(valueET);

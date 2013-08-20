@@ -53,7 +53,8 @@ public class ListActivity_Merge_Dialog extends ListActivityDisplayableItem imple
 		UNEntryMergeRecommendation entry = (UNEntryMergeRecommendation)uni.getUnEntry();
 		pi = (PersonItem) Model.getInstance().getItem(mrContext, TYPES.PERSON, entry.getSourceId());
 		List<DisplayableItem> matchSuggestions = new ArrayList<DisplayableItem>();
-		matchSuggestions.add((PersonItem) Model.getInstance().getItem(mrContext, TYPES.PERSON, entry.getTargetId()));
+		PersonItem person = (PersonItem) Model.getInstance().getItem(mrContext, TYPES.PERSON, entry.getTargetId());
+		if(person != null) matchSuggestions.add(person);
 		return matchSuggestions;
 	}
 

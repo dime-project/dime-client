@@ -1,17 +1,22 @@
 package eu.dime.mobile.view.people;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import eu.dime.control.LoadingViewHandler;
 import eu.dime.mobile.R;
+import eu.dime.mobile.helper.AndroidModelHelper;
 import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.handler.LoadingViewHandlerFactory;
 import eu.dime.mobile.helper.objects.DimeTabObject;
 import eu.dime.mobile.view.abstr.TabActivityDisplayableItemDetail;
+import eu.dime.model.displayable.PersonItem;
 
 public class TabActivity_Person_Detail extends TabActivityDisplayableItemDetail {
 
@@ -36,8 +41,13 @@ public class TabActivity_Person_Detail extends TabActivityDisplayableItemDetail 
 
 	@Override
 	protected List<String> getActionsForDetailView() {
-		//FIXME add standard profile for instance ListActivity_Person_Profile
-		return new ArrayList<String>();
+		ArrayList<String> actions = new ArrayList<String>();
+		if (currentActivity instanceof ListActivity_Person_Profile) {
+			//FIXME add standard profile for instance ListActivity_Person_Profile
+		} else if (currentActivity instanceof ListActivity_Person_Livepost) {
+			actions.add(getString(R.string.action_answerLivepost));
+		}
+		return actions;
 	}
 
 	@Override
@@ -50,6 +60,35 @@ public class TabActivity_Person_Detail extends TabActivityDisplayableItemDetail 
 			header = (LinearLayout) getLayoutInflater().inflate(R.layout.header_standard, headerContainer);
 		}
 		UIHelper.inflateStandardHeader(this, di, mrContext, header);
+	}
+	
+	@Override
+	public void onClick(View view) {
+		super.onClick(view);
+		if (view instanceof Button) {
+            Button button = (Button) view;
+            Resources res = getResources();
+            /**
+             * ---------------------------------------------------------------------------------------------------------------------------
+             * Actions for ListActivity_Person_Profile
+             * ---------------------------------------------------------------------------------------------------------------------------
+             */
+			if (currentActivity instanceof ListActivity_Person_Profile) {
+				
+			}
+			/**
+             * ---------------------------------------------------------------------------------------------------------------------------
+             * Actions for ListActivity_Person_Livepost
+             * ---------------------------------------------------------------------------------------------------------------------------
+             */
+			else if (currentActivity instanceof ListActivity_Person_Livepost) {
+				//Search public resolver
+				if (button.getText().equals(res.getString(R.string.action_answerLivepost))) {
+					actionDialog.dismiss();
+					AndroidModelHelper.answerLivepost(currentActivity, Arrays.asList((PersonItem) di));
+				}
+			}
+		}
 	}
 	
 }

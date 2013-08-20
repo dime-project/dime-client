@@ -1,24 +1,36 @@
 package eu.dime.mobile.view.data;
 
+import java.util.ArrayList;
+
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import eu.dime.control.DummyLoadingViewHandler;
 import eu.dime.control.LoadingViewHandler;
+import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
+import eu.dime.mobile.helper.AndroidModelHelper;
 import eu.dime.mobile.helper.FileHelper;
 import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.handler.LoadingViewHandlerFactory;
 import eu.dime.mobile.view.abstr.ActivityDime;
 import eu.dime.model.Model;
+import eu.dime.model.ModelHelper;
 import eu.dime.model.TYPES;
+import eu.dime.model.acl.ACLPackage;
+import eu.dime.model.acl.ACLPerson;
 import eu.dime.model.displayable.ResourceItem;
 import eu.dime.model.specialitem.NotificationItem;
 
 public class Activity_Resource_Detail extends ActivityDime implements OnClickListener {
 
 	private ResourceItem resource;
+	private String ownerName;
+    private String receiverNames;
+	private boolean isOwnItem;
 
 	/**
 	 * Called when the activity is first created.
@@ -39,6 +51,39 @@ public class Activity_Resource_Detail extends ActivityDime implements OnClickLis
 	@Override
 	protected void loadData() {
 		resource = (ResourceItem) Model.getInstance().getItem(mrContext, dio.getItemType(), dio.getItemId());
+		isOwnItem = resource.getUserId().equals(Model.ME_OWNER);
+		if(isOwnItem) {
+			ownerName = "me";
+			try {
+				ArrayList<String> profiles = new ArrayList<String>();
+				ArrayList<String> persons = new ArrayList<String>();
+				ArrayList<String> groups = new ArrayList<String>();
+				for (ACLPackage acl : resource.getAccessingAgents()) {
+					profiles.add(ModelHelper.getProfileWithSaid(DimeClient.getMRC(new DummyLoadingViewHandler()), acl.getSaidSender()).getName());
+					for (ACLPerson aclp : acl.getPersons()) {
+						try {
+							persons.add(AndroidModelHelper.getOwnItemFromStorage(aclp.getPersonId(), false).getName());
+						} catch (Exception e) {	}
+					}
+					for (String aclg : acl.getGroups()) {
+						try {
+							groups.add(AndroidModelHelper.getOwnItemFromStorage(aclg, false).getName());
+						} catch (Exception e) {	}
+					}
+				}
+				if(profiles.size() > 0) {
+					ownerName += "@" + UIHelper.formatStringListCommaSeparated(profiles);
+				}
+				receiverNames = ((persons != null && persons.size() > 0) ? UIHelper.formatStringListCommaSeparated(persons) : "") 
+							  + ((groups != null && groups.size() > 0) ? ", "  + UIHelper.formatStringListCommaSeparated(groups) : "");
+			} catch (Exception e) { }
+		} else {
+			try {
+				ownerName = AndroidModelHelper.getOwnItemFromStorage(resource.getUserId(), false).getName();
+			} catch (Exception e) {
+				ownerName = "could not retrieve sender!";
+			}
+		}
 	}
 
 	@Override
@@ -47,10 +92,17 @@ public class Activity_Resource_Detail extends ActivityDime implements OnClickLis
 		TextView mimeType = (TextView) findViewById(R.resource.mime);
 		TextView filesize = (TextView) findViewById(R.resource.filesize);
 		TextView url = (TextView) findViewById(R.resource.url);
+		TextView sharedTo = (TextView) findViewById(R.resource.sharedTo);
+		LinearLayout sharedToContainer = (LinearLayout) findViewById(R.resource.sharedTo_container);
+		owner.setText(ownerName);
+		if(!isOwnItem || receiverNames.length() == 0) {
+			sharedToContainer.setVisibility(View.GONE);
+		} else {
+			sharedTo.setText(receiverNames);
+		}
 		mimeType.setText(resource.getMimeType());
 		filesize.setText(resource.getFileSize() + " Bytes");
 		url.setText(resource.getDownloadUrl());
-		owner.setText(resource.getFileOwner());
 		Button openURL = (Button) findViewById(R.resource.button_openfile);
 		Button download = (Button) findViewById(R.resource.button_downloadfile);
 		openURL.setOnClickListener(this);

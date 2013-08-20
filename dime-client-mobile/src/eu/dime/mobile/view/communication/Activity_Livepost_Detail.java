@@ -1,18 +1,32 @@
 package eu.dime.mobile.view.communication;
 
+import java.util.ArrayList;
+
 import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import eu.dime.control.DummyLoadingViewHandler;
 import eu.dime.control.LoadingViewHandler;
+import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
+import eu.dime.mobile.helper.AndroidModelHelper;
+import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.handler.LoadingViewHandlerFactory;
 import eu.dime.mobile.view.abstr.ActivityDime;
 import eu.dime.model.Model;
+import eu.dime.model.ModelHelper;
+import eu.dime.model.acl.ACLPackage;
+import eu.dime.model.acl.ACLPerson;
 import eu.dime.model.displayable.LivePostItem;
 import eu.dime.model.specialitem.NotificationItem;
 
 public class Activity_Livepost_Detail extends ActivityDime {
 
     private LivePostItem livepost;
+    private String senderName;
+    private String receiverNames;
+    private boolean isOwnItem;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,12 +44,52 @@ public class Activity_Livepost_Detail extends ActivityDime {
 	@Override
 	protected void loadData() {	
 		livepost = (LivePostItem) Model.getInstance().getItem(mrContext, dio.getItemType(), dio.getItemId());
+		isOwnItem = livepost.getUserId().equals(Model.ME_OWNER);
+		if(isOwnItem) {
+			senderName = "me";
+			try {
+				ArrayList<String> profiles = new ArrayList<String>();
+				ArrayList<String> persons = new ArrayList<String>();
+				ArrayList<String> groups = new ArrayList<String>();
+				for (ACLPackage acl : livepost.getAccessingAgents()) {
+					profiles.add(ModelHelper.getProfileWithSaid(DimeClient.getMRC(new DummyLoadingViewHandler()), acl.getSaidSender()).getName());
+					for (ACLPerson aclp : acl.getPersons()) {
+						try {
+							persons.add(AndroidModelHelper.getOwnItemFromStorage(aclp.getPersonId(), false).getName());
+						} catch (Exception e) {	}
+					}
+					for (String aclg : acl.getGroups()) {
+						try {
+							groups.add(AndroidModelHelper.getOwnItemFromStorage(aclg, false).getName());
+						} catch (Exception e) {	}
+					}
+				}
+				senderName += "@" + UIHelper.formatStringListCommaSeparated(profiles);
+				receiverNames = ((persons != null && persons.size() > 0) ? UIHelper.formatStringListCommaSeparated(persons) : "") 
+							  + ((groups != null && groups.size() > 0) ? ", "  + UIHelper.formatStringListCommaSeparated(groups) : "");
+			} catch (Exception e) { }
+		} else {
+			try {
+				senderName = AndroidModelHelper.getOwnItemFromStorage(livepost.getUserId(), false).getName();
+			} catch (Exception e) {
+				senderName = "could not retrieve sender!";
+			}
+		}
 	}
 
 	@Override
 	protected void initializeData() {
+		TextView sender = (TextView) findViewById(R.livepost.sender);
 		TextView subject = (TextView) findViewById(R.livepost.subject);
 		TextView message = (TextView) findViewById(R.livepost.message);
+		TextView receiver = (TextView) findViewById(R.livepost.receiver);
+		LinearLayout receiverContainer = (LinearLayout) findViewById(R.livepost.receiver_container);
+		if(!isOwnItem) {
+			receiverContainer.setVisibility(View.GONE);
+		} else {
+			receiver.setText(receiverNames);
+		}
+		sender.setText(senderName);
         subject.setText(livepost.getName());
         message.setText(livepost.getText());
 	}

@@ -389,6 +389,7 @@ public class UIHelper {
 		}
 		LinearLayout generalContainer = (LinearLayout) dialog.findViewById(R.action_dialog.actions_general);
 		LinearLayout selectionContainer = (LinearLayout) dialog.findViewById(R.action_dialog.actions_selection);
+		LinearLayout selectionBar = (LinearLayout) dialog.findViewById(R.action_dialog.selection_bar);
 		int i = 0;
 		for (String name : names) {
 			Button tmp = new Button(context);
@@ -414,7 +415,10 @@ public class UIHelper {
 				generalContainer.addView(tmp);
 			}
 		}
-		if(i == 0) selectionContainer.setVisibility(View.GONE);
+		if(i == 0) {
+			selectionContainer.setVisibility(View.GONE);
+			selectionBar.setVisibility(View.GONE);
+		}
 		WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
 		Window window = dialog.getWindow();
 		lp.copyFrom(window.getAttributes());
@@ -871,7 +875,22 @@ public class UIHelper {
 		return df.format(cal.getTime());
 	}
 	
-	public static String formatStringList(List<String> strings) {
+	public static String formatStringListCommaSeparated(List<String> strings) {
+		StringBuilder sb = new StringBuilder();
+		String delim = "";
+		if(strings.size() == 0) {
+			//should not occur
+			sb.append("\'" + "empty" + "\'");
+		} else {
+			for (int i = 0; i < strings.size(); i++) {
+				sb.append(delim).append(strings.get(i));
+				delim = ", ";
+			}
+		}
+		return sb.toString();
+	}
+	
+	public static String formatStringListListSeparated(List<String> strings) {
 		StringBuilder sb = new StringBuilder();
 		String delim = " -";
 		if(strings.size() == 0) {
@@ -1016,21 +1035,21 @@ public class UIHelper {
 			WarningAttributesUntrusted attributes = (WarningAttributesUntrusted) ai.getAttributes();
 			warningText += getWarningText(AndroidModelHelper.getTrustOrPrivacyLevelForDisplayableItem(attributes.getPrivacyValue())) + " privacy: " 
 					+ System.getProperty("line.separator")
-					+ formatStringList(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getPrivateResources(), true))
+					+ formatStringListListSeparated(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getPrivateResources(), true))
 					+ System.getProperty("line.separator")
 					+ getWarningText(AndroidModelHelper.getTrustOrPrivacyLevelForDisplayableItem(attributes.getTrustValue())) + " trust:"
 					+ System.getProperty("line.separator")
-					+ formatStringList(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getUntrustedAgents(), false));
+					+ formatStringListListSeparated(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getUntrustedAgents(), false));
 		}
 		// disjunct_groups
 		else if(warningType.equals(AdvisoryItem.WARNING_TYPES[1])) {
 			headline = context.getString(R.string.sharing_warning_disjunct_groups);
 			WarningAttributesDisjunctGroups attributes = (WarningAttributesDisjunctGroups) ai.getAttributes();
-			warningText += formatStringList(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getConcernedPersons(), false))
+			warningText += formatStringListListSeparated(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getConcernedPersons(), false))
 					+ System.getProperty("line.separator")
 					+ "previous recepients:"
 					+ System.getProperty("line.separator")
-					+ formatStringList(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getPreviousSharedGroups(), false));
+					+ formatStringListListSeparated(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getPreviousSharedGroups(), false));
 		}
 		// profile_not_shared
 		else if(warningType.equals(AdvisoryItem.WARNING_TYPES[2])) {
@@ -1038,7 +1057,7 @@ public class UIHelper {
 			WarningAttributesProfileNotShared attributes = (WarningAttributesProfileNotShared) ai.getAttributes();
 			warningText += "the selected profile was never shared with:"
 					+ System.getProperty("line.separator")
-					+ formatStringList(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getPersonGuids(), false));
+					+ formatStringListListSeparated(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getPersonGuids(), false));
 		}
 		// too_many_resources
 		else if(warningType.equals(AdvisoryItem.WARNING_TYPES[3])) {
@@ -1058,7 +1077,7 @@ public class UIHelper {
 		else if(warningType.equals(AdvisoryItem.WARNING_TYPES[5])) {
 			headline = context.getString(R.string.sharing_warning_agent_not_valid_for_sharing);
 			WarningAgentNotValidForSharing attributes = (WarningAgentNotValidForSharing) ai.getAttributes();
-			warningText += formatStringList(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getAgentsNotValidForSharing(), false))
+			warningText += formatStringListListSeparated(AndroidModelHelper.getListOfNamesOfGuidList(context, attributes.getAgentsNotValidForSharing(), false))
 					+ System.getProperty("line.separator")
 					+ ((attributes.getParentGroup().length() > 0) ? "of group " + AndroidModelHelper.getOwnItemFromStorage(attributes.getParentGroup(), false).getName() + "." + System.getProperty("line.separator") : "")
 					+ "You can only share to persons with a di.me account!";
@@ -1256,6 +1275,8 @@ public class UIHelper {
 			resId = R.drawable.action_add_resources;
 		} else if (name.equals(res.getString(R.string.action_removePerson))) {
 			resId = R.drawable.action_remove_person;
+		} else if (name.equals(res.getString(R.string.action_answerLivepost))) {
+			resId = R.drawable.action_add_new_message;
 		}
 		// Tab icons
 		else if (name.equals("All people")) {

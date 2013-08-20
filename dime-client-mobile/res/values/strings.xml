@@ -73,7 +73,7 @@
     <string name="info_dialog_about_privacy">Privacy declaration (EN)</string>
 	
     <!-- items of action menu -->
-    <string name="action_addPeopleToGroup">Add selected people to group</string>
+    <string name="action_addPeopleToGroup">Add selected person(s) to group</string>
     <string name="action_addPeopleToGroupDetail">Add person(s) to group</string>
     <string name="action_removeSelectedPeopleFromGroup">Remove selected person(s) from group</string>
     <string name="action_renameGroup">Rename group</string>
@@ -119,6 +119,7 @@
     <string name="action_editItem">Edit item</string>
     <string name="action_removePerson">Delete selected person(s)</string>
     <string name="action_homeButtonPressed">homePressed</string>
+    <string name="action_answerLivepost">Answer livepost</string>
     
     <!--  other -->
     <string name="sharing_no_receiver">no receiver(s) selected</string>
