@@ -1416,7 +1416,7 @@ Dime.un={
 
         }else if (entry.unType===Dime.psMap.UN_TYPE.MERGE_RECOMMENDATION){
             return {
-                caption: 'These contacts have the same name. You may merge them to one person',
+                caption: 'These contacts have similar profile informations. You may merge them to one person.',
                 imageUrl: 'img/metaData/merge_person.png',
                 operation: 'merge',
                 operationName: 'Merge',
@@ -2723,6 +2723,8 @@ Dime.psHelper = {
         }
         if (type===Dime.psMap.TYPE.LIVEPOST){
             entry.created=entry.lastModified;
+            //set empty for the view on android
+            entry.imageUrl="";
         }
         
         return entry;
@@ -4066,8 +4068,12 @@ Dime.SelectDialog.prototype = {
                     );
             }
             listItem.append(
-                $('<span class="loadImageListItemName">'+items[i].name.substring(0, 19)+'<span>')
-                .addClass(privTrust.thinClassString)      
+                $('<div></div>')
+                    .addClass("loadImageListItemName")
+                    .append(
+                        $('<span>'+ items[i].name.substring(0, 19) +'</span>')
+                            .addClass(privTrust.thinClassString)      
+                    )
                 );
             listItem.clickExt(this, toggleSelectFunction, items[i].guid);
             listItem.mouseover(function(){
@@ -4225,7 +4231,7 @@ Dime.DetailDialog.prototype = {
             .append('<h1>Edit: Image</h1>')
             .append('<img src="' + Dime.psHelper.guessLinkURL(item.imageUrl)
                 + '" class="itemDetailPicImageBig" alt="imageUrl image" height=100px" width="100px" ></img>')
-            .append('<h2>Select or upload a new icon ...</h2>')
+            .append('<h2>Select or upload a new icon:</h2>')
             .append(
                 $('<div class="itemDetailPicButtons"></div>')
                     .append($('<div class="itemDetailPicSelectBtn btn" >select</div>')
@@ -4434,7 +4440,7 @@ Dime.DetailDialog.prototype = {
         
         var result=$('<div/>')
         .addClass("DetailDialogPrivTrustElem")
-        .append('<span >'+(currPrivTrust.isPrivacy?"How private is this:":"Trust:")+'</span>');
+        .append('<span >'+(currPrivTrust.isPrivacy?"How private is this: ":"Trust: ")+'</span>');
         if (!readOnly){
             result.append(BSTool.createDropdown(createButtonLabel(currPrivTrust),
                 dropDownElements, "btn"));
@@ -4571,16 +4577,12 @@ Dime.DetailDialog.prototype = {
         listContainer.append(
             $("<li></li>")
                 .addClass("DimeDetailDialogPAValueListItem")
-                //add CSS, refactor?
-                .attr("style", "display: -webkit-box; margin-top: 5px;")
                 .append(
                     $('<span class="dimeDetailDialogKeyValueCaption"></span>').text("Rate this location: ")
                 )
                 .append(
-                    $("<div></div>")
+                    $("<span></span>")
                         .addClass("ratingStarsYour")
-                        //add CSS, refactor?
-                        .attr("style", "margin-left: 11px; width: 202px !important;")
                         .raty({
                             score: item.userRating*5,
                             cancel: true,
@@ -5956,7 +5958,6 @@ Dime.Dialog={
                     (new Dime.Dialog.Toast(elementName+ " created successfully.")).showLong();
                 }
             };
-            
             
             //post the update
             Dime.REST.postNewItem(item, newItemCallBack);

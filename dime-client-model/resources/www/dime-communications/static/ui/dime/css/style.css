@@ -730,6 +730,7 @@ input[type="file"] {
     position: relative;
     top: 3px;
     margin-right: 10px;
+    margin-top: 2px;
 }
 
 .listElementIcon img {
@@ -1890,7 +1891,7 @@ input[type="checkbox"] {
     font-size: 14px;
     text-align: center;
     position: relative;
-    margin: 50px 0 10px 0;
+    margin: 25px 0 10px 0;
 }
 
 .itemDetailPic > h3 {
@@ -1937,7 +1938,8 @@ input[type="checkbox"] {
 }
 
 .itemDetailPicUploadBtn{
-    float: left;   
+    float: left;
+    width: 100px;
 }
 
 .itemDetailName{    
@@ -1970,7 +1972,7 @@ input[type="checkbox"] {
 }
 
 .detailDialogBody{
-    width: 98%;
+    width: 97%;
 }
 
 #DimeDetailDialogSituation{
@@ -2162,6 +2164,9 @@ input[type="checkbox"] {
 
 .loadImageListItemName{
     margin-left: 20px;
+    float: left;
+    margin-top: 10px;
+    min-width: 125px;
 }
 
 .loadImageListItemImage {
@@ -2169,6 +2174,7 @@ input[type="checkbox"] {
     height: 25px;
     width: 25px;
     margin-top: 12px;
+    float: left;
 }
 
 .loadImageListItem:hover{
@@ -2204,8 +2210,7 @@ input[type="checkbox"] {
     box-shadow: 2px 2px #5A9DD5;
     padding: 7px 20px 7px 20px;
     float: left;
-
-
+    width: 60px;
 }
 
 .itemDetailPicSelectBtn:hover {
@@ -2498,6 +2503,7 @@ input[type="text"].DimeDetailDialogPAValueListItemValue{
     width: 520px;
     margin-left: 150px;
     text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+    clear: both;
 }
 
 .livepostItem:hover {
@@ -2610,7 +2616,7 @@ input[type="text"].DimeDetailDialogPAValueListItemValue{
 
 .itemDetailPicButtons {
     width: 300px;
-    margin-left: 145px;
+    margin-left: 100px;
     height: 50px;
 }
 
@@ -2625,11 +2631,12 @@ input[type="text"].DimeDetailDialogPAValueListItemValue{
 }
 
 #backToGroupButton{
-    margin-left: 15px;
+    width: 80px;
+    margin-left: 5px;
     background-color: #5A9DD5;
     border-radius: 5px 0 0 5px;
     color: white;
-    margin-top: 4px;
+    margin-top: 10px;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 
 }
@@ -2740,7 +2747,7 @@ input[type="text"].DimeDetailDialogPAValueListItemValue{
 
 .shareDlg > .modal-body{
     height: 650px;
-    width: 104%;
+    width: 99%;
 }
 
 
@@ -3276,7 +3283,8 @@ input[type="text"].DimeDetailDialogPAValueListItemValue{
 }
 
 .shareDlg .dimeDialogInfoBox{
-    margin-left: -40px;
+    margin-left: 70px;
+    margin-top: 25px;
 }
 
 .dimeToast{
@@ -3432,23 +3440,82 @@ input[readonly].dimeDetailDialogKeyValueValue {
 }
 
 .selectHintShareDialog {
-    position: relative;
-    top: -5px;
-    float: right;
-    margin-right: 10px;
     font-size: 12px;
+    margin-right: 10px;
+    margin-top: 4px;
+    float: right;
 }
 
 #lightBoxBlack {
-    position: absolute;
+    position: fixed;
     top: 0px;  
     left: 0px; 
     display: none;  
     background: #000000;  
-    opacity: 0.8;  
+    opacity: 0.6;  
     filter: alpha(opacity=90);  
     min-width: 100%;  
     min-height: 100%;
     /** navigationBar has 1030 **/
     z-index: 1031; 
 }
+
+.ratingStarsYour {
+    float: none;
+    margin-right: 90px;
+    margin-left: 7px;
+    cursor: pointer;
+}
+
+.personInformationContainer {
+    clear: both;
+    min-height: 80px;
+    background-color: white;	
+    border: 1px solid silver;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.currentPersonImage {
+    margin: 15px;
+    float: left;
+}
+
+.currentPersonInformation {
+    float: left;
+    margin-top: 15px;
+    width: 75%;
+}
+
+.personInformationName {
+    margin: 5px;
+    font-weight: bold;
+    font-size: 1.8em;
+}
+
+.personInformationChange {
+    line-height: 12px;
+    padding: 15px 5px 0px 0px;
+    font-size: 12px;
+    margin-left: 5px;
+}
+
+.personInformationTrust {
+    line-height: 12px;
+    padding: 5px 5px 1px 0px;
+    font-size: 12px;
+    margin-left: 5px;
+}
+
+.currentPersonImage > img {
+    width: 90px;
+    height: 90px;
+}
+
+#addNewServiceAdapterDropDown {
+    min-width: 175px;
+}
+
