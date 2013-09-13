@@ -73,6 +73,33 @@
                 android:paddingTop="10dp" >
 
                 <TextView
+                    android:id="@+login/label_edittext_server"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Server Name" />
+
+                <AutoCompleteTextView
+                    android:id="@+login/editText_server"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:id="@+login/label_is_https_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="HTTPS/HTTP"
+                    android:visibility="gone"/>
+
+                <CheckBox
+                    android:id="@+login/checkbox_is_https"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="HTTPS"
+                    android:visibility="gone"/>
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Username" />
@@ -98,50 +125,7 @@
                     android:inputType="textPassword"
                     android:maxLines="1" />
 
-                <TextView
-                    android:id="@+login/label_edittext_server"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Server IP"
-                    android:visibility="gone" />
-
-                <EditText
-                    android:id="@+login/editText_server"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:singleLine="true"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+login/label_view_port_txt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Port"
-                    android:visibility="gone" />
-
-                <EditText
-                    android:id="@+login/editText_port"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="number"
-                    android:singleLine="true"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+login/label_is_https_txt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="HTTPS/HTTP"
-                    android:visibility="gone" />
-
-                <CheckBox
-                    android:id="@+login/checkbox_is_https"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="HTTPS"
-                    android:visibility="gone" />
+               
 
                 <CheckBox
                     android:id="@+login/checkBox_remember"

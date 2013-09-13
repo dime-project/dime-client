@@ -13,11 +13,9 @@ import eu.dime.model.ModelConfiguration;
 import eu.dime.model.specialitem.AuthItem;
 import eu.dime.restapi.DimeHelper;
 import eu.dime.restapi.RestApiConfiguration;
-
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import sit.tools.CryptHelper;
 import sit.web.client.HttpHelper;
 
@@ -35,7 +33,7 @@ public class Settings {
     private static final String PS_PORT_TAG = "PS_PORT";
     private static final String PS_USER_NAME_TAG = "PS_USER_NAME";
     private static final String PS_USE_HTTPS_TAG = "PS_USE_HTTPS";
-    private static final String PS_OVERRIDE_DNS = "PS_OVERRIDE_DNS";
+    private static final String PS_SHOW_HIDDEN_FIELDS = "PS_SHOW_HIDDEN_FIELDS";
     private static final String IS_DIALOG_INFO_AREA_DISPLAYED = "IS_DIALOG_INFO_AREA_DISPLAYED";
     
     private final static boolean USE_REST_API = true;
@@ -56,7 +54,7 @@ public class Settings {
     private int port;
     private boolean useHTTPS;
     private boolean loginPrefRemembered;
-    private boolean overrideDNS;
+    private boolean showHiddenFields;
     private boolean crawlingContext;
     private boolean isDialogInfoAreaDisplayed;
 
@@ -72,7 +70,7 @@ public class Settings {
         useHTTPS = androidSettings.getBoolean(PS_USE_HTTPS_TAG, DimeHelper.DEFAULT_USE_HTTPS);
         crawlingContext = androidSettings.getBoolean(PS_CRAWL_CONTEXT_TAG, false);               
         username = androidSettings.getString(PS_USER_NAME_TAG,  "");
-        overrideDNS = androidSettings.getBoolean(PS_OVERRIDE_DNS, false);       
+        showHiddenFields = androidSettings.getBoolean(PS_SHOW_HIDDEN_FIELDS, false);
         try {
         	password = CryptHelper.getUnObscuredContent(username, androidSettings.getString(PS_KEY_TAG, ""));
         } catch (IOException ex) {
@@ -88,7 +86,7 @@ public class Settings {
         androidSettings.edit().putInt(PS_PORT_TAG, port).commit();
         androidSettings.edit().putBoolean(PS_USE_HTTPS_TAG, useHTTPS).commit();
         androidSettings.edit().putBoolean(PS_CRAWL_CONTEXT_TAG, crawlingContext).commit();
-        androidSettings.edit().putBoolean(PS_OVERRIDE_DNS, overrideDNS).commit();
+        androidSettings.edit().putBoolean(PS_SHOW_HIDDEN_FIELDS, showHiddenFields).commit();
         androidSettings.edit().putString(PS_USER_NAME_TAG, username).commit();
         if(loginPrefRemembered) {
             androidSettings.edit().putString(PS_KEY_TAG, CryptHelper.getObscuredContent(username, password)).commit();
@@ -98,14 +96,14 @@ public class Settings {
         androidSettings.edit().putBoolean(LOGIN_PREF_REMEMBER_TAG, loginPrefRemembered).commit();
     }
     
-    public void updateSettingsBeforeLogin(String hostname, String username, String password, int port, boolean useHTTPS, boolean loginPrefRemembered, boolean overrideDNS) {
+    public void updateSettingsBeforeLogin(String hostname, String username, String password, int port, boolean useHTTPS, boolean loginPrefRemembered, boolean hideSpecialFields) {
     	this.hostname = hostname;
     	this.username = username;
     	this.password = password;
     	this.port = port;
     	this.useHTTPS = useHTTPS;
     	this.loginPrefRemembered = loginPrefRemembered;
-    	this.overrideDNS = overrideDNS;
+    	this.showHiddenFields = hideSpecialFields;
     	storeSettings();
     }
     
@@ -158,8 +156,8 @@ public class Settings {
     	return HttpHelper.getBase64UserNamePwdToken(username, password);
     }
     
-    public boolean getOverrideDNS(){
-    	return overrideDNS;
+    public boolean getShowHiddenFields(){
+    	return showHiddenFields;
     }
 
 	public boolean isDialogInfoAreaDisplayed() {
@@ -214,7 +212,7 @@ public class Settings {
                 + "\npassword: " + password
                 + "\nport: " + port
                 + "\nuseHTTPS: " + useHTTPS
-                + "\noverrideDNS: " + overrideDNS
+                + "\nshowHiddenFields: " + showHiddenFields
                 + "\nreceiveNotifications: " + receiveNotifications
                 + "\ncrawlingContext: " + crawlingContext
                 + "\nloginPrefRemembered: " + loginPrefRemembered;
@@ -248,5 +246,10 @@ public class Settings {
 	public String getServerVersion() {
 		return serverVersion;
 	}
+
+    public void setShowHiddenFields(boolean showHiddenFields) {
+        this.showHiddenFields = showHiddenFields;
+        storeSettings();
+    }
     
 }

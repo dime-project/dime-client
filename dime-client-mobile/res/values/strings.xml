@@ -164,4 +164,14 @@
     <string name="self_evaluation_tool_dialog_unshare_save">unshare_items_confirmed</string>
     <string name="self_evaluation_tool_dialog_merge_save">merge_confirmed</string>
     <string name="self_evaluation_tool_dialog_public_search_save">person_from_public_resolver_added</string>
+
+
+    <string-array name="known_dime_servers">
+        <item>dime.hci.iao.fraunhofer.de:8443</item>
+        <item>dimebcntrial.bdigital.org:8443</item>
+        <item>dime.teamlife.it:8080</item>
+        <item>141.99.159.222:8443</item>
+        <item>vmuscs05.deri.ie:8443</item>
+        <item>test.dime.cas.de:80</item>
+    </string-array>
 </resources>
