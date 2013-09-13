@@ -79,11 +79,18 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
         remember = (CheckBox) findViewById(R.login.checkBox_remember);
         login = (Button) findViewById(R.login.button_login);
         
-        ArrayAdapter<String> knownServersAdapter = new ArrayAdapter<String>(this,
-                 android.R.layout.simple_dropdown_item_1line, R.array.known_dime_servers);
+        ArrayAdapter<CharSequence> knownServersAdapter = ArrayAdapter.createFromResource(this,
+                    R.array.known_dime_servers,android.R.layout.simple_dropdown_item_1line); //simple_spinner_dropdown_item
         
         serverNameAndPort = (AutoCompleteTextView) findViewById(R.login.editText_server);
         serverNameAndPort.setAdapter(knownServersAdapter);
+        serverNameAndPort.setOnClickListener(new OnClickListener() {
+
+            public void onClick(View view) {
+                serverNameAndPort.showDropDown();
+            }
+        });
+
         isHttpsLabel = (TextView) findViewById(R.login.label_is_https_txt);
         isHttpsCheckBox = (CheckBox)findViewById(R.login.checkbox_is_https);
         dimeLogo = (ImageView) findViewById(R.login.dime_logo);

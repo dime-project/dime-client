@@ -83,7 +83,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:hint="servername:port"/>
 
                 <TextView
                     android:id="@+login/label_is_https_txt"
@@ -110,12 +111,15 @@
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:inputType="textNoSuggestions"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:hint="username"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Password" />
+                    android:text="Password"
+                    android:hint="password"
+                    />
 
                 <EditText
                     android:id="@+login/editText_password"
