@@ -122,7 +122,7 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
         showHiddenFields = settings.getShowHiddenFields();
         remember.setChecked(settings.isLoginPrefRemembered());
         user.setText(settings.getUsername());
-        serverNameAndPort.setText(settings.getHostname());
+        serverNameAndPort.setText(settings.getHostname()+":"+settings.getPort());
         updateHiddenFields();
         if (settings.isLoginPrefRemembered()) {
         	pass.setText(settings.getPassword());
