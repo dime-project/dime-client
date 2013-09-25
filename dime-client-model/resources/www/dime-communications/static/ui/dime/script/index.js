@@ -23,6 +23,97 @@
 
 //---------------------------------------------
 //#############################################
+//  DimeView Manager
+//#############################################
+//
+
+DimeViewManager = function(){
+    //                                               id, groupActive, settingsActive, personViewActive
+    this.addToViewMap(new DimeViewManager.viewMapEntry('groupNavigation', false, false, false, this.getCurrentGroupType)); //initially set to false, so it will only be shown with some content in place
+    this.addToViewMap(new DimeViewManager.viewMapEntry('itemNavigation', false, false, false, this.getCurrentItemType)); //initially set to false, so it will only be shown with some content in place
+    this.addToViewMap(new DimeViewManager.viewMapEntry('searchBox', true, false, false, null));
+    this.addToViewMap(new DimeViewManager.viewMapEntry('metabarMetaContainer', true, false, true, null));
+    this.addToViewMap(new DimeViewManager.viewMapEntry('backToGroupButton', false, false, true, null));
+    this.addToViewMap(new DimeViewManager.viewMapEntry('currentPersonOverview', false, false, true, null));
+    this.addToViewMap(new DimeViewManager.viewMapEntry('currentPersonLabel', false, false, true, null));
+    this.addToViewMap(new DimeViewManager.viewMapEntry('personProfileAttributeNavigation', false, false, true, Dime.psMap.TYPE.PROFILEATTRIBUTE));
+    this.addToViewMap(new DimeViewManager.viewMapEntry('personProfileNavigation', false, false, true, Dime.psMap.TYPE.PROFILE));
+    this.addToViewMap(new DimeViewManager.viewMapEntry('personLivepostNavigation', false, false, true, Dime.psMap.TYPE.LIVEPOST));
+    this.addToViewMap(new DimeViewManager.viewMapEntry('personDataboxNavigation', false, false, true, Dime.psMap.TYPE.DATABOX));
+    this.addToViewMap(new DimeViewManager.viewMapEntry('personResourceNavigation', false, false, true, Dime.psMap.TYPE.RESOURCE));
+    this.addToViewMap(new DimeViewManager.viewMapEntry('settingsNavigationContainer', false, true, false, Dime.psMap.TYPE.SERVICEADAPTER));
+    //the following are deactivated by default and only shown when required
+    this.addToViewMap(new DimeViewManager.viewMapEntry('dropzoneNavigation', false, false, false, null));
+    this.addToViewMap(new DimeViewManager.viewMapEntry('globalItemNavigation', false, false, false, null));  
+};
+
+
+DimeViewManager.prototype = {
+
+    //VIEW_MAP
+    viewMap:{}, //initialization in the constructor of DimeViewManager
+    
+    GROUP_CONTAINER_VIEW: 1,
+    SETTINGS_VIEW: 2,
+    PERSON_VIEW: 3,
+
+    currentView: 0,
+    
+    groupType:Dime.psMap.TYPE.GROUP,
+    itemType:Dime.psMap.TYPE.PERSON,
+    currentGuid: null,
+    
+    getCurrentGroupType: function(){
+        return this.groupType;
+    },
+    
+    getCurrentItemType: function(){
+        return this.itemType;
+    },
+    
+    
+    
+    addToViewMap: function(viewMapEntry){
+        this.viewMap[viewMapEntry.id]=viewMapEntry;
+    },
+    
+    updateView: function(groupType, viewType, avoidPushingHistory){
+        
+    },
+    
+    updateViewFromNotifications: function(notifications){
+
+    },
+            
+    updateViewForPerson: function(event, element, entry){
+
+    },
+
+    /**
+     * constructor for viewMapEntries
+     * @param {type} id id of div in index.html
+     * @param {type} groupActive
+     * @param {type} settingsActive
+     * @param {type} personViewActive
+     * @param {type} type
+     * @returns {undefined}
+     */
+    viewMapEntry: function(id, groupActive, settingsActive, personViewActive, type){
+        this.id = id;
+        this.groupActive = groupActive;
+        this.settingsActive = settingsActive; 
+        this.personViewActive = personViewActive;
+        this.type = type;
+    }
+};
+//---------------------------------------------
+//#############################################
+//  END DimeView Manager
+//#############################################
+//
+
+//---------------------------------------------
+//#############################################
 //  DimeView 
 //#############################################
 //
@@ -31,9 +122,6 @@
 DimeView = {
     
     searchFilter: "",
-    groupType:Dime.psMap.TYPE.GROUP,
-    itemType:Dime.psMap.TYPE.PERSON,
-    currentGuid: null,
     pushState:{}, //browser history to manage back-button
     
     getShortNameWithLength: function(name, length){
@@ -117,7 +205,7 @@ DimeView = {
         if(isGroupItem){
             jElement.clickExt(DimeView, DimeView.showGroupMembers, entry);
         }else if (entry.type===Dime.psMap.TYPE.PERSON){
-            jElement.clickExt(DimeView, DimeView.updateViewForPerson, entry);
+            jElement.clickExt(DimeView, DimeView.viewManager.updateViewForPerson, entry);
         }else if(showEditOnClick){
             jElement.clickExt(DimeView, DimeView.editItem, entry);
         }
@@ -1347,7 +1435,7 @@ DimeView = {
                             (new Dime.Dialog.Toast("Geolocation services are not supported by your browser.")).show();
                         };
                         
-                        DimeView.updateView("place", DimeView.GROUP_CONTAINER_VIEW, true);
+                        DimeView.viewManager.updateView(Dime.psMap.TYPE.PLACE, DimeView.GROUP_CONTAINER_VIEW, true);
                     });
         }
         
@@ -1377,244 +1465,7 @@ DimeView = {
         }
     },
 
-    //VIEW_MAP
-    GROUP_CONTAINER_VIEW: 1,
-    SETTINGS_VIEW: 2,
-    PERSON_VIEW: 3,
-
-    currentView: 0,
-
-    viewMapEntry: function(id, groupActive, settingsActive, personViewActive){
-        this.id = id;
-        this.groupActive = groupActive;
-        this.settingsActive = settingsActive; 
-        this.personViewActive = personViewActive;
-    },
-
-    viewMap:{}, //initialization at the end of DimeView
-
-    addToViewMap: function(viewMapEntry){
-        DimeView.viewMap[viewMapEntry.id]=viewMapEntry;
-    },
-    
-    /**
-     *
-     *
-     */
-    updateView: function(groupType, viewType, avoidPushingHistory){
-        
-        //to remove/empty the alert in another view
-        $("#alertStatusNavigation").addClass("hidden").empty();
-
-        if (!viewType){
-            viewType = DimeView.GROUP_CONTAINER_VIEW;
-        }
-
-        //send some evaluation data
-        Dime.evaluation.updateViewStack(groupType, viewType);
-
-        DimeView.currentView=viewType;
-        DimeView.switchViewForViewType();
-
-        if (!avoidPushingHistory){ //FIXME add support for settings by furhter url parameters --> refactoring required!
-            if (!groupType){
-                console.log("grouptype not set - using default: GROUP");
-                groupType=Dime.psMap.TYPE.GROUP;
-            }
-            window.history.pushState({groupType:groupType, viewType:viewType}, "", "index.html?type="+groupType+"&viewType="+viewType);
-        }
-
-        if (viewType===DimeView.SETTINGS_VIEW){
-            Dime.Navigation.setButtonsActive("navButtonSettings");
-            Dime.Settings.updateView();
-            return;
-        }
-
-        if (!groupType){
-            //GO on with viewType===PERSON_VIEW and viewType===GROUP_CONTAINER_VIEW
-            console.log("grouptype not set - using default: GROUP");
-            groupType = Dime.psMap.TYPE.GROUP;
-        }
-        
-        //update grouptype and itemtype
-        DimeView.groupType = groupType;        
-        DimeView.itemType =  Dime.psHelper.getChildType(DimeView.groupType);
-
-        //update navigation button shown
-        if (DimeView.groupType===Dime.psMap.TYPE.DATABOX){
-            Dime.Navigation.setButtonsActive("navButtonData");
-            $('#searchText').attr('placeholder', 'find data');
-        }else if (DimeView.groupType===Dime.psMap.TYPE.PROFILE){
-            Dime.Navigation.setButtonsActive("navButtonProfile");
-            $('#searchText').attr('placeholder', 'find my profile cards');
-        }else if (DimeView.groupType===Dime.psMap.TYPE.GROUP){
-            Dime.Navigation.setButtonsActive("navButtonPeople");
-            //$('#searchText').attr('placeholder', 'find persons and groups (single search-word, avoid incomplete names)');
-            $('#searchText').attr('placeholder', 'search in your contacts and Di.me User directory');
-        }else if (DimeView.groupType===Dime.psMap.TYPE.LIVESTREAM){
-            Dime.Navigation.setButtonsActive("navButtonMessages");
-            $('#searchText').attr('placeholder', 'find liveposts');
-        }else if (DimeView.groupType===Dime.psMap.TYPE.EVENT){
-            Dime.Navigation.setButtonsActive("navButtonEvent");
-            $('#searchText').attr('placeholder', 'find events');
-            //added alert for not supported calendar
-            $("#alertStatusNavigation").removeClass("hidden").text("The calendar is not yet supported in the research prototype, sorry.");
-        }else if (DimeView.groupType===Dime.psMap.TYPE.USERNOTIFICATION){
-            Dime.Navigation.setButtonsActive("notificationIcon");
-            $('#searchText').attr('placeholder', 'find notifications');
-        }else if (DimeView.groupType===Dime.psMap.TYPE.SITUATION){
-            Dime.Navigation.setButtonsActive("currentSituation");
-            $('#searchText').attr('placeholder', 'find situations');
-        }else if (DimeView.groupType===Dime.psMap.TYPE.PLACE){
-            Dime.Navigation.setButtonsActive("currentPlace");
-            $('#searchText').attr('placeholder', 'find places');         
-        }
-        
-        //activate dropzone
-        if (DimeView.itemType===Dime.psMap.TYPE.RESOURCE){
-            $("#dropzoneNavigation").removeClass("hidden");
-            DimeView.initFileUploaderForDropzone();
-        }
-
-        DimeView.updateNewButton(groupType);
-        DimeView.updateShareButton(groupType);
-        DimeView.updateMoreButton(groupType);
-        DimeView.updateAddRemoveButton(groupType, viewType);
-
-        DimeView.updateMetaBar(groupType);
-        //in order to avoid showing groups and contacts in person view
-        if(viewType!==DimeView.PERSON_VIEW){
-            DimeView.resetSearch();
-        }
-    },
-
-    switchViewForViewType: function(){
-        var viewType=DimeView.currentView;
-
-        jQuery.each(DimeView.viewMap, function(){
-            //viewMapEntry: id, groupActive, settingsActive, personViewActive
-            var displayMe=false;
-            if (viewType===DimeView.GROUP_CONTAINER_VIEW){
-                displayMe=this.groupActive;
-            }else if (viewType===DimeView.SETTINGS_VIEW){
-                displayMe=this.settingsActive;
-            }else if (viewType===DimeView.PERSON_VIEW){
-                displayMe=this.personViewActive;
-            }
-            if (displayMe){
-                $('#'+this.id).removeClass('hidden');
-            }else{
-                $('#'+this.id).addClass('hidden');
-            }
-        });
-    },
-
-    //called from back button in index.html
-    restoreGroupView:function(){
-        DimeView.updateView(DimeView.groupType, DimeView.GROUP_CONTAINER_VIEW);
-    },
-
-
-    updateViewForPerson: function(event, element, entry){
-        var guid = entry.guid;
-        
-        //hide other container
-        DimeView.currentView=DimeView.PERSON_VIEW;
-        //instead of DimeView.switchViewForViewType();
-        DimeView.updateView(DimeView.groupType, DimeView.PERSON_VIEW, false);
-
-        DimeView.currentGuid=guid;
-        Dime.evaluation.updateViewStack("", DimeView.currentView);
-                
-        
-        //select the clicked person for preselection in the share-dialog
-        this.clearSelectedItems();
-        this.selectItem(event, element, entry, false);
-        
-        //check and get item
-        if (!guid || guid.length===0){
-            console.log("ERROR wrong call updateViewForPerson with guid:", guid);
-            return;
-        }
-
-        
-        //adding person information
-        $('#currentPersonOverview')
-            .empty()
-            .append(
-                $('<div></div>')
-                    .addClass("currentPersonImage")
-                    .append(
-                        $('<img></img>').attr("src", entry.imageUrl)
-                    )
-            )
-            .append(
-                $('<div></div>')
-                    .addClass("currentPersonInformation")
-                    .append(
-                        $('<div></div>')
-                            .addClass("personInformationName")
-                            .append(entry.name)
-                    )
-                    .append(
-                        $('<div></div>')
-                            .addClass("personInformationChange")
-                            .append("Last change: ")
-                            .append(JSTool.millisToFormatString(entry.lastModified))
-                    )
-                    .append(
-                        $('<div></div>')
-                            .addClass("personInformationTrust")
-                            .append("Trust level: ")
-                            .append(Dime.privacyTrust.getClassAndCaptionForPrivacyTrust(entry["nao:trustLevel"], false).caption)
-                            .addClass(Dime.privacyTrust.getClassAndCaptionForPrivacyTrust(entry["nao:trustLevel"], false).classString)
-                    )
-            )
-            .append(
-                $('<div></div>').addClass("clear")
-            );
-        
-        
-        var updateProfileContainer=function(response){            
-            DimeView.handleSearchResultForContainer(Dime.psMap.TYPE.PROFILE,
-                    response, $('#personProfileNavigation'), true);
-        };
-        
-        var updateProfileAttributeContainer=function(response){                        
-            DimeView.handleSearchResultForContainer(Dime.psMap.TYPE.PROFILEATTRIBUTE,
-                   response, $('#personProfileAttributeNavigation'), false);
-        };
-        
-        var updateLivepostContainer=function(response){              
-            DimeView.handleSearchResultForContainer(Dime.psMap.TYPE.LIVEPOST,
-                    response, $('#personLivepostNavigation'), false);
-        };
-        
-        var updateDataboxContainer=function(response){   
-            DimeView.handleSearchResultForContainer(Dime.psMap.TYPE.DATABOX,
-                    response, $('#personDataboxNavigation'), true);
-        };
-        var updateResourceContainer=function(response){  
-            DimeView.handleSearchResultForContainer(Dime.psMap.TYPE.RESOURCE,
-                    response, $('#personResourceNavigation'), false);
-        };
-                
-        Dime.REST.getAll(Dime.psMap.TYPE.PROFILE, updateProfileContainer, guid);
-        Dime.REST.getAll(Dime.psMap.TYPE.PROFILEATTRIBUTE, updateProfileAttributeContainer, guid);       
-        Dime.REST.getAll(Dime.psMap.TYPE.LIVEPOST, updateLivepostContainer, guid);        
-        Dime.REST.getAll(Dime.psMap.TYPE.DATABOX, updateDataboxContainer, guid);
-        Dime.REST.getAll(Dime.psMap.TYPE.RESOURCE, updateResourceContainer, guid);
-        
-        /*
-        var updateAllSharedItems=function(response){
-            for(var i=0; i<response.length; i++){
-                //$("#test1234").append(DimeView.createItemJElement(response[i]));
-            } 
-        };
-        Dime.psHelper.getAllSharedItems(entry, updateAllSharedItems);
-        */
-        
-    },
+   
 
     OrangeBubble: function(handlerSelf, caption, bubbleBody, dismissHandler){
 
@@ -1654,8 +1505,6 @@ DimeView = {
             return;
         }
         var serverInfo = Dime.ps_configuration.serverInformation; //initially retrieved in main.js
-
-
 
         var loginbaselink=Dime.ps_configuration.getRealBasicUrlString()
         +'/dime-communications/web/access/';
@@ -1749,24 +1598,8 @@ DimeView.OrangeBubble.prototype = {
         $(this.bubble).remove();
     }
 };
-//                                               id, groupActive, settingsActive, personViewActive
-DimeView.addToViewMap(new DimeView.viewMapEntry('groupNavigation', false, false, false)); //initially set to false, so it will only be shown with some content in place
-DimeView.addToViewMap(new DimeView.viewMapEntry('itemNavigation', false, false, false)); //initially set to false, so it will only be shown with some content in place
-DimeView.addToViewMap(new DimeView.viewMapEntry('searchBox', true, false, false));
-DimeView.addToViewMap(new DimeView.viewMapEntry('metabarMetaContainer', true, false, true));
-DimeView.addToViewMap(new DimeView.viewMapEntry('backToGroupButton', false, false, true));
-DimeView.addToViewMap(new DimeView.viewMapEntry('currentPersonOverview', false, false, true));
-DimeView.addToViewMap(new DimeView.viewMapEntry('currentPersonLabel', false, false, true));
-DimeView.addToViewMap(new DimeView.viewMapEntry('personProfileAttributeNavigation', false, false, true));
-DimeView.addToViewMap(new DimeView.viewMapEntry('personProfileNavigation', false, false, true));
-DimeView.addToViewMap(new DimeView.viewMapEntry('personLivepostNavigation', false, false, true));
-DimeView.addToViewMap(new DimeView.viewMapEntry('personDataboxNavigation', false, false, true));
-DimeView.addToViewMap(new DimeView.viewMapEntry('personResourceNavigation', false, false, true));
-DimeView.addToViewMap(new DimeView.viewMapEntry('settingsNavigationContainer', false, true, false));
-//the following are deactivated by default and only shown when required
-DimeView.addToViewMap(new DimeView.viewMapEntry('dropzoneNavigation', false, false, false));
-DimeView.addToViewMap(new DimeView.viewMapEntry('globalItemNavigation', false, false, false));
 
+DimeView.viewManager = new DimeViewManager();
 
 //---------------------------------------------
 //#############################################
@@ -2116,9 +1949,9 @@ Dime.initProcessor.registerFunction(function(callback){
     var message = Dime.psHelper.getURLparam("msg");
     
     //update view
-    if(viewType==DimeView.SETTINGS_VIEW){
+    if(viewType===DimeView.SETTINGS_VIEW){
         DimeView.updateView(groupType, DimeView.SETTINGS_VIEW, true);
-    }else if(viewType==DimeView.PERSON_VIEW){
+    }else if(viewType===DimeView.PERSON_VIEW){
         DimeView.updateView(groupType, DimeView.PERSON_VIEW, true);
     }else{
         //default
@@ -2192,59 +2025,7 @@ Dime.initProcessor.registerFunction(function(callback){
 //#############################################
 //---------------------------------------------
 Dime.Navigation.updateView = function(notifications){
-    var refreshContainer = false;
-    var refreshSituations = false;
-    var refreshPlaces = false;
-    var refreshServices = false;
-    var refreshAccounts = false;
-    var refreshUserSettings=false;
-    
-    for (var i=0;i<notifications.length;i++){
-        if (notifications[i].element){
-            var notificationType=notifications[i].element.type;
-            if ((notificationType===DimeView.groupType) 
-                    || (notificationType===DimeView.itemType)){
-                    refreshContainer=true;
-            }
-            
-            //no else here, since the following might be called also in the case notificationType===DimeView.groupType
-            if (notificationType===Dime.psMap.TYPE.SITUATION){
-                refreshSituations=true;
-            }else if (notificationType===Dime.psMap.TYPE.PLACE){
-                refreshPlaces=true;                
-            }else if (notificationType === Dime.psMap.TYPE.SERVICEADAPTER) {
-                refreshServices = true;
-            } else if (notificationType === Dime.psMap.TYPE.ACCOUNT) {
-                refreshAccounts = true;
-            }else if (notificationType==='user'){
-                refreshUserSettings=true;
-            }
-
-        }
-    }
-    if (refreshSituations){
-        Dime.Navigation.updateSituations();
-    }
-    if (refreshPlaces){
-        Dime.Navigation.updateCurrentPlace();
-    }
-
-
-    if (DimeView.currentView===DimeView.GROUP_CONTAINER_VIEW){
-        if (refreshContainer){
-            DimeView.search();
-        }
-    }else if (DimeView.currentView===DimeView.SETTINGS_VIEW){
-        if(refreshUserSettings){
-            Dime.Settings.updateSettings();
-        }
-        if (refreshServices) {
-            Dime.Settings.updateServices();
-        }
-        if (refreshAccounts) {
-            Dime.Settings.updateAccounts();
-        }
-    }
+    DimeView.viewManager.updateViewFromNotifications(notifications);
 };
 
 Dime.Navigation.createMenuLiButton=function(id, caption, containerGroupType){
