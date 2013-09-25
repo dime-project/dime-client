@@ -80,6 +80,15 @@ DimeViewManager.prototype = {
     updateView: function(groupType, viewType, avoidPushingHistory){
         
     },
+            
+    updateViewExplicit: function(groupType, viewType, guid, detailItemType, detailItemUserId, message){
+        this.groupType = groupType;
+        this.viewType = viewType;
+        this.currentGuid = guid;
+        this.detailItemType = detailItemType;
+        this.detailItemUserId = detailItemUserId;
+        this.message = message;
+    },
     
     updateViewFromNotifications: function(notifications){
 
@@ -205,7 +214,7 @@ DimeView = {
         if(isGroupItem){
             jElement.clickExt(DimeView, DimeView.showGroupMembers, entry);
         }else if (entry.type===Dime.psMap.TYPE.PERSON){
-            jElement.clickExt(DimeView, DimeView.viewManager.updateViewForPerson, entry);
+            jElement.clickExt(DimeView.viewManager, DimeView.viewManager.updateViewForPerson, entry);
         }else if(showEditOnClick){
             jElement.clickExt(DimeView, DimeView.editItem, entry);
         }
@@ -1240,7 +1249,7 @@ DimeView = {
 
         DimeView.cleanUpView();
 
-        if (DimeView.groupType===Dime.psMap.TYPE.PLACE ){
+        if (DimeView.viewManager.getCurrentGroupType()===Dime.psMap.TYPE.PLACE ){
             var continueSearch = true;
             Dime.psHelper.canRetrievePlaces(function(connected){
                 if(!connected){
@@ -1261,13 +1270,13 @@ DimeView = {
             }
         }
         
-        if (DimeView.groupType
-            && (DimeView.groupType!==Dime.psMap.TYPE.LIVESTREAM) //HACK avoid call for unsupported livestream
+        if (DimeView.viewManager.getCurrentGroupType()
+            && (DimeView.viewManager.getCurrentGroupType()!==Dime.psMap.TYPE.LIVESTREAM) //HACK avoid call for unsupported livestream
         ){
-            DimeView.searchCallForType(DimeView.groupType);
+            DimeView.searchCallForType(DimeView.viewManager.getCurrentGroupType());
             
             //also search on global search if groupType==GROUP
-            if (DimeView.groupType===Dime.psMap.TYPE.GROUP && searchText.value && (searchText.value.length>0)){
+            if (DimeView.viewManager.getCurrentGroupType()===Dime.psMap.TYPE.GROUP && searchText.value && (searchText.value.length>0)){
 
                 DimeView.initContainer($('#globalItemNavigation'), "di.me Users in the di.me User Directory");
                 
@@ -1276,13 +1285,13 @@ DimeView = {
             }else{
                 $('#globalItemNavigation').addClass("hidden");
             }
-        }else if(DimeView.groupType===Dime.psMap.TYPE.LIVESTREAM){ //HACK avoid call for unsupported livestream
+        }else if(DimeView.viewManager.getCurrentGroupType()===Dime.psMap.TYPE.LIVESTREAM){ //HACK avoid call for unsupported livestream
             $("#groupNavigation").addClass("hidden");
         }
 
 
-        if (DimeView.itemType){ 
-            DimeView.searchCallForType(DimeView.itemType);
+        if (DimeView.viewManager.getCurrentItemType()){ 
+            DimeView.searchCallForType(DimeView.viewManager.getCurrentItemType());
         }
         
        
@@ -1435,11 +1444,11 @@ DimeView = {
                             (new Dime.Dialog.Toast("Geolocation services are not supported by your browser.")).show();
                         };
                         
-                        DimeView.viewManager.updateView(Dime.psMap.TYPE.PLACE, DimeView.GROUP_CONTAINER_VIEW, true);
+                        DimeView.viewManager.updateView.call(DimeView.viewManager, Dime.psMap.TYPE.PLACE, DimeViewManager.GROUP_CONTAINER_VIEW, true);
                     });
         }
         
-        if(viewType===DimeView.PERSON_VIEW){
+        if(viewType===DimeViewManager.PERSON_VIEW){
             addRmvBtn
                 .empty()
                 .text("Send Livepost ...")
@@ -1948,26 +1957,8 @@ Dime.initProcessor.registerFunction(function(callback){
     var userId = Dime.psHelper.getURLparam("userId");
     var message = Dime.psHelper.getURLparam("msg");
     
-    //update view
-    if(viewType===DimeView.SETTINGS_VIEW){
-        DimeView.updateView(groupType, DimeView.SETTINGS_VIEW, true);
-    }else if(viewType===DimeView.PERSON_VIEW){
-        DimeView.updateView(groupType, DimeView.PERSON_VIEW, true);
-    }else{
-        //default
-        DimeView.updateView(groupType, DimeView.GROUP_CONTAINER_VIEW, true);
-    }
+    DimeView.viewManager.updateViewExplicit.call(DimeView.viewManager, groupType, viewType, guid, dItemType, userId, message);
     
-    if (guid && guid.length>0 && userId && userId.length>0 ){
-        var showDialog = function (response){
-            if (response){
-                DimeView.editItem(null, null, response, message);
-            }
-        };
-        Dime.REST.getItem(guid, dItemType, showDialog, userId, DimeView);
-
-    }
-
     callback();
 });
 
@@ -2025,7 +2016,7 @@ Dime.initProcessor.registerFunction(function(callback){
 //#############################################
 //---------------------------------------------
 Dime.Navigation.updateView = function(notifications){
-    DimeView.viewManager.updateViewFromNotifications(notifications);
+    DimeView.viewManager.updateViewFromNotifications.call(DimeView.viewManager, notifications);
 };
 
 Dime.Navigation.createMenuLiButton=function(id, caption, containerGroupType){
@@ -2033,7 +2024,7 @@ Dime.Navigation.createMenuLiButton=function(id, caption, containerGroupType){
     return $('<li/>').attr('id',id).append($('<a/>')
         .click(function(){
             //update view
-            DimeView.updateView.call(DimeView, containerGroupType, DimeView.GROUP_CONTAINER_VIEW);
+            DimeView.viewManager.updateView.call(DimeView.viewManager, containerGroupType, DimeViewManager.GROUP_CONTAINER_VIEW);
         })
         .text(caption));
 };
@@ -2042,7 +2033,7 @@ Dime.Navigation.createMenuLiButtonSettings=function(){
     return $('<li/>').attr('id','navButtonSettings').append($('<a/>')
         .click(function(){
             //update view
-            DimeView.updateView.call(DimeView, "", DimeView.SETTINGS_VIEW);
+            DimeView.viewManager.updateView.call(DimeView.viewManager, "", DimeViewManager.SETTINGS_VIEW);
         })
         .text('Settings'));
 
@@ -2053,7 +2044,7 @@ Dime.Navigation.createNotificationIcon=function(){
     return $('<div/>').addClass('notificationIcon').attr('id','notificationIcon')
         .click(function(){
             //update view
-            DimeView.updateView.call(DimeView, Dime.psMap.TYPE.USERNOTIFICATION, DimeView.GROUP_CONTAINER_VIEW);
+            DimeView.viewManager.updateView.call(DimeView.viewManager, Dime.psMap.TYPE.USERNOTIFICATION, DimeViewManager.GROUP_CONTAINER_VIEW);
         })
         .append($('<div/>').attr('id','notificationCounter').text("0"));
 };
@@ -2071,6 +2062,6 @@ Dime.Navigation.createNotificationIcon=function(){
      var viewState = event.state;
      console.log(viewState);
      if (viewState){
-         DimeView.updateView(viewState.groupType, viewState.viewType, true);
+         DimeView.viewManager.updateView.call(DimeView.viewManager, viewState.groupType, viewState.viewType, true);
      }
 };
