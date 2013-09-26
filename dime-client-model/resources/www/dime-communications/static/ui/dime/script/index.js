@@ -254,6 +254,9 @@ DimeViewManager.prototype = {
             var showDialog = function (response){
                 if (response){
                     dimeViewRef.editItem.call(dimeViewRef, null, null, response, newStatus.message);
+                    //reset detail item in status to avoid showing the dialog over again
+                    this.status.detailItemGuid=null;
+                    this.status.detailItemType=null;
                 }
             };
             Dime.REST.getItem(newStatus.detailItemGuid, newStatus.detailItemType, showDialog, newStatus.personGuid, this);
