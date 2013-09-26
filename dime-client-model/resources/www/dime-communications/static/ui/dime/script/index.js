@@ -2719,21 +2719,25 @@ Dime.Navigation = {
                 .attr('src','img/navigation/white/logOut.png')
                 .attr('onclick','self.location.href=\'/dime-communications/j_spring_security_logout\'')
                 );
-            var situationLink = $('<a/>') //TODO ###
+            var situationLink = $('<div/>') 
             .attr('id','currentSituation')
-            .attr('href','index.html?type='+ Dime.psMap.TYPE.SITUATION)
             .append($('<div/>').addClass('clear'))
             .append($('<div/>').addClass('situation').attr('id','currentSituationText')
                 .textOnly('Situation: unknown')
                 .append($('<div/>').addClass('situationIcon'))
-                );
-            var placeLink = $('<a/>')
+                )
+            .click(function(){
+                DimeView.viewManager.updateView.call(DimeView.viewManager, Dime.psMap.TYPE.SITUATION, DimeViewStatus.GROUP_CONTAINER_VIEW, false);
+            });
+            var placeLink = $('<div/>')
             .attr('id','currentPlace')
-            .attr('href','index.html?type='+ Dime.psMap.TYPE.PLACE)//TODO ###
             .append(
                 $('<div/>').addClass('places')
                 .append($('<div/>').addClass('placesIcon'))
-                );
+                )
+            .click(function(){
+                DimeView.viewManager.updateView.call(DimeView.viewManager, Dime.psMap.TYPE.PLACE, DimeViewStatus.GROUP_CONTAINER_VIEW, false);
+            });
 
             //TODO fix spoiled naming of classes etc.
             return $('<li/>').attr('id','navCornerMenu')
