@@ -768,15 +768,16 @@ DimeView = {
         jChildItem.append(DimeView.createMark(entry, "", false));
         
         //innerChild - name
+        var entryName;
         if (entry.type===Dime.psMap.TYPE.LIVEPOST){
-            var entryName = DimeView.getShortNameWithLength(entry.name, 125);
+            entryName = DimeView.getShortNameWithLength(entry.name, 125);
         }else{
-            var entryName = DimeView.getShortNameWithLength(entry.name, 30);
+            entryName = DimeView.getShortNameWithLength(entry.name, 30);
         }
         
-        if (entry.type!==Dime.psMap.TYPE.USERNOTIFICATION){
-            jChildItem.append('<h4>'+ entryName + '</h4>');
-        }
+        
+        jChildItem.append('<h4>'+ entryName + '</h4>');
+        
           
         //innerChild - type specific fields
         if (entry.type===Dime.psMap.TYPE.LIVEPOST && entry.text){
@@ -1848,6 +1849,12 @@ DimeView = {
         DimeView.clearSelectedItems();
         DimeView.updateActionView(1);
         
+        var handleUpdatedFunction = function(updatedItem){
+            Dime.REST.updateItem(updatedItem,function(){
+                (new Dime.Dialog.Toast("Trust level for "+ personEntry.name + " has been updated.")).show();
+            }, DimeView);
+        };
+        
         //adding person information
         $('#currentPersonOverview')
             .empty()
@@ -1873,11 +1880,8 @@ DimeView = {
                             .append(JSTool.millisToFormatString(personEntry.lastModified))
                     )
                     .append(
-                        $('<div></div>')
+                        Dime.Dialog.getPrivTrustElement(personEntry, false, handleUpdatedFunction)
                             .addClass("personInformationTrust")
-                            .append("Trust level: ")
-                            .append(Dime.privacyTrust.getClassAndCaptionForPrivacyTrust(personEntry["nao:trustLevel"], false).caption)
-                            .addClass(Dime.privacyTrust.getClassAndCaptionForPrivacyTrust(personEntry["nao:trustLevel"], false).classString)
                     )
             )
             .append(
