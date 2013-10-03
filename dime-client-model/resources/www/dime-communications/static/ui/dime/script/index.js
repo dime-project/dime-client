@@ -741,6 +741,38 @@ DimeView = {
         DimeView.setActionAttributeForElements(entry, jChildItem, false, entry.type);
         return jChildItem;
     },
+
+
+    createSituationItemJElement: function(entry){
+
+        var jChildItem = $("<div/>");
+
+        //classes
+        var itemClass=entry.type+"Item childItem";
+
+        if (entry.active){
+            itemClass += " childItemSituationActive";
+        }
+
+        jChildItem.addClass(itemClass);
+
+
+        jChildItem.append('<img src="'+ Dime.psHelper.guessLinkURL(entry.imageUrl)+ '" />');
+        
+        //innerChild - mark
+        jChildItem.append(DimeView.createMark(entry, "", false));
+
+        //innerChild - name
+        var entryName = DimeView.getShortNameWithLength(entry.name, 30);
+        
+
+        jChildItem.append('<h4>'+ entryName + '</h4>');
+
+
+        //set action attributes
+        DimeView.setActionAttributeForElements(entry, jChildItem, false, true);
+        return jChildItem;
+    },
     
     createItemJElement: function(entry){
         //handle profileattributes separately
@@ -750,10 +782,12 @@ DimeView = {
             return DimeView.createUserNotification(entry);
         }else if (entry.type===Dime.psMap.TYPE.PLACE){
             return DimeView.createLocationItemJElement(entry);
+        }else if (entry.type===Dime.psMap.TYPE.SITUATION){
+            return DimeView.createSituationItemJElement(entry);
         }
         
-        var showEditOnClick = (entry.type===Dime.psMap.TYPE.SITUATION)
-                    || (entry.type===Dime.psMap.TYPE.PLACE)
+        var showEditOnClick =
+                    (entry.type===Dime.psMap.TYPE.PLACE)
                     || (entry.type===Dime.psMap.TYPE.RESOURCE)
                     || (entry.type===Dime.psMap.TYPE.LIVEPOST);
         
@@ -763,11 +797,6 @@ DimeView = {
         //classes
         var itemClass=entry.type+"Item childItem";
         
-        if (entry.type===Dime.psMap.TYPE.SITUATION){
-            if (entry.active){
-                itemClass += " childItemSituationActive";
-            }
-        }        
         jChildItem.addClass(itemClass);
         
         
