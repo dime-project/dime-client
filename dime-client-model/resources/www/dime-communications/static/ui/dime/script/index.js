@@ -754,20 +754,30 @@ DimeView = {
             itemClass += " childItemSituationActive";
         }
 
-        jChildItem.addClass(itemClass);
+        var myScore = (entry['nao:score'] ? entry['nao:score'] : 0.0);
 
-
-        jChildItem.append('<img src="'+ Dime.psHelper.guessLinkURL(entry.imageUrl)+ '" />');
-        
-        //innerChild - mark
-        jChildItem.append(DimeView.createMark(entry, "", false));
-
-        //innerChild - name
-        var entryName = DimeView.getShortNameWithLength(entry.name, 30);
-        
-
-        jChildItem.append('<h4>'+ entryName + '</h4>');
-
+        jChildItem.addClass(itemClass)
+            .append(
+                DimeView.createMark(entry, "", false)
+            )
+            .append(
+                $('<div/>').append($('<img/>').attr('src',Dime.psHelper.guessLinkURL(entry.imageUrl)))
+            )
+            .append(
+                $('<div/>').append(
+                    $('<div/>').text(DimeView.getShortNameWithLength(entry.name, 30))
+                )
+                .append(
+                    $('<div/>').addClass('situationScore').text('Score: '+(myScore*100)+'%')
+                )
+            )
+            .append(
+                $('<div/>').addClass('situationSwitch').append(
+                    $('<div/>').text('active')
+                ).append(
+                    $('<div/>').addClass(entry.active?'situationSwitchActive':'situationSwitchInactive')
+                )
+            );
 
         //set action attributes
         DimeView.setActionAttributeForElements(entry, jChildItem, false, true);

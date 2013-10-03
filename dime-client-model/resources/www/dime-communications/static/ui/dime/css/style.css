@@ -2398,6 +2398,8 @@ input[type="text"].DimeDetailDialogPAValueListItemValue{
 .childItem > .mark {
 
     top: -56px;
+    
+
     left: 84px;
     z-index: 300;
 }
@@ -2439,20 +2441,57 @@ input[type="text"].DimeDetailDialogPAValueListItemValue{
     height: 50px;
 }
 
-.situationItem > img {
-    height: 25px;
+
+.situationItem > .mark{
+    float: right;
+        
+    left: 7px;
+    top: -7px;
+}
+
+.situationItem > div{
+    float:left;
+       
+}
+
+.situationItem > div > img{
+   height: 25px;
     width: 25px;
     padding: 12.5px;
     background: #5A9DD5;
     border-radius: 4px 0 0 4px;
+    float: left;   
 }
 
-.situationItem > .mark {
-    left: 205px;
+.situationItem >.situationSwitch{
+    float:right;
+    margin-top: 13px;
+    margin-right: -17px;
+    width: 40px;
+    height: 30px;
+    
+    z-index: 250;
+    
 }
 
-.situationItem > h4 {
-    top: -60px;
+.situationSwitchInactive{
+    background-color: #FFFFFF;
+    width: 80%;
+    height: 10px;
+    margin-left: 4px;
+    border: 1px solid black;
+    border-radius: 5px;
+    
+}
+
+
+.situationSwitchActive{
+    background-color: #FFFF00;
+    width: 80%;
+    height: 10px;
+    margin-left: 4px;
+    border: 1px solid black; 
+    border-radius: 5px;   
 }
 
 /*Dropzone Element*/
