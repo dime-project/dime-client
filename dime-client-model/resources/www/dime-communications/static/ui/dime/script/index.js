@@ -764,8 +764,8 @@ DimeView = {
                 $('<div/>').append($('<img/>').attr('src',Dime.psHelper.guessLinkURL(entry.imageUrl)))
             )
             .append(
-                $('<div/>').append(
-                    $('<div/>').text(DimeView.getShortNameWithLength(entry.name, 30))
+                $('<div/>').addClass('situationTextBlock').append(
+                    $('<div/>').text(DimeView.getShortNameWithLength(entry.name, 12))
                 )
                 .append(
                     $('<div/>').addClass('situationScore').text('Score: '+(myScore*100)+'%')
@@ -775,7 +775,23 @@ DimeView = {
                 $('<div/>').addClass('situationSwitch').append(
                     $('<div/>').text('active')
                 ).append(
-                    $('<div/>').addClass(entry.active?'situationSwitchActive':'situationSwitchInactive')
+                    $('<div/>').addClass('situationSwitchSwitch').addClass(entry.active?'situationSwitchActive':'situationSwitchInactive')
+                    .click(function(event){
+                        if (event){
+                            event.stopPropagation();
+                        }
+
+                        var handleResponse=function(response){
+                            if (response && response.length>0){
+                                (new Dime.Dialog.Toast("Situation "
+                                    + (response[0].active?"activated":"deactivated")
+                                    +" successfully."
+                                )).show();
+                            }
+                        };                        
+                        entry.active = !entry.active;
+                        Dime.REST.updateItem(entry,handleResponse , DimeView);
+                    })
                 )
             );
 
@@ -2981,7 +2997,7 @@ Dime.Navigation = {
             
             var updateSituationElement=function(resultSituation){
                 $('#currentSituationText')
-                        .textOnly(DimeView.getShortNameWithLength(resultSituation, 31))
+                        .textOnly(DimeView.getShortNameWithLength(resultSituation, 26))
                         .attr("title", resultSituation);
             };
             
@@ -3016,7 +3032,7 @@ Dime.Navigation = {
                 var placeElement = document.getElementById('currentPlace');
                 placeElement.innerHTML =  '<div class="places">'
                 + '<div class="placesIcon" id="currentPlaceGuid" data-guid="' + placeId + '"></div>'
-                + DimeView.getShortNameWithLength(placeName, 34)+'</div>';
+                + DimeView.getShortNameWithLength(placeName, 26)+'</div>';
                 $("#currentPlace").attr("title", placeName);
             };
             

@@ -2463,6 +2463,16 @@ input[type="text"].DimeDetailDialogPAValueListItemValue{
     float: left;   
 }
 
+.situationTextBlock{
+    margin-left: 10px;
+    margin-top: 6px;
+}
+
+.situationScore{
+    color: #C0C0C0;
+    
+}
+
 .situationItem >.situationSwitch{
     float:right;
     margin-top: 13px;
@@ -2474,24 +2484,27 @@ input[type="text"].DimeDetailDialogPAValueListItemValue{
     
 }
 
-.situationSwitchInactive{
-    background-color: #FFFFFF;
+.situationSwitch > .situationSwitchSwitch{
     width: 80%;
     height: 10px;
-    margin-left: 4px;
+    margin-left: 2px;
     border: 1px solid black;
-    border-radius: 5px;
+    border-radius: 5px;   
+}
+
+.situationSwitch > .situationSwitchSwitch:hover{
+    border: 1px solid #FFFF00;   
+}
+.situationSwitchInactive{
+    background-color: #FFFFFF;
+ 
     
 }
 
 
 .situationSwitchActive{
     background-color: #FFFF00;
-    width: 80%;
-    height: 10px;
-    margin-left: 4px;
-    border: 1px solid black; 
-    border-radius: 5px;   
+ 
 }
 
 /*Dropzone Element*/
