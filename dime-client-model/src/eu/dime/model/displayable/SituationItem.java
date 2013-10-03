@@ -26,9 +26,6 @@ public final class SituationItem extends DisplayableItem {
     private String creator;
     private boolean active;
     private double score;
-//    private double confidence;
-//    private String place_reference;
-//    private String event_reference;
 
     public SituationItem() {
         wipeItemForDisplayItem();
@@ -44,9 +41,6 @@ public final class SituationItem extends DisplayableItem {
         setCreator("");
         setActive(false);
         setScore(0.0d);
-//        setConfidence(-1);
-//        setPlaceReference("");
-//        setEventReference("");
     }
 
     @Override
@@ -54,9 +48,6 @@ public final class SituationItem extends DisplayableItem {
         SituationItem result = new SituationItem();
         result.setCreator(this.getCreator());
         result.setActive(this.isActive());
-//        result.setConfidence(this.getConfidence());
-//        result.setPlaceReference(this.getPlaceReference());
-//        result.setEventReference(this.getEventReference());
         return result;
     }
 
@@ -65,9 +56,6 @@ public final class SituationItem extends DisplayableItem {
         this.setCreator(getStringValueOfJSONO(jsonObject, SituationItemFieldMap.get(SITUATION_ITEM_FIELDS.CREATOR)));
         this.setActive(getBooleanValueOfJSONO(jsonObject, SituationItemFieldMap.get(SITUATION_ITEM_FIELDS.ACTIVE)));
         this.setScore(getDoubleValueOfJSONO(jsonObject, SituationItemFieldMap.get(SITUATION_ITEM_FIELDS.SCORE)));
-//        this.setConfidence(getDoubleValueOfJSONO(jsonObject, SituationItemFieldMap.get(SITUATION_ITEM_FIELDS.CONFIDENCE)));
-//        this.setPlaceReference(getStringValueOfJSONO(jsonObject, SituationItemFieldMap.get(SITUATION_ITEM_FIELDS.PLACE_REFERENCE)));
-//        this.setEventReference(getStringValueOfJSONO(jsonObject, SituationItemFieldMap.get(SITUATION_ITEM_FIELDS.EVENT_REFERENCE)));
     }
 
     @Override
@@ -75,10 +63,6 @@ public final class SituationItem extends DisplayableItem {
         newJSONObject.addChild(getJSONValue(getCreator(), SituationItemFieldMap.get(SITUATION_ITEM_FIELDS.CREATOR)));
         newJSONObject.addChild(getJSONValue(isActive(), SituationItemFieldMap.get(SITUATION_ITEM_FIELDS.ACTIVE)));
         newJSONObject.addChild(getJSONValue(getScore(), SituationItemFieldMap.get(SITUATION_ITEM_FIELDS.SCORE)));
-//        newJSONObject.addChild(getJSONValue(getConfidence(), SituationItemFieldMap.get(SITUATION_ITEM_FIELDS.CONFIDENCE)));
-//        newJSONObject.addChild(getJSONValue(getPlaceReference(), SituationItemFieldMap.get(SITUATION_ITEM_FIELDS.PLACE_REFERENCE)));
-//        newJSONObject.addChild(getJSONValue(getEventReference(), SituationItemFieldMap.get(SITUATION_ITEM_FIELDS.EVENT_REFERENCE)));
-
         return newJSONObject;
     }
 
@@ -109,30 +93,4 @@ public final class SituationItem extends DisplayableItem {
 		this.score = score;
 	}
 
-//    public double getConfidence() {
-//        return confidence;
-//    }
-//
-//    public void setConfidence(double confidence) {
-//        changed = true;
-//        this.confidence = confidence;
-//    }
-//
-//    public String getPlaceReference() {
-//        return place_reference;
-//    }
-//
-//    public void setPlaceReference(String place_reference) {
-//        this.changed = true;
-//        this.place_reference = place_reference;
-//    }
-//
-//    public String getEventReference() {
-//        return event_reference;
-//    }
-//
-//    public void setEventReference(String event_reference) {
-//        this.changed = true;
-//        this.event_reference = event_reference;
-//    }
 }
