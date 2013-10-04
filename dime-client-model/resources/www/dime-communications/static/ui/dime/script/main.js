@@ -1677,8 +1677,8 @@ Dime.psMap.FixPlaceEntry=function(name, lat, lon){
 Dime.psMap.KNOWN_PLACES={
     
     Barcelona: new Dime.psMap.FixPlaceEntry('Barcelona',41.38994600,2.17283200),
-    Karlsruhe: new Dime.psMap.FixPlaceEntry('Karlsruhe', 49.01332900, 8.37942100),
     Galway: new Dime.psMap.FixPlaceEntry('Galway', 53.27127000, -9.05669000),
+    Karlsruhe: new Dime.psMap.FixPlaceEntry('Karlsruhe', 49.01332900, 8.37942100),
     Madrid: new Dime.psMap.FixPlaceEntry('Madrid', 40.42865600, -3.70594000),
     Milano: new Dime.psMap.FixPlaceEntry('Milano', 45.47096600, 9.18691600),
     Segovia: new Dime.psMap.FixPlaceEntry('Segovia', 40.94982500, -4.11203400),
@@ -2698,7 +2698,7 @@ Dime.psHelper = {
         //this.removeDialog();
     },
      
-    postCurrentContext: function(latitude, longitude, accuracy){
+    postCurrentContext: function(latitude, longitude, accuracy, callback, handlerRef){
         
         var path = Dime.ps_configuration.getUserUrlString()+"/context/@me";
         
@@ -2739,21 +2739,24 @@ Dime.psHelper = {
                     }
         };
         
-        var callback = function(response){
+        var handleResponse = function(response){
             console.log(response);
             
             //check response for errors
             if(response.response.meta.status.toLowerCase()!=="ok"){
                 var error = response.response.meta.msg;
                 (new Dime.Dialog.Toast('An Error occured: ' + error)).showLong();
+                callback.call(handlerRef,false);
                 return;
             }
-            
+            Dime.REST.clearCacheForType(Dime.psMap.TYPE.PLACE,'@me');
             (new Dime.Dialog.Toast("Getting current geolocation was successfully!")).showLong();
+            callback.call(handlerRef,true);
+            
         };
         
         var request = Dime.psHelper.prepareRequest(entry);
-        $.postJSON(path, request, callback);
+        $.postJSON(path, request, handleResponse);
     },
     
     /*
@@ -5857,7 +5860,7 @@ Dime.Dialog.Alert.prototype={
     }
 };
 
-Dime.Dialog.KnownPlacesDropdown=function(handlerRef){
+Dime.Dialog.KnownPlacesDropdown=function(callback, handlerRef){
     
     
     var dropDownElements=[];    
@@ -5865,7 +5868,7 @@ Dime.Dialog.KnownPlacesDropdown=function(handlerRef){
     jQuery.each(JSTool.getDefinedMembers(Dime.psMap.KNOWN_PLACES), function(){      
         var fixPlaceRef = this;
         var updatePlace=function(){            
-            Dime.psHelper.postCurrentContext(fixPlaceRef.lat, fixPlaceRef.lon, fixPlaceRef.acc);
+            Dime.psHelper.postCurrentContext(fixPlaceRef.lat, fixPlaceRef.lon, fixPlaceRef.acc, callback, handlerRef);
         };
         
         

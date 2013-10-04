@@ -916,15 +916,17 @@ DimeView = {
                 DimeView.viewManager.showAlertStatusNavigation.call(DimeView.viewManager, 
                         'To enable places nearby, you should activate YellowmapPlaceService first:'
                         + '<br>1. Go to Settings and add the "YellowmapPlaceService"'
-                        + '<br>2. Click “Get location” (in the bar on the right), follow the instructions in the browser');                
+                        + '<br>2. Click "Browser Position" (in the bar on the right), follow the instructions in the browser');                
             }else{                
-                var knownPlacesDropdown = new Dime.Dialog.KnownPlacesDropdown(DimeView);
+                var updateView=function(){
+                    DimeView.viewManager.updateView(Dime.psMap.TYPE.PLACE, DimeViewStatus.GROUP_CONTAINER_VIEW, true);
+                };
                 var alertElement = $('<div/>').append(
                         $('$<div/>').text('No places found, or your browser was not able to detect your position.')
                     ).append(
-                        $('$<div/>').text('You can choose a place manually by selecting a predefined one from the list below:')
+                        $('$<div/>').text('You can choose your position manually by a predefined from the list below:')
                     ).append(
-                        knownPlacesDropdown
+                        new Dime.Dialog.KnownPlacesDropdown(updateView, DimeView)
                     );
                 DimeView.viewManager.showAlertStatusNavigation.call(DimeView.viewManager, alertElement);
             }
@@ -939,8 +941,21 @@ DimeView = {
                 DimeView.handleEmptyPlaceResult();
             }
             return;
+        }//else
+        
+        if (type===Dime.psMap.TYPE.PLACE){
+                            
+                var updateView=function(){
+                    DimeView.viewManager.updateView(Dime.psMap.TYPE.PLACE, DimeViewStatus.GROUP_CONTAINER_VIEW, true);
+                };
+                var alertElement = $('<div/>').append(
+                        $('$<span/>').text('You can override your current position manually:')
+                    ).append(
+                        new Dime.Dialog.KnownPlacesDropdown(updateView, DimeView)
+                    );
+                DimeView.viewManager.showAlertStatusNavigation.call(DimeView.viewManager, alertElement);
         }
-
+        
 
         var isInFilter = function(entry){
             return JSTool.isSubString(DimeView.searchFilter, entry.name);
@@ -1853,7 +1868,7 @@ DimeView = {
         if(groupType===Dime.psMap.TYPE.PLACE){
             addRmvBtn
                     .empty()
-                    .text("Get location ...")
+                    .text("Browser Position")
                     .removeClass("disabled")
                     .click(function(){
                         if (navigator.geolocation) {
