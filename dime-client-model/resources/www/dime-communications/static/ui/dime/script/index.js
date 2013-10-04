@@ -920,9 +920,9 @@ DimeView = {
             }else{                
                 var knownPlacesDropdown = new Dime.Dialog.KnownPlacesDropdown(DimeView);
                 var alertElement = $('<div/>').append(
-                        $('$<div/>').text('No places have been found nearby your current position, or your browser was not able to detect you position.')
+                        $('$<div/>').text('No places found, or your browser was not able to detect your position.')
                     ).append(
-                        $('$<div/>').text('You can select a place manually by selecting a predefined one from the list below:')
+                        $('$<div/>').text('You can choose a place manually by selecting a predefined one from the list below:')
                     ).append(
                         knownPlacesDropdown
                     );

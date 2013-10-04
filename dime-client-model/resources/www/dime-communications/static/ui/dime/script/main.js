@@ -528,7 +528,7 @@ BSTool={
         }
         
         var result = 
-        $('<div></div>').addClass("btn-group")
+        $('<div/>').addClass("btn-group")
         .append(button)
         .append(ul);
         if (buttonGroupClass){
@@ -5871,8 +5871,9 @@ Dime.Dialog.KnownPlacesDropdown=function(handlerRef){
         
         dropDownElements.push(new BSTool.DropDownEntry(handlerRef, this.name, updatePlace));
     });
-    return BSTool.createDropdown('Select Location',dropDownElements, "btn");
-}
+    return BSTool.createDropdown('Select Location',dropDownElements, "btn")
+            .css('margin-top','7px').css('padding','6px');
+};
 
 
 setInterval(Dime.Tool.keep_alive,1000*60*5);  //repeat every 5 minutes
