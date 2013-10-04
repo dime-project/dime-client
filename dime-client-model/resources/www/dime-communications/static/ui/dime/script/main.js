@@ -1666,7 +1666,27 @@ DEMO_DATA = {
     "/dime-communications/static/ui/dime/img_demo/Personen29.jpg"]
 };
         
-
+        
+Dime.psMap.FixPlaceEntry=function(name, lat, lon){
+    this.name = name;
+    this.lat = lat;
+    this.lon = lon;
+    this.acc = 20;
+};
+        
+Dime.psMap.KNOWN_PLACES={
+    
+    Barcelona: new Dime.psMap.FixPlaceEntry('Barcelona',41.38994600,2.17283200),
+    Karlsruhe: new Dime.psMap.FixPlaceEntry('Karlsruhe', 49.01332900, 8.37942100),
+    Galway: new Dime.psMap.FixPlaceEntry('Galway', 53.27127000, -9.05669000),
+    Madrid: new Dime.psMap.FixPlaceEntry('Madrid', 40.42865600, -3.70594000),
+    Milano: new Dime.psMap.FixPlaceEntry('Milano', 45.47096600, 9.18691600),
+    Segovia: new Dime.psMap.FixPlaceEntry('Segovia', 40.94982500, -4.11203400),
+    Starnberg: new Dime.psMap.FixPlaceEntry('Starnberg', 48.00267200, 11.33906400),
+    Stuttgart: new Dime.psMap.FixPlaceEntry('Stuttgart', 48.78062800, 9.18211000),
+    Torino: new Dime.psMap.FixPlaceEntry('Torino', 45.07740000, 7.68556600),
+    Vercelli: new Dime.psMap.FixPlaceEntry('Vercelli', 45.32161600, 8.41886000)
+};
 
 
 
@@ -5836,6 +5856,23 @@ Dime.Dialog.Alert.prototype={
         $('body').append(this.dialog);
     }
 };
+
+Dime.Dialog.KnownPlacesDropdown=function(handlerRef){
+    
+    
+    var dropDownElements=[];    
+        
+    jQuery.each(JSTool.getDefinedMembers(Dime.psMap.KNOWN_PLACES), function(){      
+        var fixPlaceRef = this;
+        var updatePlace=function(){            
+            Dime.psHelper.postCurrentContext(fixPlaceRef.lat, fixPlaceRef.lon, fixPlaceRef.acc);
+        };
+        
+        
+        dropDownElements.push(new BSTool.DropDownEntry(handlerRef, this.name, updatePlace));
+    });
+    return BSTool.createDropdown('Select Location',dropDownElements, "btn");
+}
 
 
 setInterval(Dime.Tool.keep_alive,1000*60*5);  //repeat every 5 minutes

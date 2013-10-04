@@ -909,11 +909,35 @@ DimeView = {
                 .append($('<div/>').addClass('clear')));
 
     },
+            
+    handleEmptyPlaceResult: function(){
+        Dime.psHelper.canRetrievePlaces(function(connected){
+            if(!connected){
+                DimeView.viewManager.showAlertStatusNavigation.call(DimeView.viewManager, 
+                        'To enable places nearby, you should activate YellowmapPlaceService first:'
+                        + '<br>1. Go to Settings and add the "YellowmapPlaceService"'
+                        + '<br>2. Click “Get location” (in the bar on the right), follow the instructions in the browser');                
+            }else{                
+                var knownPlacesDropdown = new Dime.Dialog.KnownPlacesDropdown(DimeView);
+                var alertElement = $('<div/>').append(
+                        $('$<div/>').text('No places have been found nearby your current position, or your browser was not able to detect you position.')
+                    ).append(
+                        $('$<div/>').text('You can select a place manually by selecting a predefined one from the list below:')
+                    ).append(
+                        knownPlacesDropdown
+                    );
+                DimeView.viewManager.showAlertStatusNavigation.call(DimeView.viewManager, alertElement);
+            }
+        },this);
+    },
     
     handleSearchResultForContainer: function(type, entries, jContainerElement, isGroupContainer){
 
         if (!entries || entries.length===0){
             DimeView.viewManager.setViewVisible.call(DimeView.viewManager, jContainerElement.attr('id'), false);            
+            if (type===Dime.psMap.TYPE.PLACE){
+                DimeView.handleEmptyPlaceResult();
+            }
             return;
         }
 
@@ -968,7 +992,7 @@ DimeView = {
                     DimeView.addItemElement(jContainerElement, entries[i]);
                 }
             }
-        }
+        }        
     }, 
     
     handleSearchResult: function(entries, type){          
@@ -1702,21 +1726,7 @@ DimeView = {
 
         DimeView.cleanUpView();
 
-        if (DimeView.viewManager.getCurrentGroupType()===Dime.psMap.TYPE.PLACE ){
-            var continueSearch = true;
-            Dime.psHelper.canRetrievePlaces(function(connected){
-                if(!connected){
-                    DimeView.viewManager.showAlertStatusNavigation.call(DimeView.viewManager, 
-                            'To see places nearby to you, please'
-                            + '<br>1. Go to Settings and add the "YellowmapPlaceService"'
-                            + '<br>2. Click “Get location” (in the bar on the right), follow the instructions in the browser');
-                    continueSearch=false;
-                }
-            },this);
-            if (!continueSearch){
-                return;
-            }
-        }else if (DimeView.viewManager.getCurrentViewType()===DimeViewStatus.LIVEPOST_VIEW){
+        if (DimeView.viewManager.getCurrentViewType()===DimeViewStatus.LIVEPOST_VIEW){
             DimeView.LivePostView.search(searchText.value);
             return;
         }
