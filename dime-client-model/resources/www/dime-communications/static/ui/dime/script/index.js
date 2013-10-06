@@ -1979,12 +1979,27 @@ DimeView = {
                 .click(function(event){
                     //Dime.evaluation.createAndSendEvaluationItemForAction("action_sendLivepostFromPersonView");
                     var selectedPlaces = DimeView.getSelectedItemsForView();
+                    var restoreCurrentPlace=false;
                     var handleResponse= function(response){
                         DimeView.viewManager.updateView(Dime.psMap.TYPE.PLACE, DimeViewStatus.GROUP_CONTAINER_VIEW, true);
                         Dime.Navigation.updateCurrentPlace();
                     };
+                    var fullPlace = []
+                    
+                    var handlePlaceInformation=function(placeLocation){
+                        if (!placeLocation.connected){
+                            (new Dime.Dialog.Toast("Please, first get connected to the YellowMap service!")).show();
+                        }
+                        if (placeLocation.currPlace && placeLocation.currPlace.placeId && fullPlace[0].guid===placeLocation.currPlace.placeId){
+                            restoreCurrentPlace=true;
+                        }
+                        Dime.psHelper.postUpdateCurrentPlace(fullPlace[0], restoreCurrentPlace, handleResponse, this);
+                    };
+                    
+                    
                     var handleFullItems=function(fullItems){
-                        Dime.psHelper.postUpdateCurrentPlace(fullItems[0], false, handleResponse, this);
+                        fullPlace=fullItems;
+                        Dime.psHelper.getPositionAndPlaceInformation(handlePlaceInformation, this);
                     };
                     
                     if (!selectedPlaces || selectedPlaces.length!==1){
