@@ -993,8 +993,8 @@ DimeView = {
         };        
         
         var updatePlaceView=function(placeLocation){
-            console.log(placeLocation);
-             if(!placeLocation.connected){
+            
+            if(!placeLocation.connected){
                 //not even connected 
                 placeView.append($('<div/>')
                         .append('To enable places nearby, you should activate the') 
@@ -1373,7 +1373,7 @@ DimeView = {
 
         listItem.append(
                 $('<div class="listElementText"/>')
-                    .append($('<span class="listElementTextName"/>').text(DimeView.getShortNameWithLength(name, 50)))
+                    .append($('<span class="listElementTextName"/>').text(DimeView.getShortNameWithLength(name, 28)))
                     .append($('<span class="listElementTextValue"/>').text(value))
                 )
                 .append(listIconElement);
