@@ -1971,7 +1971,30 @@ DimeView = {
         
         //reset click handler
         addRmvBtn.empty().unbind("click");
-       
+        
+        if (groupType===Dime.psMap.TYPE.PLACE){
+            addRmvBtn
+                .empty()
+                .text("Current Place")
+                .click(function(event){
+                    //Dime.evaluation.createAndSendEvaluationItemForAction("action_sendLivepostFromPersonView");
+                    var selectedPlaces = DimeView.getSelectedItemsForView();
+                    var handleResponse= function(response){
+                        DimeView.viewManager.updateView(Dime.psMap.TYPE.PLACE, DimeViewStatus.GROUP_CONTAINER_VIEW, true);
+                        Dime.Navigation.updateCurrentPlace();
+                    };
+                    var handleFullItems=function(fullItems){
+                        Dime.psHelper.postUpdateCurrentPlace(fullItems[0], false, handleResponse, this);
+                    };
+                    
+                    if (!selectedPlaces || selectedPlaces.length!==1){
+                        (new Dime.Dialog.Toast("Please select a single place!")).show();
+                    }else{
+                        Dime.psHelper.getMixedItems(selectedPlaces, handleFullItems, this);
+                    }
+                });
+            
+        }
         
         if(viewType===DimeViewStatus.PERSON_VIEW){
             addRmvBtn
