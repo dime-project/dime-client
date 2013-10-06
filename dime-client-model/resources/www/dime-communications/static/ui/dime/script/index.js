@@ -913,6 +913,12 @@ DimeView = {
             
     getInnerPosition: function(placeLocation, addCoords){
         var result;
+        
+        var cutCoord=function(value){
+            var myStrVal = value+"";
+            return myStrVal.substr(0,8);
+        }
+        
         if (placeLocation.nextPlace && (placeLocation.nextPlace.distance!==undefined)){
             if (placeLocation.nextPlace.distance<25){
                 result = placeLocation.nextPlace.location.name;
@@ -922,7 +928,7 @@ DimeView = {
         }
         if (addCoords){
             result+=result?'<br/>':'';
-            result += placeLocation.currPos.latitude+', '+ placeLocation.currPos.longitude;
+            result += cutCoord(placeLocation.currPos.latitude)+', '+ cutCoord(placeLocation.currPos.longitude);
         }
         return result;  
     },
