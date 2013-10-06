@@ -973,8 +973,10 @@ DimeView = {
             );
         if (placeLocation.currPlace && placeLocation.currPlace.placeId && placeLocation.currPlace.placeName){
             placeSummary.append($('<div/>')
-            .append($('<span/>').text("Your current location: "))
-            .append($('<span/>').addClass('pseudoLink').text( placeLocation.currPlace.placeName).click(function(){
+            .append($('<span/>').text("Your current place: "))
+            .append($('<span/>').addClass('pseudoLink')
+                .text(DimeView.getShortNameWithLength(placeLocation.currPlace.placeName,26))
+                .click(function(){
                     DimeView.viewManager.updateViewFromStatus(new DimeViewStatus(
                             DimeViewStatus.GROUP_CONTAINER_VIEW, Dime.psMap.TYPE.PLACE, null, '@me', 
                             placeLocation.currPlace.placeId,  Dime.psMap.TYPE.PLACE, ""
@@ -983,7 +985,7 @@ DimeView = {
             );
         }else{
              placeSummary.append($('<div/>')
-            .append($('<span/>').text("Your current location: "))
+            .append($('<span/>').text("Your current place: "))
             .append($('<span/>').text('not set'))
             );
         }
