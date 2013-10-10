@@ -55,7 +55,7 @@ public class ComparatorHelper {
 			if (o1 instanceof LivePostItem && o2 instanceof LivePostItem) {
 				LivePostItem lp1 = (LivePostItem) o1;
 				LivePostItem lp2 = (LivePostItem) o2;
-				return (int) (lp1.getTimeStamp() - lp2.getTimeStamp());
+				return (int) (lp2.getCreated() - lp1.getCreated());
 			}
 			return 0;
 		}

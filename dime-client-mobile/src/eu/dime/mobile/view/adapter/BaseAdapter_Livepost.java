@@ -1,5 +1,7 @@
 package eu.dime.mobile.view.adapter;
 
+import java.util.Comparator;
+
 import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,22 +18,20 @@ import eu.dime.mobile.helper.listener.CheckListener;
 import eu.dime.mobile.helper.listener.ExpandClickListener;
 import eu.dime.mobile.helper.objects.DimeIntentObject;
 import eu.dime.mobile.view.abstr.BaseAdapterDisplayableItem;
+import eu.dime.model.ComparatorHelper;
 import eu.dime.model.Model;
 import eu.dime.model.ModelHelper;
 import eu.dime.model.TYPES;
-import eu.dime.model.displayable.AgentItem;
 import eu.dime.model.displayable.DisplayableItem;
-import eu.dime.model.displayable.GroupItem;
 import eu.dime.model.displayable.LivePostItem;
 import eu.dime.model.displayable.PersonItem;
-import eu.dime.model.displayable.ResourceItem;
 import eu.dime.model.displayable.ShareableItem;
 
-public class BaseAdapter_Standard extends BaseAdapterDisplayableItem {
+public class BaseAdapter_Livepost extends BaseAdapterDisplayableItem {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		DisplayableItem di = mItems.get(position);
+		LivePostItem di = (LivePostItem) mItems.get(position);
 		// Keeps reference to avoid future findViewById()
 		DimeViewHolder viewHolder;
 		if (convertView == null) {
@@ -57,62 +57,19 @@ public class BaseAdapter_Standard extends BaseAdapterDisplayableItem {
 			viewHolder = (DimeViewHolder) convertView.getTag();
 			viewHolder.resetAllViews();
 		}
-    	//initialize values of all DisplayableItems
-		viewHolder.name.setText((ModelHelper.isParentable(di)) ? di.getName() + " ("+di.getItems().size()+")": di.getName());
 		ImageHelper.loadImageAsynchronously(viewHolder.image, di, context);
-		boolean isValidForSharing = false;
-		//initialize values of GroupItem
-		switch (di.getMType()) {
-		case GROUP:
-			isValidForSharing = true;
-			GroupItem group = (GroupItem) di;
-			viewHolder.attribute1.setText(di.getType());
-			if (group.getGroupType().equals(GroupItem.VALID_GROUP_TYPE_VALUES[0])){
-				convertView.setBackgroundColor(context.getResources().getColor(R.color.background_yellow));
-			} else if (group.getGroupType().equals(GroupItem.VALID_GROUP_TYPE_VALUES[1])) {
-				convertView.setBackgroundColor(context.getResources().getColor(R.color.background_green));
-			} else {
-				convertView.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
-			}
-			break;
-		case PERSON:
-			PersonItem person = (PersonItem) di;
-			String defaultProfile = person.getDefaultProfileGuid();
-			isValidForSharing = (defaultProfile != null && defaultProfile.length() > 0) ? true : false;
-			viewHolder.attribute1.setVisibility(View.GONE);
-			AndroidModelHelper.loadGroupsOfChildAsynchronously(context, mrContext.owner, di, viewHolder.attribute2);
-			break;
-		case RESOURCE:
-			ResourceItem resource = (ResourceItem) di;
-			isValidForSharing = di.getUserId().equals(Model.ME_OWNER) ? true : false;
-			if (resource.getMimeType() != null && resource.getMimeType().length() > 0) {
-				viewHolder.attribute1.setText(resource.getMimeType());
-	        }
-	        if (resource.getFileSize() != null) {
-	        	viewHolder.attribute2.setText(resource.getFileSize() + " Byte");
-	        	viewHolder.attribute2.setVisibility(View.VISIBLE);
-	        }
-			break;
-		case DATABOX:
-			isValidForSharing = di.getUserId().equals(Model.ME_OWNER) ? true : false;
-			break;
-		case LIVEPOST:
-			LivePostItem livepost = (LivePostItem) di;
-			viewHolder.attribute1.setText(UIHelper.formatDateByMillis(livepost.getCreated()));
-        	viewHolder.attribute2.setText(livepost.getText());
-        	viewHolder.attribute2.setVisibility(View.VISIBLE);
-			isValidForSharing = di.getUserId().equals(Model.ME_OWNER) ? true : false;
-			if ((!livepost.getUserId().equals(Model.ME_OWNER))) {
-	        	PersonItem pi = (PersonItem) AndroidModelHelper.getGenItemSynchronously(context, new DimeIntentObject(livepost.getUserId(), TYPES.PERSON));
-	        	if(pi != null){
-	        		viewHolder.name.setText(pi.getName() + ": " + livepost.getName());
-	        	}
-	        }
-			break;
-		default:
-			viewHolder.attribute1.setText(di.getType());
-			break;
-		}
+		boolean isValidForSharing = di.getUserId().equals(Model.ME_OWNER) ? true : false;
+		viewHolder.attribute1.setText(UIHelper.formatDateByMillis(di.getCreated()));
+    	viewHolder.attribute2.setText(di.getText());
+    	viewHolder.attribute2.setVisibility(View.VISIBLE);
+		if ((!di.getUserId().equals(Model.ME_OWNER))) {
+        	PersonItem pi = (PersonItem) AndroidModelHelper.getGenItemSynchronously(context, new DimeIntentObject(di.getUserId(), TYPES.PERSON));
+        	if(pi != null){
+        		viewHolder.name.setText(pi.getName() + ": " + di.getName());
+        	}
+        } else {
+        	viewHolder.name.setText(di.getName());
+        }
 		viewHolder.validForSharingIcon.setVisibility((!isValidForSharing) ? View.VISIBLE : View.GONE);
 		if (expandedListItemId == position) {
 			viewHolder.expandedArea.setVisibility(View.VISIBLE);
@@ -129,11 +86,7 @@ public class BaseAdapter_Standard extends BaseAdapterDisplayableItem {
     		}
     		if(di.getUserId().equals(Model.ME_OWNER)) {
     			viewHolder.sharedArea.setVisibility(View.VISIBLE);
-	    		if(ModelHelper.isAgent(di.getMType())) {
-	    			AndroidModelHelper.loadSharedResourcesAsynchronously(context, mrContext.owner, (AgentItem) di, viewHolder.sharedContainer, viewHolder.sharedNoItems);
-	    		} else if(ModelHelper.isShareable(di.getMType())) {
-	    			AndroidModelHelper.loadAccessingAgentsAsynchronously(context, (ShareableItem) di, viewHolder.sharedContainer, viewHolder.sharedNoItems);
-	    		}
+	    		AndroidModelHelper.loadAccessingAgentsAsynchronously(context, (ShareableItem) di, viewHolder.sharedContainer, viewHolder.sharedNoItems);
     		} else {
     			viewHolder.sharedArea.setVisibility(View.GONE);
     		}
@@ -179,5 +132,10 @@ public class BaseAdapter_Standard extends BaseAdapterDisplayableItem {
     	}
     	
 	}
+	
+	@Override
+    protected Comparator<DisplayableItem> createComparator() {
+    	return new ComparatorHelper.LivePostComparator();
+    }
 
 }

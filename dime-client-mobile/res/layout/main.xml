@@ -162,7 +162,7 @@
                 android:onClick="onClick"
                 android:paddingBottom="8dp"
                 android:paddingTop="8dp"
-                android:text="Informations" />
+                android:text="Information" />
 
             <View
                 android:layout_width="6dp"

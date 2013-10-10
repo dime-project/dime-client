@@ -56,6 +56,7 @@ import eu.dime.mobile.helper.objects.IResultOfStandardDialog;
 import eu.dime.mobile.helper.objects.StandardDialogProperties;
 import eu.dime.mobile.view.abstr.BaseAdapterDisplayableItem;
 import eu.dime.mobile.view.adapter.BaseAdapter_Dialog_Sharing_Profile;
+import eu.dime.mobile.view.adapter.BaseAdapter_Livepost;
 import eu.dime.mobile.view.adapter.BaseAdapter_ServiceAdapter;
 import eu.dime.mobile.view.adapter.BaseAdapter_Standard;
 import eu.dime.mobile.view.communication.TabActivity_Livepost_Detail;
@@ -100,6 +101,7 @@ import eu.dime.model.displayable.ProfileItem;
 import eu.dime.model.displayable.ResourceItem;
 import eu.dime.model.displayable.ServiceAdapterItem;
 import eu.dime.model.displayable.SituationItem;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -295,7 +297,7 @@ public class UIHelper {
 								ProfileItem item = (ProfileItem) items.get(0);
 								rosdi.handleResult(new ResultObjectProfileSharing(item));
 							}
-						} else if (adapter instanceof BaseAdapter_Standard) {
+						} else if (adapter instanceof BaseAdapter_Standard || adapter instanceof BaseAdapter_Livepost) {
 							List<DisplayableItem> displayables = adapter.getSelectionItems();
 							rosdi.handleResult(new ResultObjectDisplayable(displayables, type));
 						} else if (adapter instanceof BaseAdapter_ServiceAdapter) {

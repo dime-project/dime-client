@@ -20,6 +20,7 @@
             android:background="@drawable/button_expand" />
 
         <LinearLayout
+            android:id="@+profile/borderContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="16dp"

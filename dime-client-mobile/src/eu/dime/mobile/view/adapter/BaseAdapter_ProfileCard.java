@@ -32,6 +32,7 @@ public class BaseAdapter_ProfileCard extends BaseAdapterDisplayableItem {
 			viewHolder.previewNoItems = (TextView) convertView.findViewById(R.profile.preview_noitems);
 			viewHolder.selectedCB = (CheckBox) convertView.findViewById(R.id.checkBoxProfile);
 			viewHolder.expander = (ImageButton) convertView.findViewById(R.id.buttonExp);
+			viewHolder.borderContainer = (LinearLayout) convertView.findViewById(R.profile.borderContainer);
 			viewHolder.layout = (LinearLayout) convertView.findViewById(R.id.expanded_adapter);
 	    	viewHolder.previewContainer = (LinearLayout) convertView.findViewById(R.profile.previewContainer);
 	    	viewHolder.sharingNotSupported = (LinearLayout) convertView.findViewById(R.id.sharing_not_supported);
@@ -41,7 +42,7 @@ public class BaseAdapter_ProfileCard extends BaseAdapterDisplayableItem {
 			viewHolder.selectedCB.setOnCheckedChangeListener(null);
 			viewHolder.previewContainer.removeAllViews();
 		}
-		convertView.setBackgroundColor(context.getResources().getColor(profile.isEditable() ? android.R.color.transparent : R.color.background_green));
+//		viewHolder.borderContainer.setBackgroundColor(context.getResources().getColor(profile.isEditable() ? android.R.color.transparent : R.color.background_green));
 		viewHolder.sharingNotSupported.setVisibility(profile.supportsSharing() ? View.GONE : View.VISIBLE);
 		viewHolder.name.setText(profile.getName());
 		ImageHelper.loadImageAsynchronously(viewHolder.image, profile, context);
@@ -71,6 +72,7 @@ public class BaseAdapter_ProfileCard extends BaseAdapterDisplayableItem {
 		CheckBox selectedCB;
 		ImageButton expander;
 		LinearLayout layout;
+		LinearLayout borderContainer;
 		LinearLayout previewContainer;
 		LinearLayout sharingNotSupported;
     	

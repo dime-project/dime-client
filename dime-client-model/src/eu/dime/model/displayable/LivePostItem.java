@@ -81,6 +81,10 @@ public final class LivePostItem extends DisplayableItem implements ShareableItem
         this.changed = true;
         this.text = text;
     }
+    
+    public long getCreated() {
+    	return created;
+    }
 
     public long getTimeStamp() {
         return timeStamp;
