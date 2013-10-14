@@ -23,10 +23,10 @@ public class MergeItemTest {
      */
     public static void main(String[] args) {
         MergeItem mergeItem = new MergeItem(UUID.randomUUID().toString());
-        Vector<String> personGuids = new Vector<String>();
-        for (int j = 0; j < 7; j++) {
-
-            for (int i = 0; i < 3; i++) {
+        Vector<String> personGuids;
+        for (int j = 0; j < 2; j++) {
+            personGuids = new Vector<String>();
+            for (int i = 0; i < 2; i++) {
                 personGuids.add(UUID.randomUUID().toString());
             }
             mergeItem.addMergedItem(personGuids);
