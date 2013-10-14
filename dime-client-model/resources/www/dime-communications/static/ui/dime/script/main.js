@@ -3607,9 +3607,20 @@ Dime.REST = {
         var request = Dime.psHelper.prepareRequest(evaluationItem);
 
         $.postJSON(callPath, request, callback);
-    }
+    },
 
-    
+    postMerge: function(personSource, personTarget){
+        
+//        var entry = {
+//            guid:  ,
+//                        "items":[[
+//                                "2586a25a-2a98-4bd5-bc29-9d87ae6b0538",
+//                                "0d314f5a-4eba-4b4d-92d5-40d4bd05bce8"],[
+//                                "8e5e98fc-3572-4bb0-9a73-72ebd8940cc6",
+//                                "b3fc1935-a102-4957-80a7-26e7ef05d671"]]}
+//                        };
+
+    }
 };
 
 
