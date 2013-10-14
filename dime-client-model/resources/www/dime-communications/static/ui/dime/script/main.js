@@ -2403,7 +2403,7 @@ Dime.psHelper = {
             Dime.REST.getAll(Dime.psMap.TYPE.PROFILE, handleProfiles, entryId, this);
         };
         
-        Dime.REST.getAll(Dime.psMap.TYPE.PROFILE, handlePerson, entryId, this);
+        Dime.REST.getItem(entryId, Dime.psMap.TYPE.PERSON, handlePerson, '@me', this);
     },
 
     /**
@@ -3609,17 +3609,27 @@ Dime.REST = {
         $.postJSON(callPath, request, callback);
     },
 
-    postMerge: function(personSource, personTarget){
+    postMerge: function(personsGuidsToBeMerged, callback, callerRef){
         
-//        var entry = {
-//            guid:  ,
-//                        "items":[[
-//                                "2586a25a-2a98-4bd5-bc29-9d87ae6b0538",
-//                                "0d314f5a-4eba-4b4d-92d5-40d4bd05bce8"],[
-//                                "8e5e98fc-3572-4bb0-9a73-72ebd8940cc6",
-//                                "b3fc1935-a102-4957-80a7-26e7ef05d671"]]}
-//                        };
+        var callPath = Dime.ps_configuration.getRealBasicUrlString() 
+            + "/dime-communications/api/dime/rest/"
+            + encodeURIComponent(Dime.ps_configuration.mainSaid)
+            + "/person/@merge";
+                
+        var entry = {
+            guid: JSTool.randomGUID(),
+            items:[personsGuidsToBeMerged]
+        };
+        
+        var handleResponse=function(response){
+            console.log(response);
+            callback.call(callerRef, response);
+        };
+        
+        var request = Dime.psHelper.prepareRequest(entry);
 
+        $.postJSON(callPath, request, handleResponse);
+        
     }
 };
 
@@ -5656,14 +5666,19 @@ Dime.ConfigurationDialog.prototype = {
     }
 };
 
-Dime.MergeDialog = function(){
+Dime.MergeDialog = function(mergePersonGuids, similarity){
+    //"status":"accepted/dismissed/pending"
+    this.STATUS_PENDING = 'pending';
+    this.STATUS_DISMISSED = 'dismissed';
+    this.STATUS_ACCEPTED = 'accepted';
     
-    this.mergePersons = [];
+    this.mergePersons = mergePersonGuids; //array of persons guids to be merged - full entry //currently n=2
+    this.similarity = similarity;
     
     this.dialogID = "MergeDialog_" + JSTool.randomGUID();
     this.bodyID = this.dialogID + "_body";
     
-    this.dialog = $("<div></div>")
+    this.dialog = $("<div/>")
         .addClass("modal").addClass("modal")
         .attr("id", this.dialogID)
         .attr("role", "dialog")
@@ -5677,16 +5692,20 @@ Dime.MergeDialog = function(){
             $('<div></div>').addClass("modal-header")
                 .append($('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>')
                     .clickExt(this, this.cancelHandler))
-                .append($('<h3 id="myModalLabel">Merge these persons</h3>\n')))
+                .append($('<h3/>').attr('id',"myModalLabel").text('Merge these persons? (similarity: '+similarity+')')))
         //body
         .append(this.body)
         //footer
         .append(
             $('<div></div>').addClass("modal-footer")
-                .append($('<button class="YellowMenuButton" data-dismiss="modal" aria-hidden="true">Dismiss</button>')
+                .append($('<button class="YellowMenuButton" data-dismiss="modal" aria-hidden="true">Cancel</button>')
                     .clickExt(this, this.cancelHandler))
+                .append($('<button class="YellowMenuButton" data-dismiss="modal" aria-hidden="true">Dismiss</button>')
+                    .clickExt(this, this.dismissHandler))
                 .append($('<button class="YellowMenuButton">Accept</button>')
-                    .clickExt(this, this.okHandler)));
+                    .clickExt(this, this.acceptHandler)));
+    
+    this.initBody.call(this);
     
     var thisDialog = this.dialog;
     $(document).keyup(thisDialog, function(e) {
@@ -5715,45 +5734,50 @@ Dime.MergeDialog.prototype = {
     
     cancelHandler: function(){
         this.removeDialog();  
-        //this.resultFunction.call(this.handlerSelf);
-    },
-    
-    okHandler: function(){
-        this.removeDialog();
-        //this.resultFunction.call(this.handlerSelf);
+        this.resultFunction.call(this.handlerSelf, this.STATUS_PENDING);
     },
             
-    setMergePersons: function(mergePersons){
-        this.mergePersons = mergePersons;
+            
+    dismissHandler: function(){
+        this.removeDialog();  
+        this.resultFunction.call(this.handlerSelf, this.STATUS_DISMISSED);
     },
+    
+    acceptHandler: function(){
+        var dlgRef = this;
+        Dime.REST.postMerge(this.mergePersons, function(response){
+            console.log(response);
+            (new Dime.Dialog.Toast("Persons merged successfully.")).show();
+            dlgRef.resultFunction.call(this.handlerSelf, this.STATUS_ACCEPTED);
+        }, this);
+        dlgRef.removeDialog();
+    },
+            
+  
     
     initBody: function(){
         //TODO: check two/multiple
         var dialogRef = this;
-        Dime.psHelper.getPersonAndProfiles(this.mergePersons.sourceId, function(response){
-            dialogRef.createTwoPersonElement(response, true);
-        }, this);
-        
-        Dime.psHelper.getPersonAndProfiles(this.mergePersons.targetId, function(response){
-            dialogRef.createTwoPersonElement(response, false);
-        }, this);
-        
+        for (var i=0; i<this.mergePersons.length; i++){
+            Dime.psHelper.getPersonAndProfiles(this.mergePersons[i], function(response){
+                dialogRef.createTwoPersonElement(response, this.mergePersons.length, i);
+            }, this);
+        }
     },
             
-    show: function(handlerSelf, callback){
-        this.handlerSelf = handlerSelf;
+    show: function(callback, handlerSelf){
         this.resultFunction = callback;
-        
-        this.initBody();
+        this.handlerSelf = handlerSelf;        
+                
         $("#lightBoxBlack").fadeIn(300);
 
         this.bodyWasHidden = $('body').hasClass('stop-scrolling');
         $('body').append(this.dialog).addClass('stop-scrolling');
     },
             
-    createTwoPersonElement: function(entry, isSource){
+    createTwoPersonElement: function(entry, totalPersons, personNumber){
         var jElement = $("<div></div>")
-            .addClass(isSource?"twoPersonElementContainerSource":"twoPersonElementContainerTarget")
+            .addClass(personNumber===0?"twoPersonElementContainerSource":"twoPersonElementContainerTarget")
             //header
             .append($("<div></div>").addClass("twoPersonElementHeader").append(entry.person[0].name));
     

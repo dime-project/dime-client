@@ -596,6 +596,17 @@ DimeView = {
         var clickFunction;
         var unValues=Dime.un.getCaptionImageUrl(entry);
         
+        var updateUserNotification=function(myUN, read, callback){
+                myUN.read=read;
+                //update entry
+                Dime.REST.updateItem(myUN, function(response){                    
+                    DimeView.viewManager.updateViewFromStatus(DimeView.viewManager.status, true);
+                    if (callback){
+                        callback(response);
+                    }
+                }, this);
+        };
+        
         //update caption with sender name if available
         unValues.caption = senderPersonItem ? unValues.caption + " by " + senderPersonItem.name : unValues.caption;
         
@@ -620,19 +631,35 @@ DimeView = {
             var status = new DimeViewStatus(viewType, groupType, itemType, detailUserId, 
                     entry.unEntry.guid, detailItemType, message);
             clickFunction = function(){                
-               DimeView.viewManager.updateViewFromStatus(status, false);
+                DimeView.viewManager.updateViewFromStatus(status, false);
+                updateUserNotification(entry, true);
             };
-        }else{
+        }else if (entry.unType===Dime.psMap.UN_TYPE.MERGE_RECOMMENDATION) {
+            clickFunction = function(){
+                var myNotification = entry;
+                DimeView.viewManager.updateView(Dime.psMap.TYPE.GROUP, DimeViewStatus.GROUP_CONTAINER_VIEW, false);
+                var mergeGuids = [myNotification.unEntry.sourceId, myNotification.unEntry.targetId];                
+                var dialog = new Dime.MergeDialog(mergeGuids, myNotification.unEntry.similarity);                
+                dialog.show(function(resultStatus){
+                    myNotification.unEntry.status = resultStatus;                    
+                    if (resultStatus!==dialog.STATUS_PENDING){  //"status":"accepted/dismissed/pending"
+                       updateUserNotification(myNotification, true, function(){                         
+                            //delete afterwards
+                            Dime.REST.removeItem(myNotification);
+                         });
+                    }else{
+                        updateUserNotification(myNotification, true);
+                    }
+                     
+                }, DimeView);
+                
+            };  
+        } else{
             clickFunction = function(){
                 //TODO fix
                 window.alert("This function is not supported in the research prototype.");
-                
-                /* work in progress
-                var dialog = new Dime.MergeDialog();
-                dialog.setMergePersons(entry.unEntry);
-                dialog.show();
-                */
-            };  
+                updateUserNotification(entry, true);
+            };
         }
         deployFunction(unValues, clickFunction);
 
@@ -666,7 +693,7 @@ DimeView = {
                 jChildItem.append(Dime.psHelper.getImageUrlJImageFromEntry(entry));
 
                 jChildItem
-                    .append(Dime.psHelper.getImageUrlJImageFromEntry(unValues.imageUrl, Dime.psMap.TYPE.USERNOTIFICATION).addClass('childItemNotifElemType'))
+                    .append(Dime.psHelper.getImageUrlJImage(unValues.imageUrl, Dime.psMap.TYPE.USERNOTIFICATION).addClass('childItemNotifElemType'))
                     .append($('<div/>').addClass('childItemNotifDate').text(JSTool.millisToDateString(entry.created)))
                     .append('<h4 style="font-size: 12px">'+ unValues.caption + '</h4>')                    
                     .append($('<div/>').addClass('childItemNotifOperation').append('<span>'+ unValues.operationName + '</span>'))
@@ -1965,8 +1992,17 @@ DimeView = {
         if (groupType===Dime.psMap.TYPE.GROUP){
             dropDownUl                
                 .append(createMenuItem("Merge persons ..", function(event, jElement, selectedItems){
-                    //TODO
-                    window.alert("Merging of persons is currently only supported by the mobile app!");
+                    var mergeGuids = [];
+                    for (var i=0; i<selectedItems.length;i++){
+                        mergeGuids.push(selectedItems[i].guid);
+                    }
+                
+                    var dialog = new Dime.MergeDialog(mergeGuids, "user");                
+                    dialog.show(function(mergeDone){
+                        if (mergeDone){
+                            DimeView.viewManager.updateViewFromStatus(DimeView.viewManager.status, true);
+                        }
+                    }, DimeView);
                 })); 
         }
         dropDownUl
@@ -3007,8 +3043,6 @@ Dime.Navigation = {
                     .click(clickFunction)
                     .text(unValues.shortCaption.substr(0, 16))
                     .click(function(){
-                        userNotification.read=true;
-                        Dime.REST.updateItem(userNotification);
                         jUnBarElement.remove();
                      });
                 
