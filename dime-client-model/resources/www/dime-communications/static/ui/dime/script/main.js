@@ -1832,6 +1832,15 @@ Dime.psHelper = {
             +myPath;
         }
         
+        //special case of uri coming with a /img/metaData/ are probably from simplePS //HACK
+        if ((myPath.indexOf('/img/metaData/')===0))  {
+            return Dime.ps_configuration.getRealBasicUrlString()
+            +Dime.ps_configuration.uiPath
+            +myPath;
+        }
+
+
+        
         
         return Dime.ps_configuration.getBasicUrlString()+myPath;
     },
@@ -4787,7 +4796,7 @@ Dime.DetailDialog.prototype = {
                 //show undefined and null values in the browsers
                 //while empty string is allowed
                 value="undefined";
-            }else if (value.length>22){getSharedToItems
+            }else if (value.length>22){
                 value=value.substr(0, 20)+"..";
             }
 
@@ -5776,10 +5785,31 @@ Dime.MergeDialog.prototype = {
     },
             
     createTwoPersonElement: function(entry, totalPersons, personNumber){
-        var jElement = $("<div></div>")
+        var getPAwithGuid = function(pas, guid){
+            for (var j=0; j<pas.length;j++){
+                if (pas[j].guid===guid){
+                    return pas[j];
+                }
+            }
+            return null;
+        }
+
+
+        var jElement = $("<div/>")
             .addClass(personNumber===0?"twoPersonElementContainerSource":"twoPersonElementContainerTarget")
             //header
-            .append($("<div></div>").addClass("twoPersonElementHeader").append(entry.person[0].name));
+            .append($("<div/>").addClass("twoPersonElementHeader").append(entry.person.name));
+
+         for (var pr=0; pr<entry.profiles.length;pr++){
+             var myProfile = $('<div/>').append($('<span/>').text(entry.profiles[pr].name));
+             jElement.append(myProfile);
+             for (var pa=0;pa<entry.profiles[pr].items.length;pa++){
+                myProfile.append(
+
+                    $('<div/>').text(getPAwithGuid(entry.profileattributes, entry.profiles[pr].items[pa]).name)
+                );
+             }
+         }
     
         this.body.append(jElement);
     }

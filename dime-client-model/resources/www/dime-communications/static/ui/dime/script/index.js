@@ -1415,7 +1415,7 @@ DimeView = {
         }
 
         listItem.append(
-                $('<div class="listElementText"/>')
+                $('<div/>').addClass('listElementText')
                     .append($('<span class="listElementTextName"/>').text(DimeView.getShortNameWithLength(name, 28)))
                     .append($('<span class="listElementTextValue"/>').text(value))
                 )
@@ -1532,8 +1532,7 @@ DimeView = {
 	// Handle event
         //commented out in order to stay visible after mouseout (web ui issue)
         //won't show list of selected items on the metabar
-        //DimeView.updateMetabarForSelection();
-       
+        //DimeView.updateMetabarForSelection();       
     },
        
 
@@ -1561,12 +1560,8 @@ DimeView = {
         //it's assured all data belongs to the same person
         //this could be done by using the same approach as for initalProcessor
         
-        
-        
         JSTool.removeClassIfSet($("#metaDataShareAreaId"),"hidden");
         DimeView.addInformationToMetabar(entry);      
-        
-        
         
         var addAgentsToMetaBar=function(listItemContainer, agentItems){
             for (var j=0;j<agentItems.length;j++){
