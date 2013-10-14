@@ -53,9 +53,15 @@ public class ComparatorHelper {
 		@Override
 		public int compare(DisplayableItem o1, DisplayableItem o2) {
 			if (o1 instanceof LivePostItem && o2 instanceof LivePostItem) {
-				LivePostItem lp1 = (LivePostItem) o1;
-				LivePostItem lp2 = (LivePostItem) o2;
-				return (int) (lp2.getCreated() - lp1.getCreated());
+				long t1 = ((LivePostItem) o1).getCreated();
+				long t2 = ((LivePostItem) o2).getCreated();
+				if(t2 > t1) {
+		            return 1;
+				} else if(t1 > t2) {
+		            return -1;
+				} else {
+		            return 0;
+				}
 			}
 			return 0;
 		}
