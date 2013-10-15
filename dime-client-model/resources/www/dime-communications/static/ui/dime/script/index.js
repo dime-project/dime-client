@@ -3323,7 +3323,15 @@ Dime.Navigation = {
 
 
         $('#navBarContainer').append(navBarInner);
+
+        $(window).scroll(function(){
+            var yOffset=57;
+            //console.log($(this).scrollTop());
+            $('#metabarMetaContainer').css('top', $(this).scrollTop()+yOffset);
+        });
+        
     }
+
   
 };
 
@@ -3379,6 +3387,7 @@ Dime.initProcessor.registerFunction( function(callback){
     Dime.Navigation.updateCurrentPlace();
     callback();
 });
+
 
 
 
