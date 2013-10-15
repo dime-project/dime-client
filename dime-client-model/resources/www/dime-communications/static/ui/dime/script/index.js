@@ -637,9 +637,9 @@ DimeView = {
         }else if (entry.unType===Dime.psMap.UN_TYPE.MERGE_RECOMMENDATION) {
             clickFunction = function(){
                 var myNotification = entry;
-                DimeView.viewManager.updateView(Dime.psMap.TYPE.GROUP, DimeViewStatus.GROUP_CONTAINER_VIEW, false);
-                var mergeGuids = [myNotification.unEntry.sourceId, myNotification.unEntry.targetId];                
-                var dialog = new Dime.MergeDialog(mergeGuids, myNotification.unEntry.similarity);                
+               
+                var mergeGuids = [myNotification.unEntry.sourceId, myNotification.unEntry.targetId];
+                var dialog = new Dime.MergeDialog(mergeGuids, myNotification.unEntry.similarity, true);
                 dialog.show(function(resultStatus){
                     myNotification.unEntry.status = resultStatus;                    
                     if (resultStatus!==dialog.STATUS_PENDING){  //"status":"accepted/dismissed/pending"
@@ -1986,15 +1986,16 @@ DimeView = {
 
         if (groupType===Dime.psMap.TYPE.GROUP){
             dropDownUl                
-                .append(createMenuItem("Merge persons ..", function(event, jElement, selectedItems){
+                .append(createMenuItem("Merge persons ..", function(event, jElement){
+                    var selectedItems = DimeView.getSelectedItemsForView();
                     var mergeGuids = [];
                     for (var i=0; i<selectedItems.length;i++){
                         mergeGuids.push(selectedItems[i].guid);
                     }
                 
-                    var dialog = new Dime.MergeDialog(mergeGuids, "user");                
-                    dialog.show(function(mergeDone){
-                        if (mergeDone){
+                    var dialog = new Dime.MergeDialog(mergeGuids);                
+                    dialog.show(function(resultStatus){
+                        if (resultStatus!==dialog.STATUS_PENDING){
                             DimeView.viewManager.updateViewFromStatus(DimeView.viewManager.status, true);
                         }
                     }, DimeView);
