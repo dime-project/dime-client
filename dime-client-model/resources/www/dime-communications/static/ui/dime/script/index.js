@@ -3343,6 +3343,9 @@ Dime.Navigation = {
 
         $(window).scroll(function(){
             var yOffset=57;
+            if ($(window).width()<=979){
+                yOffset=0;
+            }
             //console.log($(this).scrollTop());
             $('#metabarMetaContainer').css('top', $(this).scrollTop()+yOffset);
         });

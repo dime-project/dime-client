@@ -1071,6 +1071,9 @@
     display: none;
     visibility: hidden;
   }
+  #metabarMetaContainer{
+      position: relative;
+  }
 }
 
 @media (max-width: 858px) {
