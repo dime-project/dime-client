@@ -1016,6 +1016,7 @@
     position: absolute;
     z-index: 1035;
     top: 52px;
+    left: 0px;
 }
   .navbar .btn-navbar {
     display: block;
@@ -1051,6 +1052,13 @@
   }
     .childItemProfileAttribute {
     width: 215px;
+  }
+  #notificationContainer{
+      width: 0px;
+  }
+  #navBarSpacer{      
+    display: none;
+    visibility: hidden;
   }
 }
 
