@@ -1066,6 +1066,10 @@
     left: 70px;
     background-color: transparent;
   }
+  .actionMenu {
+    display: none;
+    visibility: hidden;
+  }
 }
 
 @media (max-width: 858px) {
