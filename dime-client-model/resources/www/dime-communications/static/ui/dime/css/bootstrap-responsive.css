@@ -1099,6 +1099,10 @@
   .metaActionView {
     height: 100px;
   }
+  #metabarMetaContainer{
+      position: inherit;
+  }
+  
 }
 
 @media (max-width: 700px) {
