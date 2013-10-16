@@ -901,7 +901,6 @@
     position: static;
   }
   .navbar-fixed-top {
-    margin-bottom: 18px;
   }
   .navbar-fixed-bottom {
     margin-top: 18px;
@@ -1059,6 +1058,13 @@
   #navBarSpacer{      
     display: none;
     visibility: hidden;
+  }
+  #infoButtonLeft {
+    width: 30px;
+    height: 33px;
+    top: 5px;
+    left: 70px;
+    background-color: transparent;
   }
 }
 
