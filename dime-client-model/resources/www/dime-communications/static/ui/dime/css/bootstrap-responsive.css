@@ -218,6 +218,19 @@
   
   }
 
+  #navBarSpacer{
+      width: 76px;
+  
+      height: 6px;
+      float: left;
+}
+
+  .brand{
+      left: 20px;
+      
+  
+      position: absolute;
+}
 
   .row-fluid [class*="span"] {
     display: block;

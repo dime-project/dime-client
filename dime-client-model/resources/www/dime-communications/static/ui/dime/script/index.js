@@ -3311,8 +3311,9 @@ Dime.Navigation = {
             );
             
         var navContainer = $('<div/>').addClass('container')
-        .append(menuButton)
+        .append(menuButton)        
         .append(brand)
+        .append($('<div/>').attr('id','navBarSpacer'))
         .append(navigation)
         .append(notificationBar)
         ;
@@ -3324,12 +3325,30 @@ Dime.Navigation = {
 
         $('#navBarContainer').append(navBarInner);
 
+        /* RESPONSIVE NAVIGATION */
+
         $(window).scroll(function(){
             var yOffset=57;
             //console.log($(this).scrollTop());
             $('#metabarMetaContainer').css('top', $(this).scrollTop()+yOffset);
         });
-        
+
+        var adaptUIToSize = function(){
+            var width=$(window).width();
+            if (width>1170){
+                $('#navButtonMessages').find('a').text('Livepost');
+            }else if (width>=670 &&width<=1170){
+                $('#navButtonMessages').find('a').text('');
+            }
+        };
+
+        $(window).resize(function(){
+            //adapt on resize
+            adaptUIToSize();
+        });
+
+        //adapt initial size
+        adaptUIToSize();
     }
 
   
