@@ -3335,8 +3335,11 @@ Dime.Navigation = {
 
         var adaptUIToSize = function(){
             var width=$(window).width();
-            if (width>1170 || width<=979){
+            if (width>1170){
                 $('#navButtonMessages').find('a').text('Livepost');
+            }else if (width<=979){
+                $('#navButtonMessages').find('a').text('Livepost');
+                $('.nav-collapse').css('height', '0px');
             }else {
                 $('#navButtonMessages').find('a').text('');
             }
