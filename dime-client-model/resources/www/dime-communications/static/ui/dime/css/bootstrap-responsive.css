@@ -1105,8 +1105,3 @@
   
 }
 
-@media (max-width: 700px) {
-[class*="notificationBar"] {
-  width: 200px;
-}
-}
