@@ -1771,14 +1771,18 @@ DimeView = {
             event.stopPropagation();
         }
         
-        Dime.evaluation.createAndSendEvaluationItemForAction("action_editItem", entry);
+        
         var isEditable=DimeView.actionMenuActivatedForItem(entry);
         
         if (entry.type===Dime.psMap.TYPE.LIVEPOST){
             isEditable=false;
         }
 
-        Dime.Dialog.showDetailItemModal(entry, isEditable, message);
+        Dime.Dialog.showDetailItemModal(entry, isEditable, message, function(result){
+            if (result!==Dime.Dialog.DIALOG_RESULT_CANCEL){
+                Dime.evaluation.createAndSendEvaluationItemForAction("action_editItem", entry);
+            }
+        });
     },
             
     
@@ -1787,7 +1791,7 @@ DimeView = {
 
         var selectedItems = DimeView.getSelectedItemsForView();
         
-        Dime.evaluation.createAndSendEvaluationItemForAction("action_editItem", selectedItems);
+        
 
         if (selectedItems.length!==1){
             window.alert("Please select a single item.");
@@ -1795,7 +1799,11 @@ DimeView = {
         }
         var triggerDialog=function(response){
             var isEditable=DimeView.actionMenuActivatedForItem(response);
-            Dime.Dialog.showDetailItemModal(response, isEditable);
+            Dime.Dialog.showDetailItemModal(response, isEditable, null, function(result){
+                if (result!==Dime.Dialog.DIALOG_RESULT_CANCEL){
+                    Dime.evaluation.createAndSendEvaluationItemForAction("action_editItem", selectedItems);
+                }
+            });
         };
 
         Dime.REST.getItem(selectedItems[0].guid, selectedItems[0].type, triggerDialog, selectedItems[0].userId, this);
@@ -1811,7 +1819,7 @@ DimeView = {
 
         if (confirm("Are you sure, you want to delete "+mySelectedItems.length+" items?")){
             
-            Dime.evaluation.createAndSendEvaluationItemForAction("action_removePerson", mySelectedItems);
+            Dime.evaluation.createAndSendEvaluationItemForAction("action_removeItem", mySelectedItems);
 
             for (var i=0;i<mySelectedItems.length;i++){
                 var item = mySelectedItems[i];
@@ -1825,11 +1833,13 @@ DimeView = {
         
         var selectedItems = DimeView.getSelectedItemsForView();
         
-        Dime.evaluation.createAndSendEvaluationItemForAction("action_share", selectedItems);
-        
         var triggerDialog=function(response){
 
-            Dime.Dialog.showShareWithSelection(response);
+            Dime.Dialog.showShareWithSelection(response, function(result){
+                if (result!==Dime.Dialog.DIALOG_RESULT_CANCEL){
+                    Dime.evaluation.createAndSendEvaluationItemForAction("action_share", selectedItems);
+                }
+            });
         };
 
         Dime.psHelper.getMixedItems(selectedItems, triggerDialog, this);

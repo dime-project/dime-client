@@ -5956,6 +5956,10 @@ Dime.MergeDialog.prototype = {
 //#############################################
 //
 Dime.Dialog={
+    DIALOG_RESULT_CANCEL:0,
+    DIALOG_RESULT_OK_SUCCESS:1,
+    DIALOG_RESULT_OK_FAIL:2,
+
     
     showImageSelectionList: function(callbackHandler){
         
@@ -6008,7 +6012,7 @@ Dime.Dialog={
     
     },
 
-    showDetailItemModal: function(entry, isEditable, message){
+    showDetailItemModal: function(entry, isEditable, message, callback){
         var caption;
         
         if (entry.type===Dime.psMap.TYPE.PROFILEATTRIBUTE){
@@ -6023,23 +6027,27 @@ Dime.Dialog={
         }
         var dialog = new Dime.DetailDialog(caption, entry, false, true, isEditable, message, Dime.psMap.getInfoHtmlForType(entry.type));
         
-        var callbackFunction = function(item, isOk){
+        var handleResult = function(item, isOk){
             
             if (!isOk){ //cancel
+                callback(Dime.Dialog.DIALOG_RESULT_CANCEL);
                 return;
             }
             var updateItemCallBack = function(response){
                 if (!response|| response.length<1){
                     (new Dime.Dialog.Toast("Updating of "+caption+" failed!")).showLong();
+                    callback(Dime.Dialog.DIALOG_RESULT_OK_FAIL);
                 }else{
                     (new Dime.Dialog.Toast(caption+ " updated successfully.")).showLong();
+                    callback(Dime.Dialog.DIALOG_RESULT_OK_SUCCESS);
                 }
+
             };
             
             //post the update
             Dime.REST.updateItem(item, updateItemCallBack, this);
         };
-        dialog.showDetailDialog(callbackFunction);
+        dialog.showDetailDialog(handleResult);
         
     },
 
@@ -6122,7 +6130,7 @@ Dime.Dialog={
         dialog.addToLivepostReceiverList.call(dialog, selectedPerson);
     },
             
-    showShareWithSelection: function(selectedItems){
+    showShareWithSelection: function(selectedItems, callback){
        
         $("#lightBoxBlack").fadeIn(300);
         var dialog = new Dime.ShareDialog();
@@ -6141,14 +6149,16 @@ Dime.Dialog={
             dialog.updateView();
         }
         
-        var callback = function(success, selectedProfile, selectedReceivers, selectedItems){
-            console.log("sharing success:", success);
+        var handleResult = function(success, selectedProfile, selectedReceivers, selectedItems){
+            
             if (!success){
+                callback(Dime.Dialog.DIALOG_RESULT_CANCEL);
                 return;
             }
 
             if (!selectedProfile){
                 window.alert("No profile selected - please select a profile.");
+                callback(Dime.Dialog.DIALOG_RESULT_OK_FAIL);
                 return;
             }
             
@@ -6156,19 +6166,22 @@ Dime.Dialog={
            
             if (!said || said.length===0){
                 window.alert("Service-Account-ID for profile: "+selectedProfile.name+" is missing! Sharing aborted.");
+                callback(Dime.Dialog.DIALOG_RESULT_OK_FAIL);
                 return;
             }
             //update items
             Dime.psHelper.addAgentAccessForItemsAndUpdateServer(selectedReceivers, selectedItems, said, function(sharingSuccessful){
                 if(sharingSuccessful){
                     (new Dime.Dialog.Toast("Sharing done!")).showLong();
+                    callback(Dime.Dialog.DIALOG_RESULT_OK_SUCCESS);
                 }else{
                     (new Dime.Dialog.Toast("Sharing failed!")).showLong();
+                    callback(Dime.Dialog.DIALOG_RESULT_OK_FAIL);
                 }
             });
         };
        
-        dialog.show(this, callback);
+        dialog.show(this, handleResult);
     },
             
     Helper:{
