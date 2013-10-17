@@ -490,6 +490,8 @@ BSTool={
     /**
      * @param buttonLabel label of the button
      * @param dropDownEntries array of BSTool.DropDownEntry
+     * @param buttonClass class to be added to the button
+     * @param buttonGroupClass class to be added to the resulting button group
      * @return jquery element containing button group with single button and dropdown
      * 
      * <div class="btn-group">
@@ -1370,9 +1372,12 @@ Dime.evaluation={
             var evaluationItem = this.createEvaluationItem(Dime.ps_configuration.userInformation.evaluationId,
                 Dime.ps_configuration.viewStack, action, this.createEmptyInvolvedItems());
             
-            this.countInvolvedItems(involvedItems, evaluationItem);
+            Dime.evaluation.countInvolvedItems(involvedItems, evaluationItem);
             
-            Dime.REST.postEvaluation(evaluationItem);
+            Dime.REST.postEvaluation(evaluationItem, function(){
+                Dime.ps_configuration.viewStack=[];
+
+            }, this);
         }
     },
             
@@ -2026,15 +2031,15 @@ Dime.psHelper = {
     
     updateExtendedACLWithAgentItems: function(extendedACL, agentType, allItemsOfType){
         var exAclPackage;
-        
+        var i;
         if (agentType===Dime.psMap.TYPE.GROUP){
-            for (var i=0;i<extendedACL.length;i++){
+            for (i=0;i<extendedACL.length;i++){
                 exAclPackage=extendedACL[i];
                 exAclPackage.groupItems = 
                 Dime.psHelper.getAllItemsWithGuids(exAclPackage.groups, allItemsOfType);
             }
         }else if (agentType===Dime.psMap.TYPE.PERSON){
-            for (var i=0;i<extendedACL.length;i++){
+            for (i=0;i<extendedACL.length;i++){
                 exAclPackage=extendedACL[i];
                 //retrieve person ids
                 var personIds = [];                
@@ -2045,7 +2050,7 @@ Dime.psHelper = {
                 Dime.psHelper.getAllItemsWithGuids(personIds, allItemsOfType);
             }
         }else if (agentType===Dime.psMap.TYPE.ACCOUNT){
-            for (var i=0;i<extendedACL.length;i++){
+            for (i=0;i<extendedACL.length;i++){
                 exAclPackage=extendedACL[i];
                 exAclPackage.serviceItems = 
                 Dime.psHelper.getAllItemsWithGuids(exAclPackage.services, allItemsOfType);
@@ -2183,20 +2188,20 @@ Dime.psHelper = {
 
     addAccessForItem: function(personGuids, groupGuids, serviceGuids, item, saidSender){
         var aclPackage =Dime.psHelper.getOrCreateACLPackage(item, saidSender);
-
-        for (var i=0;i<personGuids.length;i++){
+        var i;
+        for (i=0;i<personGuids.length;i++){
             if(!JSTool.arrayContainsItem(aclPackage.persons,personGuids[i])){
                 var aclPerson = new Dime.ACLPerson();
                 aclPerson.personId=personGuids[i];
                 aclPackage.persons.push(aclPerson);
             }
         }
-        for (var i=0;i<groupGuids.length;i++){
+        for (i=0;i<groupGuids.length;i++){
             if(!JSTool.arrayContainsItem(aclPackage.groups,groupGuids[i])){
                 aclPackage.groups.push(groupGuids[i]);
             }
         }
-        for (var i=0;i<serviceGuids.length;i++){
+        for (i=0;i<serviceGuids.length;i++){
             if(!JSTool.arrayContainsItem(aclPackage.services,serviceGuids[i])){
                 aclPackage.services.push(serviceGuids[i]);
             }
@@ -3270,6 +3275,7 @@ Dime.REST = {
      * 
      * @param item the full item 
      * @param callBack function forwarded to the ajax call
+     * @param callerSelf reference to caller this
      */
     updateItem: function(item, callBack, callerSelf){
         console.log("updateItem", item);
@@ -3627,16 +3633,19 @@ Dime.REST = {
 
         $.postJSON(callPath, request, jointCallBack);
     },
-    postEvaluation: function(evaluationItem){                     
+    postEvaluation: function(evaluationItem, callback, callerRef){
         var callPath = Dime.ps_configuration.getUserUrlString()+"/evaluation/@me";
 
-        var callback = function(response){
-            //console.log(response);
+        var handleResponse = function(response){
+            if (callback) {
+                callerRef=callerRef?callerRef:this;
+                callback.call(callerRef, response);
+            }
         };
 
         var request = Dime.psHelper.prepareRequest(evaluationItem);
 
-        $.postJSON(callPath, request, callback);
+        $.postJSON(callPath, request, handleResponse);
     },
 
     postMerge: function(personsGuidsToBeMerged, callback, callerRef){
@@ -4011,7 +4020,8 @@ Dime.SelectDialog.prototype = {
      * @param loadingFunction function triggered to start loading the items into the list
      *        loading function can use Dime.SelectDialog.addItemsToList to add items with guid to the list
      * @param callbackFunction function handling parameters (selectedItems[], isOK)
-     * @param reference to caller this
+     * @param handlerSelf reference to caller this
+     *
      */
     show: function(loadingFunction, callbackFunction, handlerSelf){
         
@@ -4048,7 +4058,12 @@ Dime.SelectDialog.prototype = {
 
 /**
  *@param caption caption of the dialog
-* @param item the items to be shown   
+* @param item the items to be shown
+* @param createNewItem true/false show new item message and initialize item
+* @param changeImageUrl true/false support for updating imageUrl
+* @param isEditable true/false edit supported or read only
+* @param message String - if set it is displayed at the top of the item
+* @param infoHtml - shown as content in the (i) button
 */
 Dime.DetailDialog = function(caption, item, createNewItem, changeImageUrl, isEditable, message, infoHtml){
     
@@ -4338,7 +4353,7 @@ Dime.DetailDialog.prototype = {
             result.append(createButtonLabel(currPrivTrust));
         }
                 
-        ;
+        
         return result;
     },
 
@@ -5469,13 +5484,14 @@ Dime.ConfigurationDialog.prototype = {
                         switch(serviceAccount.settings[i]['fieldtype']){
                             case "string":
                             case "password":
+                                var type;var value;
                                 if(serviceAccount.settings[i]['fieldtype'] === "string"){
-                                    var type = "text";
-                                    var value = serviceAccount.settings[i].value;
+                                    type = "text";
+                                    value = serviceAccount.settings[i].value;
                                 }else{
-                                    var type = "password";
+                                    type = "password";
                                     //security issue: plain text?!
-                                    var value = serviceAccount.settings[i].value;
+                                    value = serviceAccount.settings[i].value;
                                 }
 
                                 var textInput =
@@ -6013,7 +6029,6 @@ Dime.Dialog={
                 return;
             }
             var updateItemCallBack = function(response){
-                console.log("createItem response:", response);
                 if (!response|| response.length<1){
                     (new Dime.Dialog.Toast("Updating of "+caption+" failed!")).showLong();
                 }else{
