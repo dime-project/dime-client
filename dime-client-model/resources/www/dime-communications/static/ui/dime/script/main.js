@@ -4665,30 +4665,32 @@ Dime.DetailDialog.prototype = {
         var childType = Dime.psHelper.getChildType(item.type);
             $(this.getDialog()).addClass('shareDlg');
 
-            var shareContainer;
+        var shareContainer=$('<div class="shareDlgSection shareDlgSectionHover"></div>');
+        if (!this.createNewItem){
             if (item.type===Dime.psMap.TYPE.GROUP){
                 shareContainer = this.getCanAccessItems(item);
             }else{
                 shareContainer = this.getSharedToItems(item);
             }
+        }
 
-            //add containers
-            this.body.append(
-                $("<div></div>")
-                .addClass("dimeDialogBody_editContainer")
-                //left container
-                .append($("<div/>")
-                    .addClass("dimeDialogBody_editContainerLeft")
-                    .append($("<span class=label></span>")
-                        .text(Dime.psHelper.getPluralCaptionForItemType(childType)))
-                    .append(this.getChildTypeItems(item, childType)))
-                //right container
-                .append($("<div>")
-                    .addClass("dimeDialogBody_editContainerRight")
-                    .append($("<span class=label></span>")
-                        .text(item.type===Dime.psMap.TYPE.GROUP?"can access":"shared with"))
-                    .append(shareContainer))
-            );
+        //add containers
+        this.body.append(
+            $("<div></div>")
+            .addClass("dimeDialogBody_editContainer")
+            //left container
+            .append($("<div/>")
+                .addClass("dimeDialogBody_editContainerLeft")
+                .append($("<span class=label></span>")
+                    .text(Dime.psHelper.getPluralCaptionForItemType(childType)))
+                .append(this.getChildTypeItems(item, childType)))
+            //right container
+            .append($("<div>")
+                .addClass("dimeDialogBody_editContainerRight")
+                .append($("<span class=label></span>")
+                    .text(item.type===Dime.psMap.TYPE.GROUP?"can access":"shared with"))
+                .append(shareContainer))
+        );
 
     },
 
