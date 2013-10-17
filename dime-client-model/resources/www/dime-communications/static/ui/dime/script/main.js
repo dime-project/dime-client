@@ -6013,6 +6013,9 @@ Dime.Dialog={
     },
 
     showDetailItemModal: function(entry, isEditable, message, callback){
+
+        callback=callback?callback:function(){}; //init callback if not set
+
         var caption;
         
         if (entry.type===Dime.psMap.TYPE.PROFILEATTRIBUTE){
@@ -6051,7 +6054,10 @@ Dime.Dialog={
         
     },
 
-    showNewItemModal: function(type, message, newItem){
+    showNewItemModal: function(type, message, newItem, callback){
+
+        callback=callback?callback:function(){}; //init callback if not set
+
         if (!newItem){
             newItem = Dime.psHelper.createNewItem(type, "");
         }
@@ -6069,18 +6075,20 @@ Dime.Dialog={
         
         var dialog = new Dime.DetailDialog(caption, newItem, true, true, true, message, Dime.psMap.getInfoHtmlForType(type));
         
-        var callbackFunction = function(item, isOk){
+        var handleResult = function(item, isOk){
             
             if (!isOk){ //cancel
+                callback(Dime.Dialog.DIALOG_RESULT_CANCEL, newItem);
                 return;
             }            
             var newItemCallBack = function(response){
                 console.log("createItem response:", response);
                 if (!response|| response.length<1){
                     (new Dime.Dialog.Toast("Creation of "+elementName+" failed!")).showLong();
-                    
+                    callback(Dime.Dialog.DIALOG_RESULT_OK_FAIL, newItem);
                 }else{
                     (new Dime.Dialog.Toast(elementName+ " created successfully.")).showLong();
+                    callback(Dime.Dialog.DIALOG_RESULT_OK_SUCCESS, newItem);
                 }
             };
             
@@ -6088,12 +6096,14 @@ Dime.Dialog={
             Dime.REST.postNewItem(item, newItemCallBack);
         };
         
-        dialog.showDetailDialog(callbackFunction);
+        dialog.showDetailDialog(handleResult);
     
     },
 
     
-    showLivepostWithSelection: function(selectedPerson){
+    showLivepostWithSelection: function(selectedPerson, callback){
+        callback=callback?callback:function(){}; //init callback if not set
+
         $("#lightBoxBlack").fadeIn(300);
         //FIX: hard-coded
         var type = Dime.psMap.TYPE.LIVEPOST;
@@ -6107,18 +6117,20 @@ Dime.Dialog={
         //add the current person as a recipient
         dialog.selectedPerson = selectedPerson;
         
-        var callbackFunction = function(item, isOk){
+        var handleResult = function(item, isOk){
             
             if (!isOk){ //cancel
+                callback(Dime.Dialog.DIALOG_RESULT_CANCEL);
                 return;
             }            
             var newItemCallBack = function(response){
                 console.log("createItem response:", response);
                 if (!response|| response.length<1){
                     (new Dime.Dialog.Toast("Creation of "+elementName+" failed!")).showLong();
-                    
+                    callback(Dime.Dialog.DIALOG_RESULT_OK_FAIL);
                 }else{
                     (new Dime.Dialog.Toast(elementName+ " created successfully.")).showLong();
+                    callback(Dime.Dialog.DIALOG_RESULT_OK_SUCCESS);
                 }
             };
             
@@ -6126,11 +6138,13 @@ Dime.Dialog={
             Dime.REST.postNewItem(item, newItemCallBack);
         };
         
-        dialog.showDetailDialog(callbackFunction);
+        dialog.showDetailDialog(handleResult);
         dialog.addToLivepostReceiverList.call(dialog, selectedPerson);
     },
             
     showShareWithSelection: function(selectedItems, callback){
+
+        callback=callback?callback:function(){}; //init callback if not set
        
         $("#lightBoxBlack").fadeIn(300);
         var dialog = new Dime.ShareDialog();

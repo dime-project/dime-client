@@ -2026,7 +2026,11 @@ DimeView = {
                 .clickExt(Dime.Dialog,function(){
                         var newItem = Dime.psHelper.createNewItem(type, "My "+pACategory.caption);
                         newItem.category=pACategory.name;
-                        Dime.Dialog.showNewItemModal(type, null, newItem);
+                        Dime.Dialog.showNewItemModal(type, null, newItem, function(result, newItemResponse){
+                            if (result!==Dime.Dialog.DIALOG_RESULT_CANCEL){
+                                Dime.evaluation.createAndSendEvaluationItemForAction("action_new", newItemResponse);
+                            }
+                        });
                     });
 
                 result.push($('<li/>').attr('role','menuitem').append(link));
@@ -2040,7 +2044,11 @@ DimeView = {
             var link= $('<a tabindex="-1" href="#" />')
                 .text('New '+Dime.psHelper.getCaptionForItemType(type)+' ..')
                 .clickExt(Dime.Dialog,
-                    function(event, jElement, type){Dime.Dialog.showNewItemModal(type);}, type);
+                    function(event, jElement, type){Dime.Dialog.showNewItemModal(type, null, null, function(result, newItemResponse){
+                            if (result!==Dime.Dialog.DIALOG_RESULT_CANCEL){
+                                Dime.evaluation.createAndSendEvaluationItemForAction("action_new", newItemResponse);
+                            }
+                        });}, type);
             return $('<li/>').attr('role','menuitem').append(link);
         };
         var dropDownUl=$('#actionButtonDropDownNew');
