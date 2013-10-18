@@ -652,10 +652,13 @@ DimeView = {
                             //delete afterwards
                             Dime.REST.removeItem(myNotification);
                             if (resultStatus===dialog.STATUS_ACCEPTED){
-                                Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.MERGE, mergedPersons);
+                                Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.MERGE_CONFIRMED, mergedPersons);
+                            }else{
+                                Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.MERGE_DISMISSED, mergedPersons);
                             }
                          });
                     }else{
+                        Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.MERGE_PENDING, mergedPersons);
                         updateUserNotification(myNotification, true);
                     }
                      
@@ -1399,7 +1402,9 @@ DimeView = {
                 if (resultStatus!==dialog.STATUS_PENDING){
                     DimeView.viewManager.updateViewFromStatus(DimeView.viewManager.status, true);
                     if (resultStatus===dialog.STATUS_ACCEPTED){
-                        Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.MERGE, mergedPersons);
+                        Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.MERGE_SELECTION, mergedPersons);
+                    }else{
+                        Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.OPERATION_CANCELED, mergedPersons);
                     }
                 }
             }, DimeView);
@@ -1792,6 +1797,8 @@ DimeView = {
         Dime.Dialog.showDetailItemModal(entry, isEditable, message, function(result){
             if (result!==Dime.Dialog.DIALOG_RESULT_CANCEL){
                 Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.EDIT, entry);
+            }else{
+                Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.OPERATION_CANCELED, entry);
             }
         });
     },
@@ -1813,6 +1820,8 @@ DimeView = {
             Dime.Dialog.showDetailItemModal(response, isEditable, null, function(result){
                 if (result!==Dime.Dialog.DIALOG_RESULT_CANCEL){
                     Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.EDIT, selectedItems);
+                }else{
+                    Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.OPERATION_CANCELED, selectedItems);
                 }
             });
         };
@@ -1827,15 +1836,17 @@ DimeView = {
             window.alert("Please select at least one item to be deleted!");
             return;
         }
+        Dime.evaluation.updateViewStackWithViewStack(Dime.evaluation.VIEW_STACK.Delete_Dialog);
 
         if (confirm("Are you sure, you want to delete "+mySelectedItems.length+" items?")){
             
             Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.REMOVE, mySelectedItems);
-
             for (var i=0;i<mySelectedItems.length;i++){
                 var item = mySelectedItems[i];
                 Dime.REST.removeItem(item);
             }
+        }else{
+            Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.OPERATION_CANCELED, mySelectedItems);
         }
     },    
            
@@ -1849,6 +1860,8 @@ DimeView = {
             Dime.Dialog.showShareWithSelection(response, function(result){
                 if (result!==Dime.Dialog.DIALOG_RESULT_CANCEL){
                     Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.SHARE, selectedItems);
+                }else{
+                    Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.OPERATION_CANCELED, selectedItems);
                 }
             });
         };
@@ -2040,6 +2053,8 @@ DimeView = {
                         Dime.Dialog.showNewItemModal(type, null, newItem, function(result, newItemResponse){
                             if (result!==Dime.Dialog.DIALOG_RESULT_CANCEL){
                                 Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.NEW, newItemResponse);
+                            }else{
+                                Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.OPERATION_CANCELED, newItemResponse);
                             }
                         });
                     });
@@ -2058,6 +2073,8 @@ DimeView = {
                     function(event, jElement, type){Dime.Dialog.showNewItemModal(type, null, null, function(result, newItemResponse){
                             if (result!==Dime.Dialog.DIALOG_RESULT_CANCEL){
                                 Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.NEW, newItemResponse);
+                            }else{
+                                Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.OPERATION_CANCELED, newItemResponse);
                             }
                         });}, type);
             return $('<li/>').attr('role','menuitem').append(link);

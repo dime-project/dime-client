@@ -1285,41 +1285,69 @@ Dime.AdvisoryItem.prototype={
 };
 
 Dime.evaluation={
-
+    // https://confluence.deri.ie:8443/display/digitalme/SET+%28Self+Evaluation+Tool%29+Specs#SET%28SelfEvaluationTool%29Specs-Viewstack
     ACTION: {
         NEW: 'action_new',
         EDIT: 'action_editItem',
         REMOVE: 'action_removeItem',
         SHARE: 'action_share',
-        MERGE: 'action_merge',
+        MERGE_CONFIRMED: 'merge_confirmed',
+        MERGE_DISMISSED: 'merge_dismissed',
+        MERGE_PENDING: 'merge_pending',
+        MERGE_SELECTION: 'action_mergeSelection',
         READ_UN: 'action_read_UN',
         FIRST_LOGIN: 'initial_login',
-        NAVIGATE_SEARCH: 'navigate_search_web_UI'
+        NAVIGATE_SEARCH: 'navigate_search_web_UI',
+        OPERATION_CANCELED: 'operation_canceled',
+        CONNECT_SERVICE: 'action_connectServiceAdapter',
+        DISCONNECT_SERVICE: 'action_disconnectServiceAdapter',
+        UPLOAD: 'action_uploadFile'
+    },
+    
+    VIEW_STACK:{
+        Account_Configuration_Dialog: 'Account_Configuration_Dialog',
+        Communication: 'Communication',
+        Data: 'Data',
+        Delete_Dialog: 'Delete_Dialog',
+        Edit_Item_Dialog: 'Edit_Item_Dialog',
+        Event: 'Event',
+        Merge_Dialog: 'Merge_Dialog',
+        Myprofile: 'Myprofile',
+        New_Item_Dialog: 'New_Item_Dialog',
+        New_Livepost_Dialog: 'New_Livepost_Dialog',
+        Notifications: 'Notifications',
+        People: 'People',
+        Person_Detail: 'Person_Detail',
+        Place: 'Place',
+        Share_Dialog: 'Share_Dialog',
+        Situations: 'Situations',
+        Settings: 'Settings'        
     },
 
+
     getViewStackItemByGroupType: function(groupType, viewType){
-        //https://confluence.deri.ie:8443/display/digitalme/SET+%28Self+Evaluation+Tool%29+Specs#SET%28SelfEvaluationTool%29Specs-Viewstack
+        
         //FIXME access to index.js :-(
         if (viewType===DimeViewStatus.SETTINGS_VIEW){
-            return "Settings";
+            return Dime.evaluation.VIEW_STACK.Settings;
         }
         if (viewType===DimeViewStatus.PERSON_VIEW){
-            return "Person_Detail";
+            return Dime.evaluation.VIEW_STACK.Person_Detail;
         }
         if (groupType===Dime.psMap.TYPE.GROUP){
-            return "People";
+            return Dime.evaluation.VIEW_STACK.People;
         }else if (groupType===Dime.psMap.TYPE.DATABOX){
-            return "Data";
+            return Dime.evaluation.VIEW_STACK.Data;
         }else if (groupType===Dime.psMap.TYPE.PROFILE){
-            return "Myprofile";
+            return Dime.evaluation.VIEW_STACK.Myprofile;
         }else if (groupType===Dime.psMap.TYPE.LIVESTREAM){
-            return "Communication";
+            return Dime.evaluation.VIEW_STACK.Communication;
         }else if (groupType===Dime.psMap.TYPE.SITUATION){
-            return "Situations";
+            return Dime.evaluation.VIEW_STACK.Situations;
         }else if (groupType===Dime.psMap.TYPE.PLACE){
-            return "Place";
+            return Dime.evaluation.VIEW_STACK.Place;
         }else if (groupType===Dime.psMap.TYPE.EVENT){
-            return "Event";
+            return Dime.evaluation.VIEW_STACK.Event;
         }
         console.log("Evaluation: undefined view: (groupType, viewType)", groupType, viewType);
         return 'undefined';
@@ -1369,15 +1397,21 @@ Dime.evaluation={
             "involvedItems":involvedItems
         };
     },
-            
-    updateViewStack: function(groupType, viewType){
+
+    updateViewStackWithViewStack: function(viewStackEntry){
         if (!Dime.ps_configuration.viewStack){
             Dime.ps_configuration.viewStack=this.createViewStack();
             //store initial evaluation
             var action = Dime.evaluation.ACTION.NAVIGATE_SEARCH;
             this.createAndSendEvaluationItemForAction(action);
         }
-        Dime.ps_configuration.viewStack.push(this.getViewStackItemByGroupType(groupType, viewType));
+        Dime.ps_configuration.viewStack.push(viewStackEntry);
+    },
+
+    updateViewStack: function(groupType, viewType){
+        var viewStackEntry = this.getViewStackItemByGroupType(groupType, viewType);
+        this.updateViewStackWithViewStack(viewStackEntry);
+        
     },
 
     createAndSendEvaluationItemForAction: function(action, involvedItems){
@@ -1391,7 +1425,7 @@ Dime.evaluation={
             Dime.REST.postEvaluation(evaluationItem, function(){
                 //reset view stack
                 Dime.ps_configuration.viewStack=[];
-
+                console.log('sent evaluation: ', evaluationItem.action, evaluationItem.viewStack)
             }, this);
         }
     },
@@ -1405,7 +1439,7 @@ Dime.evaluation={
                     }
                 });
             });
-       console.log('countInvolvedItems (involvedItems, evaluationItem)', involvedItems, evaluationItem);
+       //console.log('countInvolvedItems (involvedItems, evaluationItem)', involvedItems, evaluationItem);
     }
 };
 
@@ -5842,6 +5876,8 @@ Dime.MergeDialog.prototype = {
     },
             
     show: function(callback, handlerSelf){
+        Dime.evaluation.updateViewStackWithViewStack(Dime.evaluation.VIEW_STACK.Merge_Dialog);
+
         this.resultFunction = callback;
         this.handlerSelf = handlerSelf;        
                 
@@ -6025,6 +6061,7 @@ Dime.Dialog={
     },
 
     showDetailItemModal: function(entry, isEditable, message, callback){
+        Dime.evaluation.updateViewStackWithViewStack(Dime.evaluation.VIEW_STACK.Edit_Item_Dialog);
 
         callback=callback?callback:function(){}; //init callback if not set
 
@@ -6067,6 +6104,7 @@ Dime.Dialog={
     },
 
     showNewItemModal: function(type, message, newItem, callback){
+        Dime.evaluation.updateViewStackWithViewStack(Dime.evaluation.VIEW_STACK.New_Item_Dialog);
 
         callback=callback?callback:function(){}; //init callback if not set
 
@@ -6114,6 +6152,7 @@ Dime.Dialog={
 
     
     showLivepostWithSelection: function(selectedPerson, callback){
+        Dime.evaluation.updateViewStackWithViewStack(Dime.evaluation.VIEW_STACK.New_Livepost_Dialog);
         callback=callback?callback:function(){}; //init callback if not set
 
         $("#lightBoxBlack").fadeIn(300);
@@ -6155,7 +6194,8 @@ Dime.Dialog={
     },
             
     showShareWithSelection: function(selectedItems, callback){
-
+        Dime.evaluation.updateViewStackWithViewStack(Dime.evaluation.VIEW_STACK.Share_Dialog);
+        
         callback=callback?callback:function(){}; //init callback if not set
        
         $("#lightBoxBlack").fadeIn(300);
