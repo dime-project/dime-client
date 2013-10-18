@@ -1286,6 +1286,16 @@ Dime.AdvisoryItem.prototype={
 
 Dime.evaluation={
 
+    ACTION: {
+        NEW: 'action_new',
+        EDIT: 'action_editItem',
+        REMOVE: 'action_removeItem',
+        SHARE: 'action_share',
+        MERGE: 'action_merge',
+        READ_UN: 'action_read_usernotification',
+        FIRST_LOGIN: 'initial_login'
+    },
+
     getViewStackItemByGroupType: function(groupType, viewType){
         //https://confluence.deri.ie:8443/display/digitalme/SET+%28Self+Evaluation+Tool%29+Specs#SET%28SelfEvaluationTool%29Specs-Viewstack
         
@@ -1308,6 +1318,7 @@ Dime.evaluation={
         }else if (groupType===Dime.psMap.TYPE.PLACE){
             return "Place";
         }
+        console.log("Evaluation: undefined view: (groupType, viewType)", groupType, viewType);
         return 'undefined';
     },
 
@@ -1372,9 +1383,10 @@ Dime.evaluation={
             var evaluationItem = this.createEvaluationItem(Dime.ps_configuration.userInformation.evaluationId,
                 Dime.ps_configuration.viewStack, action, this.createEmptyInvolvedItems());
             
-            Dime.evaluation.countInvolvedItems(involvedItems, evaluationItem);
+            this.countInvolvedItems(involvedItems, evaluationItem);
             
             Dime.REST.postEvaluation(evaluationItem, function(){
+                //reset view stack
                 Dime.ps_configuration.viewStack=[];
 
             }, this);
@@ -1390,6 +1402,7 @@ Dime.evaluation={
                     }
                 });
             });
+       console.log('countInvolvedItems', involvedItems, evaluationItem);
     }
 };
 
@@ -5785,12 +5798,12 @@ Dime.MergeDialog.prototype = {
     
     cancelHandler: function(){
         this.removeDialog();  
-        this.resultFunction.call(this.handlerSelf, this.STATUS_PENDING);
+        this.resultFunction.call(this.handlerSelf, this.STATUS_PENDING, this.mergePersonsFull);
     },
       
     dismissHandler: function(){
         this.removeDialog();  
-        this.resultFunction.call(this.handlerSelf, this.STATUS_DISMISSED);
+        this.resultFunction.call(this.handlerSelf, this.STATUS_DISMISSED, this.mergePersonsFull);
     },
     
     acceptHandler: function(){
@@ -5807,7 +5820,7 @@ Dime.MergeDialog.prototype = {
             //HACK clear cache totaly since notifications are missing
             Dime.cache.resetCache();
 
-            dlgRef.resultFunction.call(this.handlerSelf, this.STATUS_ACCEPTED);
+            dlgRef.resultFunction.call(this.handlerSelf, this.STATUS_ACCEPTED, this.mergePersonsFull);
         }, this);
         dlgRef.removeDialog();
     },
@@ -5819,14 +5832,21 @@ Dime.MergeDialog.prototype = {
         }else{
             return false;
         }
-   },
+    },
+
+    mergePersonsFull: [], //array of full person entries to be merged
 
     initBody: function(){
         //TODO: check two/multiple
         var dialogRef = this;
         for (var i=0; i<this.mergePersons.length; i++){
             Dime.psHelper.getPersonAndProfiles(this.mergePersons[i], function(response){
-                dialogRef.createPersonElement(response, this.mergePersons.length, i);
+                if (response && response.person){
+                    this.mergePersonsFull.push(response.person);
+                    dialogRef.createPersonElement(response, this.mergePersons.length, i);
+                }else{
+                    console.log('received incomplete response from getPersonAndProfiles:', response);
+                }
             }, this);
         }
     },

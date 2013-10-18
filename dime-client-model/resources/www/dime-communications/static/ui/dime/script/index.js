@@ -235,14 +235,14 @@ DimeViewManager.prototype = {
         //store status for reference by called functions e.g. DimeView.search //REFACTOR
         this.status = newStatus;
         var dimeViewRef = this.dimeViewRef;
-        
-        //update evaluation data
-        Dime.evaluation.updateViewStack(newStatus.groupType, newStatus.viewType);
-        
+                
         this.resetContainers(newStatus); //based on viewtype
 
         if (!skipHistory){ 
-            this.pushHistory(newStatus); //update navigation history
+            //update evaluation data
+            Dime.evaluation.updateViewStack(newStatus.groupType, newStatus.viewType);
+            //update navigation history
+            this.pushHistory(newStatus);
         }
 
         //refresh general navigation buttons, action buttons and meta-bar
@@ -330,12 +330,13 @@ DimeViewManager.prototype = {
             
     viewForTypeIsShown: function(type){
         var views = this.getViewsByType(type);
+        var viewShown = false;
         jQuery(views, function(){
             if (this.visibleViews[this.id]){
-                return true;
+                viewShown = true;
             }
         });
-        return false;
+        return viewShown;
     },
     
     updateViewFromNotifications: function(notifications){
@@ -605,6 +606,10 @@ DimeView = {
                         callback(response);
                     }
                 }, this);
+
+                if (read){
+                    Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.READ_UN, myUN);
+                }
         };
         
         //update caption with sender name if available
@@ -640,12 +645,15 @@ DimeView = {
                
                 var mergeGuids = [myNotification.unEntry.sourceId, myNotification.unEntry.targetId];
                 var dialog = new Dime.MergeDialog(mergeGuids, myNotification.unEntry.similarity, true);
-                dialog.show(function(resultStatus){
+                dialog.show(function(resultStatus, mergedPersons){
                     myNotification.unEntry.status = resultStatus;                    
                     if (resultStatus!==dialog.STATUS_PENDING){  //"status":"accepted/dismissed/pending"
                        updateUserNotification(myNotification, true, function(){                         
                             //delete afterwards
                             Dime.REST.removeItem(myNotification);
+                            if (resultStatus===dialog.STATUS_ACCEPTED){
+                                Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.MERGE, mergedPersons);
+                            }
                          });
                     }else{
                         updateUserNotification(myNotification, true);
@@ -1082,7 +1090,7 @@ DimeView = {
                                 }); 
                             }else{
                                 (new Dime.Dialog.Toast("Geolocation services are not supported by your browser.")).show();
-                            };                                
+                            }                                
                         })));
         };
         
@@ -1387,9 +1395,12 @@ DimeView = {
             }
 
             var dialog = new Dime.MergeDialog(mergeGuids);
-            dialog.show(function(resultStatus){
+            dialog.show(function(resultStatus, mergedPersons){
                 if (resultStatus!==dialog.STATUS_PENDING){
                     DimeView.viewManager.updateViewFromStatus(DimeView.viewManager.status, true);
+                    if (resultStatus===dialog.STATUS_ACCEPTED){
+                        Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.MERGE, mergedPersons);
+                    }
                 }
             }, DimeView);
         }else if (DimeView.viewManager.status.groupType===Dime.psMap.TYPE.PLACE){
@@ -1780,7 +1791,7 @@ DimeView = {
 
         Dime.Dialog.showDetailItemModal(entry, isEditable, message, function(result){
             if (result!==Dime.Dialog.DIALOG_RESULT_CANCEL){
-                Dime.evaluation.createAndSendEvaluationItemForAction("action_editItem", entry);
+                Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.EDIT, entry);
             }
         });
     },
@@ -1801,7 +1812,7 @@ DimeView = {
             var isEditable=DimeView.actionMenuActivatedForItem(response);
             Dime.Dialog.showDetailItemModal(response, isEditable, null, function(result){
                 if (result!==Dime.Dialog.DIALOG_RESULT_CANCEL){
-                    Dime.evaluation.createAndSendEvaluationItemForAction("action_editItem", selectedItems);
+                    Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.EDIT, selectedItems);
                 }
             });
         };
@@ -1819,7 +1830,7 @@ DimeView = {
 
         if (confirm("Are you sure, you want to delete "+mySelectedItems.length+" items?")){
             
-            Dime.evaluation.createAndSendEvaluationItemForAction("action_removeItem", mySelectedItems);
+            Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.REMOVE, mySelectedItems);
 
             for (var i=0;i<mySelectedItems.length;i++){
                 var item = mySelectedItems[i];
@@ -1837,7 +1848,7 @@ DimeView = {
 
             Dime.Dialog.showShareWithSelection(response, function(result){
                 if (result!==Dime.Dialog.DIALOG_RESULT_CANCEL){
-                    Dime.evaluation.createAndSendEvaluationItemForAction("action_share", selectedItems);
+                    Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.SHARE, selectedItems);
                 }
             });
         };
@@ -2028,7 +2039,7 @@ DimeView = {
                         newItem.category=pACategory.name;
                         Dime.Dialog.showNewItemModal(type, null, newItem, function(result, newItemResponse){
                             if (result!==Dime.Dialog.DIALOG_RESULT_CANCEL){
-                                Dime.evaluation.createAndSendEvaluationItemForAction("action_new", newItemResponse);
+                                Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.NEW, newItemResponse);
                             }
                         });
                     });
@@ -2046,7 +2057,7 @@ DimeView = {
                 .clickExt(Dime.Dialog,
                     function(event, jElement, type){Dime.Dialog.showNewItemModal(type, null, null, function(result, newItemResponse){
                             if (result!==Dime.Dialog.DIALOG_RESULT_CANCEL){
-                                Dime.evaluation.createAndSendEvaluationItemForAction("action_new", newItemResponse);
+                                Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.NEW, newItemResponse);
                             }
                         });}, type);
             return $('<li/>').attr('role','menuitem').append(link);
@@ -2641,7 +2652,7 @@ DimeView.viewManager = new DimeViewManager(DimeView);
 
 
 Dime.Settings = {
-    evaluationInfoHtml:'<span>The following data will be collected for evaluation:</span><br><ul><li>an anonymous identifyier which allows us to know what click data and questionaire answers come from the same account. No other identity information like your di.me username, nickname, real name, or email-address is sent. No location information is sent.</li><li>statistics about how many contacts, files, messages, and connected systems you use in your system. Only the number and time when created, but no information about names, content, or anything else is sent.</li><li>data about what type of pages you click in the system (e.g. a page „person“). This includes the time the page was clicked. No title, text, or other content of the pages are sent.</li></ul><br/><span>We do not use other click analysis (like e.g. Google Analytics). You can switch this off at any time on the page "Settings".</span>',
+    evaluationInfoHtml:'<span>The following data will be collected for evaluation:</span><br><ul><li>an anonymous identifyier which allows us to know what click data and questionaire answers come from the same account. No other identity information like your di.me username, nickname, real name, or email-address is sent. No location information is sent.</li><li>statistics about how many contacts, files, messages, and connected systems you use in your system. Only the number and time when created, but no information about names, content, or anything else is sent.</li><li>data about what type of pages you click in the system (e.g. a page "person"). This includes the time the page was clicked. No title, text, or other content of the pages are sent.</li></ul><br/><span>We do not use other click analysis (like e.g. Google Analytics). You can switch this off at any time on the page "Settings".</span>',
 
     //in segovia some services have been hidden
     //hiddenServices: ['SocialRecommenderServiceAdapter', 'AMETICDummyAdapter', 'Facebook'],
@@ -2890,15 +2901,15 @@ Dime.Settings = {
     },
 
     dropdownOnClick: function(event, jqueryItem, serviceAdapter) {
-        
+        var dialog;
         if (serviceAdapter.authUrl) {
             //showing service description before open in new window
-            var dialog = new Dime.ConfigurationDialog(this, this.configurationSubmitHandler);
+            dialog = new Dime.ConfigurationDialog(this, this.configurationSubmitHandler);
             dialog.showAuth(serviceAdapter.name, serviceAdapter.description, serviceAdapter.authUrl);
         } else {
             //create account item
             var newAccountItem = Dime.Settings.createAccount(serviceAdapter);
-            var dialog = new Dime.ConfigurationDialog(this, this.configurationSubmitHandler);
+            dialog = new Dime.ConfigurationDialog(this, this.configurationSubmitHandler);
             dialog.show(serviceAdapter.name, serviceAdapter.description, newAccountItem, true);
         }
     },
@@ -2985,6 +2996,7 @@ Dime.initProcessor.registerFunction(function(callback){
             response.userStatusFlag=1;
             Dime.REST.updateUser(response);
             DimeView.showAbout();
+            Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.FIRST_LOGIN, []);
         }
     };
     Dime.REST.getUser(getUserCallback, DimeView);
