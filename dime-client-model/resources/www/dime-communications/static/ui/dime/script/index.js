@@ -585,7 +585,7 @@ DimeView = {
             }
         }
         jChildItem.append(profileAttributeValues)
-            .append('<div class="clear">');
+            .append('<div class="clear">').attr('title',entry.name);
         
         
         DimeView.setActionAttributeForElements(entry, jChildItem, false, true);
@@ -745,7 +745,7 @@ DimeView = {
         //replace resource.png (no-image) with default
         jChildItem.append(Dime.psHelper.getImageUrlJImageFromEntry(entry));
         jChildItem.append(DimeView.createMark(entry, "", false));
-        jChildItem.append('<h4 title="' + entry.name + '"><b>'+ DimeView.getShortNameWithLength(entry.name, 40) +  '</b></h4>');
+        jChildItem.append('<h4 title="' + entry.name + '"><b>'+ DimeView.getShortNameWithLength(entry.name, 30) +  '</b></h4>');
         if(fav){
             jChildItem.append('<p>' + fav + '</p>');
         }
@@ -839,7 +839,7 @@ DimeView = {
                         Dime.REST.updateItem(entry,handleResponse , DimeView);
                     })
                 )
-            );
+            ).attr('title',entry.name);
 
         //set action attributes
         DimeView.setActionAttributeForElements(entry, jChildItem, false, true);
@@ -894,7 +894,7 @@ DimeView = {
         }
         
         
-        jChildItem.append('<h4>'+ entryName + '</h4>');
+        jChildItem.append('<h4>'+ entryName + '</h4>').attr('title',entry.name);
         
           
         //innerChild - type specific fields
