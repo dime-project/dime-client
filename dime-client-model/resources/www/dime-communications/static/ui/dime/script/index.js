@@ -890,7 +890,7 @@ DimeView = {
         if (entry.type===Dime.psMap.TYPE.LIVEPOST){
             entryName = DimeView.getShortNameWithLength(entry.name, 125);
         }else{
-            entryName = DimeView.getShortNameWithLength(entry.name, 30);
+            entryName = DimeView.getShortNameWithLength(entry.name, 25);
         }
         
         
