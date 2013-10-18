@@ -832,6 +832,7 @@ DimeView = {
                                     + (response[0].active?"activated":"deactivated")
                                     +" successfully."
                                 )).show();
+                                Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.SITUATION_TOGGLED, []);
                             }
                         };                        
                         entry.active = !entry.active;
@@ -1990,7 +1991,8 @@ DimeView = {
                     ){
                             
                     responseJSON.success=true; //set success == true for processing of result by fileuploader
-                    DimeView.search(); //update container
+                    DimeView.viewManager.updateViewFromStatus(DimeView.viewManager.status, true); //update view
+                    Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.UPLOAD, []);
                 }
       
             }
@@ -2766,6 +2768,7 @@ Dime.Settings = {
         $('#ConfigServiceDialogID').remove();
         var callBackHandler = function(response) {
             console.log("DELETED service " + serviceAccount.guid + " - response:", response);
+            Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.DISCONNECT_SERVICE, []);
         };
 
         Dime.REST.removeItem(serviceAccount, callBackHandler, Dime.Settings);
@@ -2887,8 +2890,7 @@ Dime.Settings = {
     updateServices: function() {
                 
         var callback = function(response) {
-            Dime.Settings.initServiceAdapters(response);
-        
+            Dime.Settings.initServiceAdapters(response);        
         };
         
         Dime.REST.getAll(Dime.psMap.TYPE.SERVICEADAPTER, callback , '@me', Dime.Settings);
@@ -2898,8 +2900,7 @@ Dime.Settings = {
     updateAccounts: function() {
 
         var callback = function(response) {
-            Dime.Settings.initServiceAccounts(response);
-        
+            Dime.Settings.initServiceAccounts(response);        
         };
 
         Dime.REST.getAll(Dime.psMap.TYPE.ACCOUNT, callback , '@me', Dime.Settings);

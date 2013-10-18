@@ -1300,8 +1300,10 @@ Dime.evaluation={
         NAVIGATE_SEARCH: 'navigate_search_web_UI',
         OPERATION_CANCELED: 'operation_canceled',
         CONNECT_SERVICE: 'action_connectServiceAdapter',
+        UPDATE_SERVICE: 'action_updateServiceAdapter',
         DISCONNECT_SERVICE: 'action_disconnectServiceAdapter',
-        UPLOAD: 'action_uploadFile'
+        UPLOAD: 'action_uploadFile',
+        SITUATION_TOGGLED: 'action_toggle_situation'
     },
     
     VIEW_STACK:{
@@ -1314,7 +1316,6 @@ Dime.evaluation={
         Merge_Dialog: 'Merge_Dialog',
         Myprofile: 'Myprofile',
         New_Item_Dialog: 'New_Item_Dialog',
-        New_Livepost_Dialog: 'New_Livepost_Dialog',
         Notifications: 'Notifications',
         People: 'People',
         Person_Detail: 'Person_Detail',
@@ -1348,6 +1349,8 @@ Dime.evaluation={
             return Dime.evaluation.VIEW_STACK.Place;
         }else if (groupType===Dime.psMap.TYPE.EVENT){
             return Dime.evaluation.VIEW_STACK.Event;
+        }else if (groupType===Dime.psMap.TYPE.USERNOTIFICATION){
+            return Dime.evaluation.VIEW_STACK.Notifications;
         }
         console.log("Evaluation: undefined view: (groupType, viewType)", groupType, viewType);
         return 'undefined';
@@ -5476,6 +5479,7 @@ Dime.ConfigurationDialog.prototype = {
     
     //FIX: refactor -> better solution in show()?!
     showAuth: function(adapterName, adapterDescription, adapterAuthUrl){
+        Dime.evaluation.updateViewStackWithViewStack(Dime.evaluation.VIEW_STACK.Account_Configuration_Dialog);
         
         this.modal = document.createElement("div");
         this.modal.setAttribute("id", "ConfigServiceWrapperID");
@@ -5493,19 +5497,24 @@ Dime.ConfigurationDialog.prototype = {
             window.open(adapterAuthUrl, "_blank", "");
             $("#lightBoxBlack").fadeOut(300);
             $('#ConfigServiceDialogID').remove();
+            Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.CONNECT_SERVICE, []);
+
         };
 
         var myCancelHandler = function() {
             $("#lightBoxBlack").fadeOut(300);
             $('#ConfigServiceDialogID').remove();
+            Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.OPERATION_CANCELED, []);
         };
                
-        var dialog = new Dime.BasicDialog('ServiceModal', "Create new account", 'ConfigServiceDialogID', 'ConfigServiceBodyID', this.modal, myCancelHandler , myOkHandler, this);
+        var dialog = new Dime.BasicDialog('ServiceModal', "Create new account", 'ConfigServiceDialogID', 'ConfigServiceBodyID',
+            this.modal, myCancelHandler , myOkHandler, this);
         $('body').append(dialog.dialog);
     },
 
     show: function(adapterName, adapterDescription, serviceAccount, isNewAccount) {
-
+        Dime.evaluation.updateViewStackWithViewStack(Dime.evaluation.VIEW_STACK.Account_Configuration_Dialog);
+        
         var inputs = [];
         this.modal = document.createElement("div");
         this.modal.setAttribute("id", "ConfigServiceWrapperID");
@@ -5727,12 +5736,18 @@ Dime.ConfigurationDialog.prototype = {
                 $("#lightBoxBlack").fadeOut(300);
                 $('#ConfigServiceDialogID').remove();
                 this.okHandler.call(this.handlerSelf, serviceAccount, isNewAccount);
+                if (isNewAccount){
+                    Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.CONNECT_SERVICE, []);
+                }else{
+                    Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.UPDATE_SERVICE, []);
+                }
             }
         };
 
         var myCancelHandler = function() {
             $("#lightBoxBlack").fadeOut(300);
             $('#ConfigServiceDialogID').remove();
+            Dime.evaluation.createAndSendEvaluationItemForAction(Dime.evaluation.ACTION.OPERATION_CANCELED, []);
         };
 
         //show dialog
@@ -6152,7 +6167,7 @@ Dime.Dialog={
 
     
     showLivepostWithSelection: function(selectedPerson, callback){
-        Dime.evaluation.updateViewStackWithViewStack(Dime.evaluation.VIEW_STACK.New_Livepost_Dialog);
+        Dime.evaluation.updateViewStackWithViewStack(Dime.evaluation.VIEW_STACK.New_Item_Dialog);
         callback=callback?callback:function(){}; //init callback if not set
 
         $("#lightBoxBlack").fadeIn(300);
