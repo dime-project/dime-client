@@ -5,18 +5,13 @@ import eu.dime.model.ModelHelper;
 import eu.dime.model.TYPES;
 import eu.dime.restapi.DimeEnvelope.ENVELOPE_TYPE;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
-import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.xbill.DNS.Address;
-import org.xbill.DNS.Lookup;
-import org.xbill.DNS.SimpleResolver;
 import sit.json.JSONObject;
 import sit.json.JSONPathAccessException;
 import sit.web.HttpConstants;
@@ -59,16 +54,6 @@ public class DimeHelper {
     public final static long systemStartTime = System.currentTimeMillis();
     public final static double DEFAULT_INITIAL_TRUST_LEVEL = 0.5;
     public final static double DEFAULT_INITIAL_PRIVACY_LEVEL = 0.5;
-    
-    //"e.g. ps43"
-    public static String resolveIPOfPS(String said) throws UnknownHostException{
-        Lookup.refreshDefault(); //clear cache TODO: check again
-        Lookup.setDefaultResolver(new SimpleResolver(DIME_DNS_SERVER));
-        String internalHostname = said+".dns.dime-project.eu";
-        Logger.getLogger(DimeHelper.class.getName()).log(Level.INFO, "lookup ip for hostname:" + internalHostname + " at "+DIME_DNS_SERVER);
-        InetAddress addr = Address.getByName(internalHostname);
-        return addr.getHostAddress();
-    }
     
     public static String getBaseHostURl(RestApiConfiguration conf) {
         String myPath = conf.isHttps ? "https://" : "http://";

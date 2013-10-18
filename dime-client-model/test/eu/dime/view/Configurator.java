@@ -12,10 +12,8 @@ import eu.dime.view.viewmodel.ModelConfigurationHelper;
 import eu.dime.view.viewmodel.PresetList;
 import eu.dime.view.viewmodel.Settings;
 import java.awt.Window;
-import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -35,7 +33,6 @@ public class Configurator extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();        
         this.setTitle("di.me Model Viewer - Settings");
-        
         //load settings
         settings = ModelConfigurationHelper.getStoredSettings();
         updateFormFromConfiguration(settings.getCurrentConfiguration());
@@ -43,8 +40,6 @@ public class Configurator extends javax.swing.JDialog {
             presets.addElement(configuration);
         }        
         this.presetsList.setModel(presets);
-        
-        
         UIHelper.moveWindowToMousePosition((Window)this);
     }
 
@@ -73,7 +68,6 @@ public class Configurator extends javax.swing.JDialog {
         accessRemoteCheckbox = new javax.swing.JCheckBox();
         enablePersistenceCheckbox = new javax.swing.JCheckBox();
         getNotificationsCheckbox = new javax.swing.JCheckBox();
-        lookupHostname = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         presetNameText = new javax.swing.JTextField();
         loadPresetText = new javax.swing.JButton();
@@ -121,42 +115,22 @@ public class Configurator extends javax.swing.JDialog {
         );
 
         jLabel1.setText("HostName");
-
         hostNameText.setText("jTextField1");
-
         jLabel2.setText("Port");
-
         portText.setText("jTextField1");
-
         jLabel3.setText("UserName");
-
         userNameText.setText("Username");
-
         useHTTPSCheck.setText("use HTTPS");
-
         jLabel4.setText("Password");
-
         passwordText.setText("jTextField1");
-
         accessRemoteCheckbox.setText("access remote");
         accessRemoteCheckbox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 accessRemoteCheckboxActionPerformed(evt);
             }
         });
-
         enablePersistenceCheckbox.setText("enable persistence");
-
         getNotificationsCheckbox.setText("get notifications");
-
-        lookupHostname.setText("lookup hostname");
-        lookupHostname.setToolTipText("lookup hostname via dime.dns by the username given");
-        lookupHostname.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                lookupHostnameActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -168,8 +142,7 @@ public class Configurator extends javax.swing.JDialog {
                         .addComponent(userNameText)
                         .addComponent(hostNameText, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
                         .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING))
-                    .addComponent(jLabel3)
-                    .addComponent(lookupHostname, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel4)
@@ -207,8 +180,7 @@ public class Configurator extends javax.swing.JDialog {
                     .addComponent(passwordText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(accessRemoteCheckbox)
-                    .addComponent(lookupHostname))
+                    .addComponent(accessRemoteCheckbox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(enablePersistenceCheckbox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -337,12 +309,7 @@ public class Configurator extends javax.swing.JDialog {
         if (userNameText.getText().length()==0){
             return;
         }
-        try {
-            hostNameText.setText(DimeHelper.resolveIPOfPS(userNameText.getText()));
-        } catch (UnknownHostException ex) {
-            JOptionPane.showMessageDialog(this, "unable to resolve hostname for user: "+userNameText.getText());
-            Logger.getLogger(Configurator.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        //FIXME: hostNameText.setText(DimeHelper.resolveIPOfPS(userNameText.getText()));
     }//GEN-LAST:event_lookupHostnameActionPerformed
 
     private void presetsListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_presetsListMouseClicked
@@ -370,7 +337,6 @@ public class Configurator extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton loadPresetText;
-    private javax.swing.JButton lookupHostname;
     private javax.swing.JButton okButton;
     private javax.swing.JTextField passwordText;
     private javax.swing.JTextField portText;
@@ -388,18 +354,15 @@ public class Configurator extends javax.swing.JDialog {
         userNameText.setEnabled(remoteActive);
         passwordText.setEnabled(remoteActive);
         getNotificationsCheckbox.setEnabled(remoteActive);
-        lookupHostname.setEnabled(remoteActive);
     }
     
     private Configuration getConfigFromForm(String presetName){
-        
         int port=DimeHelper.DEFAULT_PORT;
         try{
             port = Integer.parseInt(portText.getText());
-        }catch (NumberFormatException ex){
+        } catch (NumberFormatException ex){
             Logger.getLogger(Configurator.class.getName()).log(Level.SEVERE, "portText.getText() is not a number! - using default port");
         }
-        
         Configuration result = new Configuration(presetName, new ModelConfiguration(
                 hostNameText.getText(),
                 port,
@@ -411,11 +374,8 @@ public class Configurator extends javax.swing.JDialog {
                 accessRemoteCheckbox.isSelected(),
                 getNotificationsCheckbox.isSelected()                
                 ));
-        
-        
         return result;        
     }
-     
      
     private void updateFormFromConfiguration(Configuration configuration){
         hostNameText.setText(configuration.getHostname());
@@ -426,7 +386,6 @@ public class Configurator extends javax.swing.JDialog {
         accessRemoteCheckbox.setSelected(configuration.isAccessRemoteRestAPI());
         enablePersistenceCheckbox.setSelected(configuration.isPersistence());
         getNotificationsCheckbox.setSelected(configuration.isFetchNotifications());
-        
         toggleRemoteFieldsEnable(accessRemoteCheckbox.isSelected());
     }
     
@@ -435,7 +394,6 @@ public class Configurator extends javax.swing.JDialog {
     }
 
     private void updateSettingsFromForm() {
-        
         settings.setCurrentConfiguration(getConfigFromForm("default"));
         settings.setConfigurations(presets.elements());
     }

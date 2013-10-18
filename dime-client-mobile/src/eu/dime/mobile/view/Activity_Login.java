@@ -32,7 +32,6 @@ import android.widget.TextView.OnEditorActionListener;
 import eu.dime.control.DummyLoadingViewHandler;
 import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
-import eu.dime.mobile.R.array;
 import eu.dime.mobile.Settings;
 import eu.dime.mobile.helper.AndroidModelHelper;
 import eu.dime.mobile.helper.DimeIntentObjectHelper;
@@ -64,7 +63,6 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
     private TextView isHttpsLabel;
     protected ProgressDialog dialog;
     private boolean showHiddenFields = false;
-    
 
     /**
      * Called when the activity is first created.
@@ -78,19 +76,14 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
         pass = (EditText) findViewById(R.login.editText_password);
         remember = (CheckBox) findViewById(R.login.checkBox_remember);
         login = (Button) findViewById(R.login.button_login);
-        
-        ArrayAdapter<CharSequence> knownServersAdapter = ArrayAdapter.createFromResource(this,
-                    R.array.known_dime_servers,android.R.layout.simple_dropdown_item_1line); //simple_spinner_dropdown_item
-        
+        ArrayAdapter<CharSequence> knownServersAdapter = ArrayAdapter.createFromResource(this, R.array.known_dime_servers, android.R.layout.simple_dropdown_item_1line); //simple_spinner_dropdown_item
         serverNameAndPort = (AutoCompleteTextView) findViewById(R.login.editText_server);
         serverNameAndPort.setAdapter(knownServersAdapter);
         serverNameAndPort.setOnClickListener(new OnClickListener() {
-
             public void onClick(View view) {
                 serverNameAndPort.showDropDown();
             }
         });
-
         isHttpsLabel = (TextView) findViewById(R.login.label_is_https_txt);
         isHttpsCheckBox = (CheckBox)findViewById(R.login.checkbox_is_https);
         dimeLogo = (ImageView) findViewById(R.login.dime_logo);
@@ -163,15 +156,15 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
 
         public ServerAndPort(String serverAndPort) throws DimeClientLoginException {
             String[] input = serverAndPort.split(":");
-            if (input.length==0|| input.length>2){
-                throw new DimeClientLoginException("Invalid server entry: "+serverAndPort);
+            if (input.length == 0 || input.length > 2){
+                throw new DimeClientLoginException("Invalid server entry: " + serverAndPort);
             }
             this.serverName = input[0];
-            if (input.length>1){
-                try{
+            if (input.length > 1){
+                try {
                     this.port = Integer.parseInt(input[1]);
-                }catch (NumberFormatException ex){
-                    throw new DimeClientLoginException("Invalid port in server entry: "+serverAndPort);
+                } catch (NumberFormatException ex){
+                    throw new DimeClientLoginException("Invalid port in server entry: " + serverAndPort);
                 }
             }
         }
@@ -307,7 +300,6 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
 
     private void updateHiddenFields() {
         int viewState = showHiddenFields ? View.VISIBLE : View.GONE;
-        
         isHttpsLabel.setVisibility(viewState);
         isHttpsCheckBox.setVisibility(viewState);
         isHttpsCheckBox.setChecked(settings.isUseHTTPS());
