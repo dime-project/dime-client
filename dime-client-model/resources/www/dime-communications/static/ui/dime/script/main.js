@@ -1292,17 +1292,18 @@ Dime.evaluation={
         REMOVE: 'action_removeItem',
         SHARE: 'action_share',
         MERGE: 'action_merge',
-        READ_UN: 'action_read_usernotification',
-        FIRST_LOGIN: 'initial_login'
+        READ_UN: 'action_read_UN',
+        FIRST_LOGIN: 'initial_login',
+        NAVIGATE_SEARCH: 'navigate_search_web_UI'
     },
 
     getViewStackItemByGroupType: function(groupType, viewType){
         //https://confluence.deri.ie:8443/display/digitalme/SET+%28Self+Evaluation+Tool%29+Specs#SET%28SelfEvaluationTool%29Specs-Viewstack
-        
-        if (viewType===DimeView.SETTINGS_VIEW){
+        //FIXME access to index.js :-(
+        if (viewType===DimeViewStatus.SETTINGS_VIEW){
             return "Settings";
         }
-        if (viewType===DimeView.PERSON_VIEW){
+        if (viewType===DimeViewStatus.PERSON_VIEW){
             return "Person_Detail";
         }
         if (groupType===Dime.psMap.TYPE.GROUP){
@@ -1317,6 +1318,8 @@ Dime.evaluation={
             return "Situations";
         }else if (groupType===Dime.psMap.TYPE.PLACE){
             return "Place";
+        }else if (groupType===Dime.psMap.TYPE.EVENT){
+            return "Event";
         }
         console.log("Evaluation: undefined view: (groupType, viewType)", groupType, viewType);
         return 'undefined';
@@ -1358,7 +1361,7 @@ Dime.evaluation={
             "type": "evaluation",
             "created": new Date().getTime(),
             "tenantId": evaluationId, //evaluation id from user call
-            "clientId":"0.01",
+            "clientId":"0.02_web",
             "viewStack":viewStack,
             "action": action,
             "currPlace":"unknown",
@@ -1371,7 +1374,7 @@ Dime.evaluation={
         if (!Dime.ps_configuration.viewStack){
             Dime.ps_configuration.viewStack=this.createViewStack();
             //store initial evaluation
-            var action = "navigate_search_web_UI";
+            var action = Dime.evaluation.ACTION.NAVIGATE_SEARCH;
             this.createAndSendEvaluationItemForAction(action);
         }
         Dime.ps_configuration.viewStack.push(this.getViewStackItemByGroupType(groupType, viewType));
@@ -1402,7 +1405,7 @@ Dime.evaluation={
                     }
                 });
             });
-       console.log('countInvolvedItems', involvedItems, evaluationItem);
+       console.log('countInvolvedItems (involvedItems, evaluationItem)', involvedItems, evaluationItem);
     }
 };
 
@@ -3291,7 +3294,6 @@ Dime.REST = {
      * @param callerSelf reference to caller this
      */
     updateItem: function(item, callBack, callerSelf){
-        console.log("updateItem", item);
         
         if (!item.userId || item.userId.length===0) {
             console.log("ERROR: userId not defined for item:", item, "update aborted!");
@@ -3442,56 +3444,44 @@ Dime.REST = {
         Dime.REST.getCurrentPlaceGuidAndName(metaCallBack);
     },
     
-    getCurrentPlaceGuidAndName: function(callBack){
+    getCurrentPlaceGuidAndName: function(callback){
         var path = Dime.ps_configuration.getRealBasicUrlString() 
         + "/dime-communications/api/dime/rest/"
         + encodeURIComponent(Dime.ps_configuration.mainSaid)
         + "/context/@me/currentPlace";        
         
-        if (!callBack){
-            callBack = function(response){
-                console.log("getCurrentPlaceGuidAndName callback - (response):", response);
-            };
-        }
+        callback=callback?callback:function(){}; //init callback if not exist
         
         var metaCallBack=function(response){
             var entries = Dime.psHelper.getEntryOfResponseObject(response, false);
-            if (!entries || entries.length===0 || (!entries[0].dataPart)){
-                console.log("ERROR when looking up current place!(path, response)", path, response);
-                callBack({});
+            if (!entries || entries.length===0 || (!entries[0].dataPart)){                
+                callback({});
                 return;
             }
-            console.log("received current place:", entries[0].dataPart);
             
-            callBack(entries[0].dataPart);
+            
+            callback(entries[0].dataPart);
         };
         
         $.getJSON(path, "", metaCallBack);
     },
             
      
-    getCurrentPosition: function(callBack){
+    getCurrentPosition: function(callback){
         var path = Dime.ps_configuration.getRealBasicUrlString() 
         + "/dime-communications/api/dime/rest/"
         + encodeURIComponent(Dime.ps_configuration.mainSaid)
         + "/context/@me/position";        
         
-        if (!callBack){
-            callBack = function(response){
-                console.log("getCurrentPosition callback - (response):", response);
-            };
-        }
+        callback=callback?callback:function(){}; //init callback if not exist        
         
         var metaCallBack=function(response){
             var entries = Dime.psHelper.getEntryOfResponseObject(response, false);
             if (!entries || entries.length===0 || (!entries[0].dataPart)){
-                console.log("ERROR when looking up current position!(path, response)", path, response);
-                callBack({});
+                callback({});
                 return;
             }
-            console.log("received current position:", entries[0].dataPart);
-            
-            callBack(entries[0].dataPart);
+            callback(entries[0].dataPart);
         };
         
         $.getJSON(path, "", metaCallBack);
