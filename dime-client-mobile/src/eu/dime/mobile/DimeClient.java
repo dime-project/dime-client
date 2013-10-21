@@ -117,6 +117,7 @@ public class DimeClient extends Application implements NotificationListener {
         Notification n = new Notification(R.drawable.icon_android_notification, notificationText, System.currentTimeMillis());
         n.vibrate = new long[]{100, 200, 100, 500};
         n.setLatestEventInfo(context, notificationText, "open in #di.me", intent);
+        n.flags|= Notification.FLAG_AUTO_CANCEL;
         androidNotificationManager.notify(NOTIFICATION_GENERAL_ID, n);
     }
 
@@ -193,7 +194,7 @@ public class DimeClient extends Application implements NotificationListener {
 		String clientVersion = "unknown";
 		try {
 			PackageInfo info = appContext.getPackageManager().getPackageInfo(appContext.getPackageName(), 0);
-			clientVersion = info.versionName + info.versionCode;
+			clientVersion = info.versionName;
 		} catch (NameNotFoundException e) {	
 			//silently catch exception
 		}

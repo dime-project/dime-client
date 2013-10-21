@@ -1,17 +1,24 @@
 package eu.dime.mobile.view.dialog;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import android.app.Dialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -24,6 +31,7 @@ import eu.dime.mobile.helper.ImageHelper;
 import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.handler.LoadingViewHandlerFactory;
 import eu.dime.mobile.view.abstr.ActivityDime;
+import eu.dime.mobile.view.adapter.BaseAdapter_Image;
 import eu.dime.model.GenItem;
 import eu.dime.model.Model;
 import eu.dime.model.ModelHelper;
@@ -31,6 +39,7 @@ import eu.dime.model.TYPES;
 import eu.dime.model.displayable.AgentItem;
 import eu.dime.model.displayable.DisplayableItem;
 import eu.dime.model.displayable.LivePostItem;
+import eu.dime.model.displayable.ResourceItem;
 import eu.dime.model.displayable.ShareableItem;
 import eu.dime.model.specialitem.NotificationItem;
 
@@ -50,6 +59,7 @@ public class Activity_Edit_Item_Dialog extends ActivityDime implements OnClickLi
 	private TextView seekHint;
 	private Button saveButton;
 	private View coloredBar;
+	private List<ResourceItem> resources;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -84,9 +94,11 @@ public class Activity_Edit_Item_Dialog extends ActivityDime implements OnClickLi
 		startTask("");
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void loadData() {
 		item = (DisplayableItem) Model.getInstance().getItem(mrContext, dio.getItemType(), dio.getItemId());
+		resources = (List<ResourceItem>) (Object) Model.getInstance().getAllItems(mrContext, TYPES.RESOURCE);
 	}
 
 	@Override
@@ -151,6 +163,38 @@ public class Activity_Edit_Item_Dialog extends ActivityDime implements OnClickLi
 		case R.edit.button_cancel:
 			AndroidModelHelper.sendEvaluationDataAsynchronously(Arrays.asList((GenItem)item), mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_canceled));
 			finish();
+			break;
+		case R.edit.button_upload_picture:
+			// custom dialog
+			final Dialog dialog = new Dialog(this);
+			ListView list = new ListView(this);
+			list.setBackgroundColor(getResources().getColor(android.R.color.white));
+			BaseAdapter_Image adapter = new BaseAdapter_Image();
+			List<String> exampleImages = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.example_images)));
+			if(resources != null && resources.size() > 0) {
+				for (ResourceItem ri : resources) {
+					if(ri.getImageUrl().length() > 0) {
+						exampleImages.add(ri.getImageUrl());
+					}
+				}
+			}
+			list.setAdapter(adapter);
+			list.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					String name = ((TextView)view.findViewById(R.id.name)).getText().toString();
+					String url = ((TextView)view.findViewById(R.id.name)).getTag().toString();
+					dialog.cancel();
+					Toast.makeText(Activity_Edit_Item_Dialog.this, "using image " + name + "!", Toast.LENGTH_LONG).show();
+					item.setImageUrl(url);
+					ImageHelper.loadImageAsynchronously(headerImage, item, Activity_Edit_Item_Dialog.this);
+				}
+			});
+			dialog.setContentView(list);
+			dialog.setTitle("Select Image...");
+			dialog.show();
+			((TextView) dialog.findViewById(android.R.id.title)).setTextColor(Color.WHITE);
+			adapter.init(this, exampleImages);
 			break;
 		}
 	}

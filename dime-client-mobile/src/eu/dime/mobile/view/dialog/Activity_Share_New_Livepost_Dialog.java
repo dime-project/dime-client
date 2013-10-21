@@ -37,9 +37,7 @@ import eu.dime.model.displayable.DisplayableItem;
 import eu.dime.model.displayable.GroupItem;
 import eu.dime.model.displayable.LivePostItem;
 import eu.dime.model.displayable.PersonItem;
-import eu.dime.model.displayable.ProfileAttributeItem;
 import eu.dime.model.displayable.ProfileItem;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,8 +46,7 @@ public class Activity_Share_New_Livepost_Dialog extends ActivityDime implements 
 	private ImageView image;
 	private TextView fullName;
 	private TextView profileName;
-	private TextView attributeKey;
-	private TextView attributeValue;
+	private TextView attribute;
 //	private TextView labelWarnings;
 	private TextView labelReceivers;
 	private TextView noReceivers;
@@ -82,8 +79,7 @@ public class Activity_Share_New_Livepost_Dialog extends ActivityDime implements 
         image = (ImageView) findViewById(R.share.image_profile);
     	fullName = (TextView) findViewById(R.share.text_full_name);
     	profileName = (TextView) findViewById(R.share.text_profile_name);
-    	attributeKey = (TextView) findViewById(R.share.text_attribute_key);
-    	attributeValue = (TextView) findViewById(R.share.text_attribute_value);
+    	attribute = (TextView) findViewById(R.share.text_attribute);
         recieverContainer = (LinearLayout) findViewById(R.share.container_reciever);
 //        labelWarnings = (TextView) findViewById(R.share.label_warnings);
         labelReceivers = (TextView) findViewById(R.share.label_receivers);
@@ -228,24 +224,11 @@ public class Activity_Share_New_Livepost_Dialog extends ActivityDime implements 
     private void updateSelectedProfile(ProfileItem item) {
     	fullName.setText("");
     	profileName.setText("");
-    	attributeKey.setText("");
-		attributeValue.setText("");
+    	attribute.setText("");
     	if(item != null) {
 	    	ImageHelper.loadImageAsynchronously(image, item, Activity_Share_New_Livepost_Dialog.this);
-	    	List<ProfileAttributeItem> attributes = ModelHelper.getProfileAttributesOfProfile(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler()), item);
-	    	for (ProfileAttributeItem profileAttributeItem : attributes) {
-	    		for (String key : profileAttributeItem.getValue().keySet()) {
-					String value = profileAttributeItem.getValue().get(key);
-					if(value.length() > 0) {
-						if(key.equals("fullname")){
-							fullName.setText(value);
-						} else {
-			    			attributeKey.setText(key + ":");
-			    			attributeValue.setText(value);
-						}
-					}
-	    		}
-			}
+	    	AndroidModelHelper.loadProfileAttributesOfProfileAsynchronously(this, fullName, item, "fullname");
+	    	AndroidModelHelper.loadProfileAttributesOfProfileAsynchronously(this, attribute, item, null);
 	    	profileName.setText(item.getName());
     	} else {
     		profileName.setText("<no profile selected>");

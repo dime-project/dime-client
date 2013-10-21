@@ -48,26 +48,21 @@
                     android:maxLines="2"
                     android:textStyle="bold" />
 
-                <LinearLayout
-                    android:id="@+id/sharing_not_supported"
+                <TextView
+                    android:id="@+id/attribute1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:orientation="horizontal" >
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/icon_black_sharing_not_possible" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="2dp"
-                        android:text="sharing not supported"
-                        android:textSize="11sp" />
-                </LinearLayout>
+                    android:textColor="@color/dm_text_restrained"
+                    android:textSize="11sp" />
             </LinearLayout>
+
+            <ImageView
+                android:id="@+id/is_valid_for_sharing"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="3dp"
+                android:src="@drawable/icon_black_sharing_not_possible" />
 
             <CheckBox
                 android:id="@+id/checkBoxProfile"
@@ -96,44 +91,101 @@
             android:background="#FFFFFF"
             android:orientation="vertical" >
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="10dp"
-                android:background="#8F8E8F" />
-
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="-8dp"
-                android:background="@drawable/shape_meta_area"
-                android:paddingBottom="4dp"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
-                android:paddingTop="2dp" >
-
-                <ImageView
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
-                    android:src="@drawable/icon_white_preview" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+profile/preview_noitems"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="5dp"
-                android:background="#dddedd"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:textSize="11sp" />
-
-            <LinearLayout
-                android:id="@+profile/previewContainer"
+                android:id="@+adapter/sharedArea"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:background="#8F8E8F" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="-8dp"
+                    android:background="@drawable/shape_meta_area"
+                    android:paddingBottom="4dp"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp"
+                    android:paddingTop="2dp" >
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/icon_white_sharedwith" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+adapter/shared_noitems"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="#dddedd"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:text="loading..."
+                    android:textSize="11sp" />
+
+                <LinearLayout
+                    android:id="@+adapter/shared_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:orientation="vertical" >
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+adapter/sharedArea"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:layout_marginTop="5dp"
+                    android:background="#8F8E8F" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="-8dp"
+                    android:background="@drawable/shape_meta_area"
+                    android:paddingBottom="4dp"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp"
+                    android:paddingTop="2dp" >
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/icon_white_preview" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+profile/preview_noitems"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="#dddedd"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:textSize="11sp"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:id="@+profile/previewContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" >
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

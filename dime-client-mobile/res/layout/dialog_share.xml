@@ -80,26 +80,11 @@
                     android:text="..."
                     android:textSize="11sp" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
-
-                    <TextView
-                        android:id="@+share/text_attribute_key"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:textSize="11sp" />
-
-                    <TextView
-                        android:id="@+share/text_attribute_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="5dp"
-                        android:ellipsize="end"
-                        android:singleLine="true"
-                        android:textSize="11sp" />
-                </LinearLayout>
+                <TextView
+                    android:id="@+share/text_attribute"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textSize="11sp" />
             </LinearLayout>
         </LinearLayout>
 

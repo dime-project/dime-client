@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import eu.dime.control.DummyLoadingViewHandler;
 import eu.dime.control.LoadingViewHandler;
 import eu.dime.mobile.DimeClient;
@@ -38,7 +39,6 @@ import eu.dime.model.displayable.DisplayableItem;
 import eu.dime.model.displayable.GroupItem;
 import eu.dime.model.displayable.LivePostItem;
 import eu.dime.model.displayable.PersonItem;
-import eu.dime.model.displayable.ProfileAttributeItem;
 import eu.dime.model.displayable.ProfileItem;
 import eu.dime.model.displayable.ResourceItem;
 import java.util.ArrayList;
@@ -51,8 +51,7 @@ public class Activity_Share_Dialog extends ActivityDime implements OnClickListen
 	private ImageView image;
 	private TextView fullName;
 	private TextView profileName;
-	private TextView attributeKey;
-	private TextView attributeValue;
+	private TextView attribute;
 	private TextView labelItems;
 	private TextView labelWarnings;
 	private TextView labelReceivers;
@@ -91,8 +90,7 @@ public class Activity_Share_Dialog extends ActivityDime implements OnClickListen
         image = (ImageView) findViewById(R.share.image_profile);
     	fullName = (TextView) findViewById(R.share.text_full_name);
     	profileName = (TextView) findViewById(R.share.text_profile_name);
-    	attributeKey = (TextView) findViewById(R.share.text_attribute_key);
-    	attributeValue = (TextView) findViewById(R.share.text_attribute_value);
+    	attribute = (TextView) findViewById(R.share.text_attribute);
         dataContainer = (LinearLayout) findViewById(R.share.container_data);
         warningsContainer = (LinearLayout) findViewById(R.share.container_warnings);
         recieverContainer = (LinearLayout) findViewById(R.share.container_reciever);
@@ -187,44 +185,48 @@ public class Activity_Share_Dialog extends ActivityDime implements OnClickListen
     @SuppressWarnings("unchecked")
 	@Override
     public void onClick(View v) {
-        switch (v.getId()) {
-        case R.share.button_sel_person:
-        	UIHelper.createStandardDialog(Activity_Share_Dialog.this, mrContext, new BaseAdapter_Standard(), (List<DisplayableItem>)(Object) AndroidModelHelper.getItemsForSelection(allPersonsValidForSharing, selectedPersons), ResultObject.RESULT_OBJECT_TYPES.SHARING_PERSONS);
-            break;
+    	try {
+    		switch (v.getId()) {
+            case R.share.button_sel_person:
+            	UIHelper.createStandardDialog(Activity_Share_Dialog.this, mrContext, new BaseAdapter_Standard(), (List<DisplayableItem>)(Object) AndroidModelHelper.getItemsForSelection(allPersonsValidForSharing, selectedPersons), ResultObject.RESULT_OBJECT_TYPES.SHARING_PERSONS);
+                break;
 
-        case R.share.button_sel_group:
-        	UIHelper.createStandardDialog(this, mrContext, new BaseAdapter_Standard(), (List<DisplayableItem>)(Object) AndroidModelHelper.getItemsForSelection(allGroups, selectedGroups), ResultObject.RESULT_OBJECT_TYPES.SHARING_GROUPS);
-            break;
+            case R.share.button_sel_group:
+            	UIHelper.createStandardDialog(this, mrContext, new BaseAdapter_Standard(), (List<DisplayableItem>)(Object) AndroidModelHelper.getItemsForSelection(allGroups, selectedGroups), ResultObject.RESULT_OBJECT_TYPES.SHARING_GROUPS);
+                break;
 
-        case R.share.button_sel_resource:
-        	UIHelper.createStandardDialog(Activity_Share_Dialog.this, mrContext, new BaseAdapter_Standard(), (List<DisplayableItem>)(Object) AndroidModelHelper.getItemsForSelection(allResources, selectedResources), ResultObject.RESULT_OBJECT_TYPES.SHARING_RESOURCES);
-            break;
-            
-        case R.share.button_sel_databox:
-        	UIHelper.createStandardDialog(Activity_Share_Dialog.this, mrContext, new BaseAdapter_Standard(), (List<DisplayableItem>)(Object) AndroidModelHelper.getItemsForSelection(allDataboxes, selectedDataboxes), ResultObject.RESULT_OBJECT_TYPES.SHARING_DATABOXES);
-            break;
-            
-        case R.share.button_sel_message:
-        	UIHelper.createStandardDialog(this, mrContext, new BaseAdapter_Standard(), (List<DisplayableItem>)(Object)  AndroidModelHelper.getItemsForSelection(allLiveposts, selectedLiveposts), ResultObject.RESULT_OBJECT_TYPES.SHARING_LIVEPOSTS);
-            break;
+            case R.share.button_sel_resource:
+            	UIHelper.createStandardDialog(Activity_Share_Dialog.this, mrContext, new BaseAdapter_Standard(), (List<DisplayableItem>)(Object) AndroidModelHelper.getItemsForSelection(allResources, selectedResources), ResultObject.RESULT_OBJECT_TYPES.SHARING_RESOURCES);
+                break;
+                
+            case R.share.button_sel_databox:
+            	UIHelper.createStandardDialog(Activity_Share_Dialog.this, mrContext, new BaseAdapter_Standard(), (List<DisplayableItem>)(Object) AndroidModelHelper.getItemsForSelection(allDataboxes, selectedDataboxes), ResultObject.RESULT_OBJECT_TYPES.SHARING_DATABOXES);
+                break;
+                
+            case R.share.button_sel_message:
+            	UIHelper.createStandardDialog(this, mrContext, new BaseAdapter_Standard(), (List<DisplayableItem>)(Object)  AndroidModelHelper.getItemsForSelection(allLiveposts, selectedLiveposts), ResultObject.RESULT_OBJECT_TYPES.SHARING_LIVEPOSTS);
+                break;
 
-        case R.share.container_profile:
-        	UIHelper.createStandardDialog(Activity_Share_Dialog.this, mrContext, new BaseAdapter_Dialog_Sharing_Profile(), (List<DisplayableItem>) (Object) allProfilesValidForSharing, ResultObject.RESULT_OBJECT_TYPES.SHARING_PROFILE);
-            break;
+            case R.share.container_profile:
+            	UIHelper.createStandardDialog(Activity_Share_Dialog.this, mrContext, new BaseAdapter_Dialog_Sharing_Profile(), (List<DisplayableItem>) (Object) allProfilesValidForSharing, ResultObject.RESULT_OBJECT_TYPES.SHARING_PROFILE);
+                break;
 
-        case R.share.button_share:
-            shareSelectedItems();
-            break;
-            
-        case R.share.button_cancel:
-        	List<GenItem> items = new ArrayList<GenItem>();
-        	items.addAll(listOfSelectedItems);
-        	items.addAll((List<GenItem>) (Object) listOfSelectedAgents);
-        	items.add(selectedProfile);
-        	AndroidModelHelper.sendEvaluationDataAsynchronously(items, mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_canceled));
-        	finish();
-        	break;
-        }
+            case R.share.button_share:
+                shareSelectedItems();
+                break;
+                
+            case R.share.button_cancel:
+            	List<GenItem> items = new ArrayList<GenItem>();
+            	items.addAll(listOfSelectedItems);
+            	items.addAll((List<GenItem>) (Object) listOfSelectedAgents);
+            	items.add(selectedProfile);
+            	AndroidModelHelper.sendEvaluationDataAsynchronously(items, mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_canceled));
+            	finish();
+            	break;
+            }
+		} catch (Exception e) {
+			Toast.makeText(this, "Could not initialize share dialog. Please reload manually.", Toast.LENGTH_LONG).show();
+		}
     }
     
     private void checkValidityOfPersons(List<PersonItem> persons, String parentGuid) {
@@ -308,24 +310,11 @@ public class Activity_Share_Dialog extends ActivityDime implements OnClickListen
     private void updateSelectedProfile(ProfileItem item) {
     	fullName.setText("");
     	profileName.setText("");
-    	attributeKey.setText("");
-		attributeValue.setText("");
+    	attribute.setText("");
     	if(item != null) {
 	    	ImageHelper.loadImageAsynchronously(image, item, Activity_Share_Dialog.this);
-	    	List<ProfileAttributeItem> attributes = ModelHelper.getProfileAttributesOfProfile(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler()), item);
-	    	for (ProfileAttributeItem profileAttributeItem : attributes) {
-	    		for (String key : profileAttributeItem.getValue().keySet()) {
-					String value = profileAttributeItem.getValue().get(key);
-					if(value.length() > 0) {
-						if(key.equals("fullname")){
-							fullName.setText(value);
-						} else {
-			    			attributeKey.setText(key + ":");
-			    			attributeValue.setText(value);
-						}
-					}
-	    		}
-			}
+	    	AndroidModelHelper.loadProfileAttributesOfProfileAsynchronously(this, fullName, item, "fullname");
+	    	AndroidModelHelper.loadProfileAttributesOfProfileAsynchronously(this, attribute, item, null);
 	    	profileName.setText(item.getName());
     	} else {
     		profileName.setText("<no profile selected>");

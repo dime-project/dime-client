@@ -54,70 +54,74 @@ public class ImageHelper {
 		String url = ModelHelper.guessURLString(imageUrl);
 		iv.setImageDrawable(ImageHelper.getDefaultImageDrawable(di, context));
 		if (di != null && di.getImageUrl() != null && di.getImageUrl().length() > 0 && !bad.contains(url)) {
-	    	if(imageCache != null && imageCache.containsKey(url)) {
-				Bitmap bitmap = ImageHelper.getCachedImageBitmap(url);
-				if(bitmap != null) { 
-					iv.setImageBitmap(bitmap);
-				}
-			} else if (ivsToBeUpdated.containsKey(url)) {
-				synchronized (ivsToBeUpdated) {
-					//since BaseAdpaters in lists are reused and getView is called many times because the ListView tries to calculate how many items can be visible,
-					//we have to make sure that imageViews are only put in the list once
-					for (String key : ivsToBeUpdated.keySet()) {
-						Iterator<WeakReference<ImageView>> iter = ivsToBeUpdated.get(key).iterator();
-				        while (iter.hasNext()){
-				            ImageView wiv = iter.next().get();
-				            if(iv.equals(wiv)) {
-								iter.remove();
-							}
-				        }
-					}
-					List<WeakReference<ImageView>> ivs = ivsToBeUpdated.get(url);
-					ivs.add(new WeakReference<ImageView>(iv));
-				}
-			} else {
-				synchronized (ivsToBeUpdated) {
-					ivsToBeUpdated.put(url, new Vector<WeakReference<ImageView>>());
-					List<WeakReference<ImageView>> ivs = ivsToBeUpdated.get(url);
-					ivs.add(new WeakReference<ImageView>(iv));
-				}
-				AsyncTask<String, Void, Bitmap> task = new AsyncTask<String, Void, Bitmap>() {
-					
-					private String imageUrl = "";
-					
-					@Override
-					protected Bitmap doInBackground(String... url) {
-						Bitmap bitmap = null;
-						imageUrl = url[0];
-						try {
-							bitmap = ImageHelper.getImageBitmap(url[0]);
-						} catch(OutOfMemoryError e){
-							Log.d(ImageHelper.class.getName(), "outOfMemoryException");
-							clearCache();
-						} catch (Exception e) {
-							Log.d(ImageHelper.class.getName(), "Exception when loading image for url: \"" + url + "\" (" + e.getMessage() + ")");
-						}
-						return bitmap;
-					}
-		
-					@Override
-					protected void onPostExecute(Bitmap bitmap) {
-						if (bitmap != null) {
-							synchronized (ivsToBeUpdated) {
-								for (WeakReference<ImageView> iv: ivsToBeUpdated.get(imageUrl)){
-									if(iv.get() != null) iv.get().setImageBitmap(bitmap);
-								}
-								ivsToBeUpdated.remove(imageUrl);
-							}
-						} else {
-							bad.add(imageUrl);
-						}
-					}
-				};
-				task.execute(url);
-			}
+	    	loadImageAsynchronously(iv, url);
 		}
 	}
+    
+    public static void loadImageAsynchronously(ImageView iv, String url) {
+    	if(imageCache != null && imageCache.containsKey(url)) {
+			Bitmap bitmap = ImageHelper.getCachedImageBitmap(url);
+			if(bitmap != null) { 
+				iv.setImageBitmap(bitmap);
+			}
+		} else if (ivsToBeUpdated.containsKey(url)) {
+			synchronized (ivsToBeUpdated) {
+				//since BaseAdpaters in lists are reused and getView is called many times because the ListView tries to calculate how many items can be visible,
+				//we have to make sure that imageViews are only put in the list once
+				for (String key : ivsToBeUpdated.keySet()) {
+					Iterator<WeakReference<ImageView>> iter = ivsToBeUpdated.get(key).iterator();
+			        while (iter.hasNext()){
+			            ImageView wiv = iter.next().get();
+			            if(iv.equals(wiv)) {
+							iter.remove();
+						}
+			        }
+				}
+				List<WeakReference<ImageView>> ivs = ivsToBeUpdated.get(url);
+				ivs.add(new WeakReference<ImageView>(iv));
+			}
+		} else {
+			synchronized (ivsToBeUpdated) {
+				ivsToBeUpdated.put(url, new Vector<WeakReference<ImageView>>());
+				List<WeakReference<ImageView>> ivs = ivsToBeUpdated.get(url);
+				ivs.add(new WeakReference<ImageView>(iv));
+			}
+			AsyncTask<String, Void, Bitmap> task = new AsyncTask<String, Void, Bitmap>() {
+				
+				private String imageUrl = "";
+				
+				@Override
+				protected Bitmap doInBackground(String... url) {
+					Bitmap bitmap = null;
+					imageUrl = url[0];
+					try {
+						bitmap = ImageHelper.getImageBitmap(url[0]);
+					} catch(OutOfMemoryError e){
+						Log.d(ImageHelper.class.getName(), "outOfMemoryException");
+						clearCache();
+					} catch (Exception e) {
+						Log.d(ImageHelper.class.getName(), "Exception when loading image for url: \"" + url + "\" (" + e.getMessage() + ")");
+					}
+					return bitmap;
+				}
+	
+				@Override
+				protected void onPostExecute(Bitmap bitmap) {
+					if (bitmap != null) {
+						synchronized (ivsToBeUpdated) {
+							for (WeakReference<ImageView> iv: ivsToBeUpdated.get(imageUrl)){
+								if(iv.get() != null) iv.get().setImageBitmap(bitmap);
+							}
+							ivsToBeUpdated.remove(imageUrl);
+						}
+					} else {
+						bad.add(imageUrl);
+					}
+				}
+			};
+			task.execute(url);
+		}
+    }
 
     public static Bitmap getImageBitmap(String url) throws IOException, OutOfMemoryError, NullPointerException {
         Bitmap bm = null;

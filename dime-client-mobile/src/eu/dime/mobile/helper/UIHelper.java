@@ -597,7 +597,7 @@ public class UIHelper {
 			for (ProfileAttributeItem pai : (List<ProfileAttributeItem>) (Object) displayables) {
 				if (pai != null) {
 					TextView labelCat = createTextView(context, -1, Typeface.BOLD, 11, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT), true);
-					labelCat.setText(pai.getCategory() + " (" + pai.getName() + ")");
+					labelCat.setText(pai.getCategory() + ((pai.getName() != null && pai.getName().length() > 0 ) ? " (" + pai.getName() + ")" : ""));
 					labelCat.setPadding(getDPvalue(5), getDPvalue(5), 0, 0);
 					boolean hasChild = false;
 					int index = 0;

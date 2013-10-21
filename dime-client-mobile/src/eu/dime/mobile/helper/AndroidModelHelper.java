@@ -791,18 +791,18 @@ public class AndroidModelHelper {
 		}.execute();
 	}
 	
-	public static void loadProfileNamesAsynchronously(final Context context, final String owner, final TextView tv, final PersonItem pi) {
+	public static void loadProfileNamesAsynchronously(final Context context, final TextView tv, final PersonItem pi) {
 		(new AsyncTask<Void, Void, String>() {
 
 			@Override
 			protected String doInBackground(Void... params) {
 				String profiles = "";
 				if (pi != null) {
-					List<ProfileItem> test = ModelHelper.getAllProfiles(DimeClient.getMRC(owner, new DummyLoadingViewHandler()));
+					List<ProfileItem> test = ModelHelper.getAllProfiles(DimeClient.getMRC(pi.getUserId(), new DummyLoadingViewHandler()));
 			        for (ProfileItem profileItem : test) {
 						profiles += profileItem.getName() + "; ";
 					}
-			        if(profiles.length() >0 ){ profiles = profiles.substring(0, profiles.length()-2); }
+			        if(profiles.length() > 0){ profiles = profiles.substring(0, profiles.length()-2); }
 				}
 				return profiles;
 			}
@@ -810,6 +810,35 @@ public class AndroidModelHelper {
 			@Override
 			protected void onPostExecute(String profiles) {
 				tv.setText(profiles);
+			}
+		}).execute();
+	}
+	
+	public static void loadProfileAttributesOfProfileAsynchronously(final Context context, final TextView tv, final ProfileItem profile, final String specialType) {
+		(new AsyncTask<Void, Void, String>() {
+
+			@Override
+			protected String doInBackground(Void... params) {
+				String result = "";
+				List<ProfileAttributeItem> attributes = ModelHelper.getProfileAttributesOfProfile(DimeClient.getMRC(profile.getUserId(), new DummyLoadingViewHandler()), profile);
+				for (ProfileAttributeItem profileAttributeItem : attributes) {
+					for (String key : profileAttributeItem.getValue().keySet()) {
+						String value = profileAttributeItem.getValue().get(key);
+						if(value.length() > 0) {
+							if(specialType == null || specialType.length() == 0) {
+								result = key + ":" + value;
+							} else if(specialType.equals(key)) {
+								result = value;
+							}
+						}
+					}
+				}
+				return result;
+			}
+
+			@Override
+			protected void onPostExecute(String result) {
+				tv.setText(result);
 			}
 		}).execute();
 	}

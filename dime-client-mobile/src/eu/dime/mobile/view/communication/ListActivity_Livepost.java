@@ -1,11 +1,13 @@
 package eu.dime.mobile.view.communication;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import eu.dime.control.LoadingViewHandler;
 import eu.dime.mobile.helper.DimeIntentObjectHelper;
+import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.handler.LoadingViewHandlerFactory;
 import eu.dime.mobile.helper.objects.DimeIntentObject;
 import eu.dime.mobile.view.abstr.ListActivityDisplayableItem;
@@ -14,9 +16,12 @@ import eu.dime.model.ModelHelper;
 import eu.dime.model.TYPES;
 import eu.dime.model.displayable.DisplayableItem;
 import eu.dime.model.specialitem.NotificationItem;
+
 import java.util.List;
 
 public class ListActivity_Livepost extends ListActivityDisplayableItem {
+	
+	protected ProgressDialog dialog;
 
 	/**
      * Called when the activity is first created.
@@ -29,9 +34,20 @@ public class ListActivity_Livepost extends ListActivityDisplayableItem {
     }
     
     @Override
+    protected void onResume() {
+    	dialog = UIHelper.createCustonProgressDialog(ListActivity_Livepost.this, "Loading data...");
+    	super.onResume();
+    }
+    
+    @Override
     @SuppressWarnings("unchecked")
     protected List<DisplayableItem> loadListData() {
         return (List<DisplayableItem>) (Object) ModelHelper.getAllAllLivePosts(mrContext);
+    }
+    
+    @Override
+    protected void initializeHeader() {
+    	if(dialog != null && dialog.isShowing()) dialog.dismiss();
     }
     
     @Override

@@ -289,7 +289,7 @@ public class Model implements NotificationListener{
     public List<GenItem> getAllAllItems(ModelRequestContext mrContext, TYPES type) {
         List<GenItem> result = new Vector<GenItem>();
         for (String userId : getAllOwners(mrContext)) {
-            result.addAll(getAllItems(new ModelRequestContext(mrContext.hoster, userId, mrContext.lvHandler), type));
+            result.addAll(getAllItems(new ModelRequestContext(mrContext.hoster, userId, new DummyLoadingViewHandler()), type));
         }
         return result;
     }
