@@ -1717,15 +1717,15 @@ DimeView = {
         }
         
         if (!event) {event = window.event;}
-	var tg = (window.event) ? event.srcElement : event.target;
-	if (tg.nodeName !== 'DIV') {
+        var tg = (window.event) ? event.srcElement : event.target;
+        if (tg.nodeName !== 'DIV') {
             return;
         }
-	var reltg = (event.relatedTarget) ? event.relatedTarget : event.toElement;
-	while (reltg !== tg && reltg && reltg.nodeName !== 'BODY'){
-		reltg= reltg.parentNode;
-        }
-	if (reltg===tg) {
+        var reltg = (event.relatedTarget) ? event.relatedTarget : event.toElement;
+        while (reltg !== tg && reltg && reltg.nodeName !== 'BODY'){
+            reltg= reltg.parentNode;
+            }
+        if (reltg===tg) {
             return;
         }
         
@@ -1738,7 +1738,11 @@ DimeView = {
        
 
     showMouseOver: function(event, element, entry, isGroupEntry){        
-        
+
+        if (DimeView.viewManager.status.viewType===DimeViewStatus.PERSON_VIEW){
+            return;
+        }
+
         //FIXME - this check is not required if this is already checked at a prior instance
         if (!entry  || !entry.guid || !entry.userId || !entry.type || entry.type.length===0 ){
             console.log("ERROR: received invalid entry: (entry)", entry);
