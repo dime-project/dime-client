@@ -1454,7 +1454,8 @@ DimeView = {
                 return;
             }
 
-            if (!Dime.psHelper.isSharableAgent(selectedPersons[0])){
+            var handleNonSharableAgents = function(person){
+                
                 var invitePerson = function(emailAddress){
                     var invitation = DimeView.getInvitationContent();
                     var email=(emailAddress && emailAddress.length>0)?emailAddress:"friends_mail_address";
@@ -1468,12 +1469,15 @@ DimeView = {
 
                 var status = confirm("This person does not have a di.me profile. Send an invitation instead?");
                 if(status){
-                    Dime.psHelper.findEmailAddressOfPerson(selectedPersons[0], invitePerson, DimeView);
+                    Dime.psHelper.findEmailAddressOfPerson(person, invitePerson, DimeView);
                 }
                 return;
             }
 
             var triggerDialog=function(response){
+                if (!Dime.psHelper.isSharableAgent(response[0])){
+                    handleNonSharableAgents(response[0]);
+                }
                 Dime.Dialog.showLivepostWithSelection(response);
             };
             Dime.psHelper.getMixedItems(selectedPersons, triggerDialog, this);
