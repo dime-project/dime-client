@@ -19,11 +19,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
-import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.HeaderViewListAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
@@ -41,7 +39,6 @@ import eu.dime.mobile.view.Activity_Main;
 import eu.dime.mobile.view.Activity_Shutdown;
 import eu.dime.model.GenItem;
 import eu.dime.model.ModelRequestContext;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -257,14 +254,9 @@ public abstract class TabActivityDime extends TabActivity implements OnClickList
 		LinearLayout ll = new LinearLayout(this);
 		ll.setBackgroundResource(R.drawable.tab);
 		ll.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
-		ImageView image = new ImageView(this);
-		image.setImageResource(UIHelper.getResourceIdByName(getResources(), tabname));
-		image.setLayoutParams(new LayoutParams(40, 40));
-		image.setPadding(0, 0, 10, 0);
 		TextView txtTabInfo = new TextView(this);
 		txtTabInfo.setText(tabname);
 		txtTabInfo.setTextColor(Color.WHITE);
-//		ll.addView(image); //TODO add different image style and then reactivate this
 		ll.addView(txtTabInfo);
 		tabSpec.setIndicator(ll);
 		getTabHost().addTab(tabSpec);

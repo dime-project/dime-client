@@ -97,6 +97,10 @@ public abstract class BaseAdapterDime<ITEM_TYPE extends GenItem> extends BaseAda
     @Override
     public abstract View getView(int position, View convertView, ViewGroup parent);
     
+    public void resetExpandedItem() {
+    	expandedListItemId = -1;
+    }
+    
     public void expandedItemChanged(int position) {
         if (expandedListItemId != position) {
             expandedListItemId = position;

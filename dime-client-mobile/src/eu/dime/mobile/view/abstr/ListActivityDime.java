@@ -82,6 +82,8 @@ public abstract class ListActivityDime<ITEM_TYPE extends GenItem> extends ListAc
     protected void onStop() {
     	super.onStop();
     	NotificationManager.unregisterSecondLevel(this);
+    	baseAdapter.resetSelection();
+    	baseAdapter.resetExpandedItem();
     }
 
     public void reloadList() {
@@ -140,6 +142,10 @@ public abstract class ListActivityDime<ITEM_TYPE extends GenItem> extends ListAc
 
     public List<String> getSelectionGUIDS() {
         return baseAdapter.getSelection();
+    }
+    
+    public void resetSelection() {
+    	baseAdapter.resetSelection();
     }
     
     public List<ITEM_TYPE> getSelectedListItems() {

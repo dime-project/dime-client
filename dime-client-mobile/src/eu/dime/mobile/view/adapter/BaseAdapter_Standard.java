@@ -79,7 +79,11 @@ public class BaseAdapter_Standard extends BaseAdapterDisplayableItem {
 			PersonItem person = (PersonItem) di;
 			String defaultProfile = person.getDefaultProfileGuid();
 			isValidForSharing = (defaultProfile != null && defaultProfile.length() > 0) ? true : false;
-			viewHolder.attribute1.setVisibility(View.GONE);
+//			if(isValidForSharing) {
+				AndroidModelHelper.loadProfilesOfPersonAsynchronously(context, person, viewHolder.attribute1);
+//			} else {
+//				viewHolder.attribute1.setVisibility(View.GONE);
+//			}
 			AndroidModelHelper.loadGroupsOfChildAsynchronously(context, mrContext.owner, di, viewHolder.attribute2);
 			break;
 		case RESOURCE:

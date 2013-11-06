@@ -141,13 +141,7 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
 						Toast.makeText(Activity_Login.this, hostname.getText().toString() + ":" + tmpPort + " added to list!", Toast.LENGTH_LONG).show();
 					}
 				});
-        		AlertDialog addDialog = builder.show();
-        		addDialog.setOnShowListener(new DialogInterface.OnShowListener(){
-					@Override
-					public void onShow(DialogInterface d){
-		                   hostname.requestFocus();
-		            }
-        		});
+        		AlertDialog addDialog = UIHelper.displayAlertDialog(builder, true);
         		final Button addButton = addDialog.getButton(ProgressDialog.BUTTON_POSITIVE);
         		addButton.setEnabled(false);
         		hostname.addTextChangedListener(new TextWatcher() {

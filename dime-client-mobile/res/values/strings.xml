@@ -120,6 +120,7 @@
     <string name="action_removePerson">Delete selected person(s)</string>
     <string name="action_homeButtonPressed">homePressed</string>
     <string name="action_answerLivepost">Answer livepost</string>
+    <string name="action_setDefaultProfile">Set default profile</string>
     
     <!--  other -->
     <string name="sharing_no_receiver">no receiver(s) selected</string>

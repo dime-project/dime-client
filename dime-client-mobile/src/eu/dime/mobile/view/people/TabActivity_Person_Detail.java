@@ -4,21 +4,32 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+import eu.dime.control.DummyLoadingViewHandler;
 import eu.dime.control.LoadingViewHandler;
+import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
 import eu.dime.mobile.helper.AndroidModelHelper;
 import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.handler.LoadingViewHandlerFactory;
 import eu.dime.mobile.helper.objects.DimeTabObject;
+import eu.dime.mobile.helper.objects.IResultOfStandardDialog;
+import eu.dime.mobile.helper.objects.ResultObject;
+import eu.dime.mobile.helper.objects.ResultObjectProfileSharing;
 import eu.dime.mobile.view.abstr.TabActivityDisplayableItemDetail;
+import eu.dime.mobile.view.adapter.BaseAdapter_Dialog_Sharing_Profile;
+import eu.dime.model.ModelHelper;
+import eu.dime.model.displayable.DisplayableItem;
 import eu.dime.model.displayable.PersonItem;
+import eu.dime.model.displayable.ProfileItem;
 
-public class TabActivity_Person_Detail extends TabActivityDisplayableItemDetail {
+public class TabActivity_Person_Detail extends TabActivityDisplayableItemDetail implements IResultOfStandardDialog {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -43,7 +54,7 @@ public class TabActivity_Person_Detail extends TabActivityDisplayableItemDetail 
 	protected List<String> getActionsForDetailView() {
 		ArrayList<String> actions = new ArrayList<String>();
 		if (currentActivity instanceof ListActivity_Person_Profile) {
-			//FIXME add standard profile for instance ListActivity_Person_Profile
+			actions.add(getString(R.string.action_setDefaultProfile));
 		} else if (currentActivity instanceof ListActivity_Person_Livepost) {
 			actions.add(getString(R.string.action_answerLivepost));
 		}
@@ -74,7 +85,28 @@ public class TabActivity_Person_Detail extends TabActivityDisplayableItemDetail 
              * ---------------------------------------------------------------------------------------------------------------------------
              */
 			if (currentActivity instanceof ListActivity_Person_Profile) {
-				
+				//Set default profile
+				if(button.getText().equals(res.getString(R.string.action_setDefaultProfile))) {
+					actionDialog.dismiss();
+					(new AsyncTask<Void, Void, List<ProfileItem>>() {	
+						@Override
+						protected List<ProfileItem> doInBackground(Void... params) {
+							return ModelHelper.getAllValidProfilesForSharing(DimeClient.getMRC(di.getGuid(), new DummyLoadingViewHandler()));
+						}
+						@SuppressWarnings("unchecked")
+						@Override
+						protected void onPostExecute(List<ProfileItem> result) {
+							if(result == null || result.size() == 0) {
+								Toast.makeText(TabActivity_Person_Detail.this, "Cannot change default profile! No valid profiles for sharing!", Toast.LENGTH_LONG).show();
+							} else if (result.size() == 1){
+								Toast.makeText(TabActivity_Person_Detail.this, "Cannot change default profile! Only " + result.get(0).getName() + " valid for sharing!", Toast.LENGTH_LONG).show();
+							} else {
+								UIHelper.createStandardDialog(TabActivity_Person_Detail.this, DimeClient.getMRC(di.getGuid(), new DummyLoadingViewHandler()), new BaseAdapter_Dialog_Sharing_Profile(), (List<DisplayableItem>) (Object) result, ResultObject.RESULT_OBJECT_TYPES.SHARING_PROFILE);
+							}
+						}
+
+					}).execute();
+				}
 			}
 			/**
              * ---------------------------------------------------------------------------------------------------------------------------
@@ -87,6 +119,22 @@ public class TabActivity_Person_Detail extends TabActivityDisplayableItemDetail 
 					actionDialog.dismiss();
 					AndroidModelHelper.answerLivepost(currentActivity, Arrays.asList((PersonItem) di));
 				}
+			}
+		}
+	}
+	
+	@Override
+	public void handleResult(ResultObject result) {
+		if(result instanceof ResultObjectProfileSharing) {
+			ProfileItem profile = null;
+			String profileName = "null";
+			try {
+				profile = ((ResultObjectProfileSharing) result).getProfile();
+				profileName = profile.getName();
+				((PersonItem) di).setDefaultProfileGuid(profile.getGuid());
+				AndroidModelHelper.updateGenItemAsynchronously(di, null, this, mrContext, null);
+			} catch (Exception e) {
+				Toast.makeText(this, "Could not update default profile " + profileName, Toast.LENGTH_LONG).show();
 			}
 		}
 	}

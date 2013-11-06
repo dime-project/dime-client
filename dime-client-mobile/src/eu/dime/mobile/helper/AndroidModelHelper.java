@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
@@ -505,9 +504,34 @@ public class AndroidModelHelper {
         }).execute();
 	}
 	
+	public static void loadProfilesOfPersonAsynchronously(final Context context, final PersonItem person, final TextView attribute1) {
+		(new AsyncTask<Void, Void, List<ProfileItem>>() {	
+			@Override
+			protected List<ProfileItem> doInBackground(Void... params) {
+				return ModelHelper.getAllValidProfilesForSharing(DimeClient.getMRC(person.getGuid(), new DummyLoadingViewHandler()));
+			}
+
+			@SuppressWarnings("unchecked")
+			@Override
+			protected void onPostExecute(List<ProfileItem> result) {
+				if(result == null || result.size() == 0) {
+					attribute1.setVisibility(View.VISIBLE);
+					attribute1.setText("no profiles available!");
+				} else if (result.size() == 1){
+					attribute1.setVisibility(View.GONE);
+				} else {
+					attribute1.setVisibility(View.VISIBLE);
+					attribute1.setText(UIHelper.formatStringListCommaSeparated(getListOfNamesOfDisplayableList((List<DisplayableItem>) (Object) result)));
+				}
+			}
+
+		}).execute();
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static void refreshViewAfterModelChanges(Activity activity, DialogInterface dialog) {
 		if(activity instanceof ListActivityDime) {
+			((ListActivityDime<GenItem>) activity).resetSelection();
 			((ListActivityDime<GenItem>) activity).reloadList();
 		} else if(activity instanceof ActivityDime) {
 			((ActivityDime) activity).startTask("Refreshing view...");

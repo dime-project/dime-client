@@ -715,7 +715,7 @@ public class ModelHelper {
         Iterator<ProfileItem> iter = result.iterator();
         while (iter.hasNext()){
             ProfileItem profile = iter.next();
-            if (!profile.supportsSharing()){
+            if (profile.getUserId().equals(Model.ME_OWNER) && !profile.supportsSharing()){
                 iter.remove();
             }
         }

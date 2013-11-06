@@ -264,6 +264,7 @@ public class UIHelper {
 			});
 			infoArea.setVisibility((DimeClient.getSettings().isDialogInfoAreaDisplayed()) ? View.VISIBLE : View.GONE);
 			Button infoButton = (Button) header.findViewById(R.dialog.button_info);
+			infoButton.setBackgroundColor((DimeClient.getSettings().isDialogInfoAreaDisplayed()) ? activity.getResources().getColor(android.R.color.black) : activity.getResources().getColor(android.R.color.transparent));
 			infoButton.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -364,13 +365,14 @@ public class UIHelper {
     	return dialog;
 	}
 
-	public static void displayAlertDialog(Builder builder, boolean showSoftInput) {
+	public static AlertDialog displayAlertDialog(Builder builder, boolean showSoftInput) {
 		AlertDialog alert = builder.create();
 		if(showSoftInput) alert.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 		alert.show();
 		if (alert.getButton(AlertDialog.BUTTON_NEGATIVE) == null) {
 			alert.getButton(AlertDialog.BUTTON_POSITIVE).setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 		}
+		return alert;
 	}
 	
 	public static Dialog createActionDialog(Context context, List<String> names, OnClickListener listener, List<String> selectedGUIDs) {
@@ -1279,6 +1281,8 @@ public class UIHelper {
 			resId = R.drawable.action_remove_person;
 		} else if (name.equals(res.getString(R.string.action_answerLivepost))) {
 			resId = R.drawable.action_add_new_message;
+		} else if (name.equals(res.getString(R.string.action_setDefaultProfile))) {
+			resId = R.drawable.action_add_profilecard;
 		}
 		// Tab icons
 		else if (name.equals("All people")) {
