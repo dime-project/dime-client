@@ -2,6 +2,7 @@ package eu.dime.mobile.view;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
@@ -17,18 +18,18 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 import eu.dime.control.DummyLoadingViewHandler;
 import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
@@ -46,6 +47,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sit.web.client.HttpHelper;
@@ -57,12 +61,10 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
     private EditText user;
     private EditText pass;
     private Button login;
-    private ImageView dimeLogo;
-    private AutoCompleteTextView serverNameAndPort;
+    private Spinner serverNameAndPort;
     private CheckBox isHttpsCheckBox;
-    private TextView isHttpsLabel;
+    private ArrayAdapter<CharSequence> knownServersAdapter;
     protected ProgressDialog dialog;
-    private boolean showHiddenFields = false;
 
     /**
      * Called when the activity is first created.
@@ -76,17 +78,8 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
         pass = (EditText) findViewById(R.login.editText_password);
         remember = (CheckBox) findViewById(R.login.checkBox_remember);
         login = (Button) findViewById(R.login.button_login);
-        ArrayAdapter<CharSequence> knownServersAdapter = ArrayAdapter.createFromResource(this, R.array.known_dime_servers, android.R.layout.simple_dropdown_item_1line); //simple_spinner_dropdown_item
-        serverNameAndPort = (AutoCompleteTextView) findViewById(R.login.editText_server);
-        serverNameAndPort.setAdapter(knownServersAdapter);
-        serverNameAndPort.setOnClickListener(new OnClickListener() {
-            public void onClick(View view) {
-                serverNameAndPort.showDropDown();
-            }
-        });
-        isHttpsLabel = (TextView) findViewById(R.login.label_is_https_txt);
+        serverNameAndPort = (Spinner) findViewById(R.login.select_server);
         isHttpsCheckBox = (CheckBox)findViewById(R.login.checkbox_is_https);
-        dimeLogo = (ImageView) findViewById(R.login.dime_logo);
         ImageButton exit = (ImageButton) findViewById(R.id.exit);
         exit.setOnClickListener(this);
         TextView register = (TextView) findViewById(R.login.register);
@@ -97,14 +90,6 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
         pass.addTextChangedListener(this);
         user.setOnEditorActionListener(this);
         user.addTextChangedListener(this);
-        dimeLogo.setOnLongClickListener(new OnLongClickListener() {
-            public boolean onLongClick(View v) {
-            	showHiddenFields = !showHiddenFields;
-                settings.setShowHiddenFields(showHiddenFields);
-                updateHiddenFields();
-                return true;
-            }
-        });
     }
 
     @Override
@@ -112,11 +97,10 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
         super.onResume();
         // Restore preferences
         settings = DimeClient.getSettings();
-        showHiddenFields = settings.getShowHiddenFields();
+        updateServers();
         remember.setChecked(settings.isLoginPrefRemembered());
         user.setText(settings.getUsername());
-        serverNameAndPort.setText(settings.getHostname()+":"+settings.getPort());
-        updateHiddenFields();
+        isHttpsCheckBox.setChecked(settings.isUseHTTPS());
         if (settings.isLoginPrefRemembered()) {
         	pass.setText(settings.getPassword());
             try {
@@ -126,10 +110,75 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
             }
          }
     }
+    
+    private void updateServers() {
+    	String[] predefindesServers = getResources().getStringArray(R.array.known_dime_servers);
+        List<String> ownServers = settings.getOwnServers();
+        List<String> allservers = new ArrayList<String>();
+        Collections.addAll(allservers, predefindesServers);
+        allservers.addAll(ownServers);
+        knownServersAdapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, allservers.toArray(new CharSequence[allservers.size()]));
+        knownServersAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        serverNameAndPort.setAdapter(knownServersAdapter);
+        serverNameAndPort.setSelection(knownServersAdapter.getPosition(settings.getHostname() + ":" + settings.getPort()));
+    }
 
 	@Override
     public void onClick(View v) {
+		Builder builder;
         switch (v.getId()) {
+        	case R.login.add_server:
+        		LinearLayout container = (LinearLayout) getLayoutInflater().inflate(R.layout.dialog_add_own_server, null);
+        		final EditText hostname = (EditText) container.findViewById(R.ownserver.hostname);
+        		final EditText port = (EditText) container.findViewById(R.ownserver.port);
+        		builder = UIHelper.createCustomAlertDialogBuilder(this, "Add own server", true, container);
+        		builder.setPositiveButton("add", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						int tmpPort = port.getText().toString().length() > 0 ? Integer.valueOf(port.getText().toString()) : DimeHelper.DEFAULT_PORT;
+						settings.addOwnServer(hostname.getText().toString(), tmpPort);
+						updateServers();
+						Toast.makeText(Activity_Login.this, hostname.getText().toString() + ":" + tmpPort + " added to list!", Toast.LENGTH_LONG).show();
+					}
+				});
+        		AlertDialog addDialog = builder.show();
+        		addDialog.setOnShowListener(new DialogInterface.OnShowListener(){
+					@Override
+					public void onShow(DialogInterface d){
+		                   hostname.requestFocus();
+		            }
+        		});
+        		final Button addButton = addDialog.getButton(ProgressDialog.BUTTON_POSITIVE);
+        		addButton.setEnabled(false);
+        		hostname.addTextChangedListener(new TextWatcher() {
+					@Override
+					public void afterTextChanged(Editable hostname) {
+						addButton.setEnabled((hostname.length() > 0));
+					}
+					@Override
+					public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+					
+					@Override
+					public void onTextChanged(CharSequence s, int start, int before, int count) { }
+				});
+        		break;
+        	case R.login.remove_server:
+        		final CharSequence[] ownServers = settings.getOwnServers().toArray(new CharSequence[settings.getOwnServers().size()]);
+        		if(ownServers.length > 0) {
+	        		builder = UIHelper.createAlertDialogBuilder(this, "Remove own server", true);
+	        		builder.setSingleChoiceItems(ownServers, 1, new DialogInterface.OnClickListener() {
+	        			@Override
+	        			public void onClick(DialogInterface dialog, int which) {
+	        				settings.removeOwnServer((String) ownServers[which]);
+							updateServers();
+							dialog.dismiss();
+	        			}
+	        		});
+	        		builder.show();
+        		} else {
+        			Toast.makeText(this, "No servers to remove...", Toast.LENGTH_SHORT).show();
+        		}
+        		break;
             case R.login.button_login:
             	try {
                     login();
@@ -180,16 +229,13 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
     
     private void login() throws DimeClientLoginException {
         validateUserNamePasswordGiven();
-        final ServerAndPort sap = new ServerAndPort(serverNameAndPort.getText().toString());
-
+        final ServerAndPort sap = new ServerAndPort(serverNameAndPort.getSelectedItem().toString());
     	final AsyncTask<Void, Void, String> loginTask = new MyAsyncTask(sap.serverName,
 				user.getText().toString(), 
 				pass.getText().toString(),
 				sap.port,
 				isHttpsCheckBox.isChecked() ,
-				remember.isChecked(),
-                showHiddenFields
-                );
+				remember.isChecked());
     	dialog = ProgressDialog.show(this, null, "Trying to login...", true, true);
     	dialog.setOnCancelListener(new OnCancelListener() {
 			@Override
@@ -210,16 +256,14 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
         private int port;
         private boolean useHTTPS;
         private boolean loginPrefRemembered;
-        private boolean showHiddenFields;
         
-        public MyAsyncTask(String hostname, String username, String password, int port, boolean useHTTPS, boolean loginPrefRemembered, boolean showHiddenFields) {
+        public MyAsyncTask(String hostname, String username, String password, int port, boolean useHTTPS, boolean loginPrefRemembered) {
             this.hostname = hostname;
             this.username = username; //== mainSAID
             this.password = password;
             this.port = port;
             this.useHTTPS = useHTTPS;
             this.loginPrefRemembered = loginPrefRemembered;
-            this.showHiddenFields = showHiddenFields;
         }
 		
 		@Override
@@ -227,7 +271,7 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
 			String result = "";
 			try {
 				String myHostName =  hostname;
-	        	settings.updateSettingsBeforeLogin(myHostName, username, password, port, useHTTPS, loginPrefRemembered, showHiddenFields);
+	        	settings.updateSettingsBeforeLogin(myHostName, username, password, port, useHTTPS, loginPrefRemembered);
 		        if(!new DimeHelper().dimeServerIsAuthenticated(username, settings.getRestApiConfiguration())) {
 		            result = "Could not login because the password was incorrect!";
 		        } else {
@@ -246,7 +290,7 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
 		        	}
 		        }
 		    } catch (UnknownHostException ex) {
-		    	settings.updateSettingsBeforeLogin(hostname, username, password, port, useHTTPS, loginPrefRemembered, showHiddenFields);
+		    	settings.updateSettingsBeforeLogin(hostname, username, password, port, useHTTPS, loginPrefRemembered);
                 Logger.getLogger(DimeClient.class.getName()).log(Level.SEVERE, "Unable to resolve hostname for said:" + username);
                 result = "Unable to resolve hostname for said:" + settings.getMainSAID();
             } catch (MalformedURLException ex) {
@@ -297,14 +341,6 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
         }
         return true;
     }
-
-    private void updateHiddenFields() {
-        int viewState = showHiddenFields ? View.VISIBLE : View.GONE;
-        isHttpsLabel.setVisibility(viewState);
-        isHttpsCheckBox.setVisibility(viewState);
-        isHttpsCheckBox.setChecked(settings.isUseHTTPS());
-    }
-  
     
     @Override
     public void afterTextChanged(Editable s) {

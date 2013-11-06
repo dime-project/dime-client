@@ -47,7 +47,7 @@ public class DimeHelper {
     public final static String JSON_MIME_TYPE = JSONObject.JSON_MIME_TYPE;    
     public final static String DIME_OWNER_AUTH_TOKEN = "b3duZXI6ZGltZXBhc3M0b3duZXI=";
     public final static String DIME_SSL_CERT_TYPE = "TLS";
-    public final static String DEFAULT_HOSTNAME = "10.36.53.144"; //127.0.0.1, 10.36.52.159 dime.hci.iao.fraunhofer.de
+    public final static String DEFAULT_HOSTNAME = "dime.hci.iao.fraunhofer.de";
     public final static int DEFAULT_PORT = 8443;
     public final static boolean DEFAULT_USE_HTTPS = true;
     public final static String clientId = UUID.randomUUID().toString();

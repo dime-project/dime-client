@@ -9,13 +9,18 @@ package eu.dime.mobile;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import eu.dime.mobile.helper.objects.OwnServers;
+import eu.dime.model.InvalidJSONItemException;
 import eu.dime.model.ModelConfiguration;
 import eu.dime.model.specialitem.AuthItem;
 import eu.dime.restapi.DimeHelper;
 import eu.dime.restapi.RestApiConfiguration;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sit.json.JSONParseException;
+import sit.json.JSONParser;
 import sit.tools.CryptHelper;
 import sit.web.client.HttpHelper;
 
@@ -33,8 +38,8 @@ public class Settings {
     private static final String PS_PORT_TAG = "PS_PORT";
     private static final String PS_USER_NAME_TAG = "PS_USER_NAME";
     private static final String PS_USE_HTTPS_TAG = "PS_USE_HTTPS";
-    private static final String PS_SHOW_HIDDEN_FIELDS = "PS_SHOW_HIDDEN_FIELDS";
     private static final String IS_DIALOG_INFO_AREA_DISPLAYED = "IS_DIALOG_INFO_AREA_DISPLAYED";
+    private static final String OWN_SERVERS = "OWN_SERVERS";
     
     private final static boolean USE_REST_API = true;
     private final static boolean RETRIEVE_NOTIFICATIONS = true;
@@ -54,9 +59,9 @@ public class Settings {
     private int port;
     private boolean useHTTPS;
     private boolean loginPrefRemembered;
-    private boolean showHiddenFields;
     private boolean crawlingContext;
     private boolean isDialogInfoAreaDisplayed;
+    private OwnServers ownServers;
 
     public Settings(Context appContext) {
         this.appContext = appContext;
@@ -69,8 +74,11 @@ public class Settings {
         port = androidSettings.getInt(PS_PORT_TAG, DimeHelper.DEFAULT_PORT);
         useHTTPS = androidSettings.getBoolean(PS_USE_HTTPS_TAG, DimeHelper.DEFAULT_USE_HTTPS);
         crawlingContext = androidSettings.getBoolean(PS_CRAWL_CONTEXT_TAG, false);               
-        username = androidSettings.getString(PS_USER_NAME_TAG,  "");
-        showHiddenFields = androidSettings.getBoolean(PS_SHOW_HIDDEN_FIELDS, false);
+        username = androidSettings.getString(PS_USER_NAME_TAG, "");
+        ownServers = new OwnServers();
+        try {
+			ownServers.readJSONObject(new JSONParser().parseJSON(androidSettings.getString(OWN_SERVERS, "")));
+		} catch (InvalidJSONItemException e) { } catch (JSONParseException e) { }
         try {
         	password = CryptHelper.getUnObscuredContent(username, androidSettings.getString(PS_KEY_TAG, ""));
         } catch (IOException ex) {
@@ -86,8 +94,8 @@ public class Settings {
         androidSettings.edit().putInt(PS_PORT_TAG, port).commit();
         androidSettings.edit().putBoolean(PS_USE_HTTPS_TAG, useHTTPS).commit();
         androidSettings.edit().putBoolean(PS_CRAWL_CONTEXT_TAG, crawlingContext).commit();
-        androidSettings.edit().putBoolean(PS_SHOW_HIDDEN_FIELDS, showHiddenFields).commit();
         androidSettings.edit().putString(PS_USER_NAME_TAG, username).commit();
+        androidSettings.edit().putString(OWN_SERVERS, ownServers.createJSONObject().toString()).commit();
         if(loginPrefRemembered) {
             androidSettings.edit().putString(PS_KEY_TAG, CryptHelper.getObscuredContent(username, password)).commit();
         } else {
@@ -96,14 +104,13 @@ public class Settings {
         androidSettings.edit().putBoolean(LOGIN_PREF_REMEMBER_TAG, loginPrefRemembered).commit();
     }
     
-    public void updateSettingsBeforeLogin(String hostname, String username, String password, int port, boolean useHTTPS, boolean loginPrefRemembered, boolean hideSpecialFields) {
+    public void updateSettingsBeforeLogin(String hostname, String username, String password, int port, boolean useHTTPS, boolean loginPrefRemembered) {
     	this.hostname = hostname;
     	this.username = username;
     	this.password = password;
     	this.port = port;
     	this.useHTTPS = useHTTPS;
     	this.loginPrefRemembered = loginPrefRemembered;
-    	this.showHiddenFields = hideSpecialFields;
     	storeSettings();
     }
     
@@ -154,10 +161,6 @@ public class Settings {
     
     public String getAuthToken() {
     	return HttpHelper.getBase64UserNamePwdToken(username, password);
-    }
-    
-    public boolean getShowHiddenFields(){
-    	return showHiddenFields;
     }
 
 	public boolean isDialogInfoAreaDisplayed() {
@@ -212,7 +215,6 @@ public class Settings {
                 + "\npassword: " + password
                 + "\nport: " + port
                 + "\nuseHTTPS: " + useHTTPS
-                + "\nshowHiddenFields: " + showHiddenFields
                 + "\nreceiveNotifications: " + receiveNotifications
                 + "\ncrawlingContext: " + crawlingContext
                 + "\nloginPrefRemembered: " + loginPrefRemembered;
@@ -247,9 +249,22 @@ public class Settings {
 		return serverVersion;
 	}
 
-    public void setShowHiddenFields(boolean showHiddenFields) {
-        this.showHiddenFields = showHiddenFields;
-        storeSettings();
-    }
+	public List<String> getOwnServers() {
+		return ownServers.getOwnServers();
+	}
+	
+	public void addOwnServer(String hostname, int port) {
+		this.hostname = hostname;
+		this.port = port;
+		ownServers.addOwnServer(new StringBuilder().append(hostname).append(":").append(port).toString());
+		SharedPreferences androidSettings = appContext.getSharedPreferences(DIME_SETTINGS_TAG, Context.MODE_PRIVATE);
+		androidSettings.edit().putString(OWN_SERVERS, ownServers.createJSONObject().toString()).commit();
+	}
+
+	public void removeOwnServer(String server) {
+		ownServers.removeOwnServer(server);
+		SharedPreferences androidSettings = appContext.getSharedPreferences(DIME_SETTINGS_TAG, Context.MODE_PRIVATE);
+		androidSettings.edit().putString(OWN_SERVERS, ownServers.createJSONObject().toString()).commit();
+	}
     
 }

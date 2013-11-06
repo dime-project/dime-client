@@ -23,7 +23,7 @@
                 android:autoLink="web"
                 android:gravity="center_vertical"
                 android:paddingRight="10dp"
-                android:text="Register page"
+                android:text="Landing page"
                 android:textColor="@android:color/white"
                 android:textSize="11sp" />
 
@@ -76,29 +76,45 @@
                     android:id="@+login/label_edittext_server"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Server Name" />
+                    android:text="Server" />
 
-                <AutoCompleteTextView
-                    android:id="@+login/editText_server"
+                <Spinner
+                    android:id="@+login/select_server"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:singleLine="true"
-                    android:hint="servername:port"/>
+                    android:popupBackground="@android:layout/simple_spinner_dropdown_item" />
 
-                <TextView
-                    android:id="@+login/label_is_https_txt"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="HTTPS/HTTP"
-                    android:visibility="gone"/>
+                    android:orientation="horizontal" >
 
-                <CheckBox
-                    android:id="@+login/checkbox_is_https"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="HTTPS"
-                    android:visibility="gone"/>
+                    <CheckBox
+                        android:id="@+login/checkbox_is_https"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="HTTPS"
+                        android:visibility="visible" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+
+                    <Button
+                        android:id="@+login/add_server"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:onClick="onClick"
+                        android:text="add" />
+
+                    <Button
+                        android:id="@+login/remove_server"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:onClick="onClick"
+                        android:text="remove" />
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -110,26 +126,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
+                    android:hint="username"
                     android:inputType="textNoSuggestions"
-                    android:maxLines="1"
-                    android:hint="username"/>
+                    android:maxLines="1" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Password"
                     android:hint="password"
-                    />
+                    android:text="Password" />
 
                 <EditText
                     android:id="@+login/editText_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
+                    android:hint="password"
                     android:inputType="textPassword"
                     android:maxLines="1" />
-
-               
 
                 <CheckBox
                     android:id="@+login/checkBox_remember"
