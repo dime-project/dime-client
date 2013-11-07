@@ -113,6 +113,11 @@ public class Main {
 
     /**
      *
+     * This is a simple mockup server to test the REST-API calls independently
+     * In contrary to the dime-server https is not supported.
+     *
+     * FIXME: update calls to latest changes in the REST-API
+     *
      * @param args the command line arguments
      */
     public static void main(String[] args) {
