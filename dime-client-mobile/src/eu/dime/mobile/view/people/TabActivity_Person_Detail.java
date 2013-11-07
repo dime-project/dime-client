@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-import eu.dime.control.DummyLoadingViewHandler;
+import eu.dime.control.SilentLoadingViewHandler;
 import eu.dime.control.LoadingViewHandler;
 import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
@@ -91,7 +91,7 @@ public class TabActivity_Person_Detail extends TabActivityDisplayableItemDetail 
 					(new AsyncTask<Void, Void, List<ProfileItem>>() {	
 						@Override
 						protected List<ProfileItem> doInBackground(Void... params) {
-							return ModelHelper.getAllValidProfilesForSharing(DimeClient.getMRC(di.getGuid(), new DummyLoadingViewHandler()));
+							return ModelHelper.getAllValidProfilesForSharing(DimeClient.getMRC(di.getGuid(), new SilentLoadingViewHandler()));
 						}
 						@SuppressWarnings("unchecked")
 						@Override
@@ -101,7 +101,7 @@ public class TabActivity_Person_Detail extends TabActivityDisplayableItemDetail 
 							} else if (result.size() == 1){
 								Toast.makeText(TabActivity_Person_Detail.this, "Cannot change default profile! Only " + result.get(0).getName() + " valid for sharing!", Toast.LENGTH_LONG).show();
 							} else {
-								UIHelper.createStandardDialog(TabActivity_Person_Detail.this, DimeClient.getMRC(di.getGuid(), new DummyLoadingViewHandler()), new BaseAdapter_Dialog_Sharing_Profile(), (List<DisplayableItem>) (Object) result, ResultObject.RESULT_OBJECT_TYPES.SHARING_PROFILE);
+								UIHelper.createStandardDialog(TabActivity_Person_Detail.this, DimeClient.getMRC(di.getGuid(), new SilentLoadingViewHandler()), new BaseAdapter_Dialog_Sharing_Profile(), (List<DisplayableItem>) (Object) result, ResultObject.RESULT_OBJECT_TYPES.SHARING_PROFILE);
 							}
 						}
 
