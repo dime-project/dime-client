@@ -1,1 +1,0 @@
-rsync -rv --delete --exclude=nbproject --exclude=import --exclude=\.svn resources/www/net/static/dime/* ../dime-personalserver/dime-communications/src/main/webapp/static/dime/

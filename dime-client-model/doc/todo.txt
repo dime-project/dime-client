@@ -4,16 +4,10 @@ Known Bugs:
 
 TODO:
 
+!Check TODO-LIST!!! :-)
 
-* handle "changed" for GenItems in a proper way - current solution is not acceptable
-
-* refresh items
-
-** handle warnings 
-* add merge function
-* notifications
-** handle various types of notifications
-* add factory method for creation of various kinds of profile-attributes
+* handle "changed" flag for GenItems in a proper way - current solution is not acceptable
+* SimpelPS: add merge function
 * adapt model for not caching context information
 * battery saving functions - mobile network saving functions!!!!
 
