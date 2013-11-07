@@ -115,22 +115,34 @@ public class Configurator extends javax.swing.JDialog {
         );
 
         jLabel1.setText("HostName");
+
         hostNameText.setText("jTextField1");
+
         jLabel2.setText("Port");
+
         portText.setText("jTextField1");
+
         jLabel3.setText("UserName");
+
         userNameText.setText("Username");
+
         useHTTPSCheck.setText("use HTTPS");
+
         jLabel4.setText("Password");
+
         passwordText.setText("jTextField1");
+
         accessRemoteCheckbox.setText("access remote");
         accessRemoteCheckbox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 accessRemoteCheckboxActionPerformed(evt);
             }
         });
+
         enablePersistenceCheckbox.setText("enable persistence");
+
         getNotificationsCheckbox.setText("get notifications");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -179,13 +191,12 @@ public class Configurator extends javax.swing.JDialog {
                     .addComponent(userNameText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(passwordText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(accessRemoteCheckbox))
+                .addComponent(accessRemoteCheckbox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(enablePersistenceCheckbox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(getNotificationsCheckbox)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(90, Short.MAX_VALUE))
         );
 
         loadPresetText.setText("load");
@@ -304,13 +315,6 @@ public class Configurator extends javax.swing.JDialog {
         presets.addOrReplaceElement(conf);
         
     }//GEN-LAST:event_savePresetTextActionPerformed
-
-    private void lookupHostnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lookupHostnameActionPerformed
-        if (userNameText.getText().length()==0){
-            return;
-        }
-        //FIXME: hostNameText.setText(DimeHelper.resolveIPOfPS(userNameText.getText()));
-    }//GEN-LAST:event_lookupHostnameActionPerformed
 
     private void presetsListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_presetsListMouseClicked
         Configuration preset = (Configuration)presetsList.getSelectedValue();
