@@ -32,22 +32,18 @@ public class SilentLoadingViewHandler extends AbstractLoadingViewHandler {
 
     @Override
     protected void handleTimeOutNotified() {
+        this.continueAfterTimeOut = (retries < FIX_NUMBER_OF_RETRIES);
+    	retries++;
+    	
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException ex) {
 
-    	if(retries < FIX_NUMBER_OF_RETRIES) {
-    		retries++;
-    		continueAfterTimeOut = true;
-    	}else{
-
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException ex) {
-
-            }
-        }
+        }        
     }
 
     public boolean doContinueAfterTimeOut() {
     	
-        return continueAfterTimeOut;
+        return this.continueAfterTimeOut;
     }    
 }
