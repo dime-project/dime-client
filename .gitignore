@@ -12,3 +12,4 @@ dime-client-model/nbproject/private/private.xml
 dime-client-model/resources/www/dime-communications/nbproject/private/
 dime-client-mobile/private
 dime-client-model/settings.xml
+dime-client-model/test/eu/dime/restapi/RegisterTeamUser.java
