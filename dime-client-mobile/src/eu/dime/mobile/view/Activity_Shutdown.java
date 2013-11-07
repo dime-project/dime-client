@@ -1,6 +1,6 @@
 package eu.dime.mobile.view;
 
-import eu.dime.control.DummyLoadingViewHandler;
+import eu.dime.control.SilentLoadingViewHandler;
 import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
 import eu.dime.mobile.helper.AndroidModelHelper;
@@ -27,7 +27,7 @@ public class Activity_Shutdown extends Activity {
 		dialog = ProgressDialog.show(this, null, "Shutting down di.me...", true, false, null);
     	((TextView) dialog.findViewById(android.R.id.message)).setTextColor(Color.WHITE);
     	try {
-    		AndroidModelHelper.sendEvaluationDataAsynchronously(null, DimeClient.getMRC(new DummyLoadingViewHandler()), "action_logout");
+    		AndroidModelHelper.sendEvaluationDataAsynchronously(null, DimeClient.getMRC(new SilentLoadingViewHandler()), "action_logout");
 		} catch (Exception e) {	}
     	DimeClient.shutdown();
     	Handler handler = new Handler();

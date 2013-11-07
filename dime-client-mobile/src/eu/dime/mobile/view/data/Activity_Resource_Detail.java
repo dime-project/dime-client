@@ -8,7 +8,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import eu.dime.control.DummyLoadingViewHandler;
+import eu.dime.control.SilentLoadingViewHandler;
 import eu.dime.control.LoadingViewHandler;
 import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
@@ -59,7 +59,7 @@ public class Activity_Resource_Detail extends ActivityDime implements OnClickLis
 				ArrayList<String> persons = new ArrayList<String>();
 				ArrayList<String> groups = new ArrayList<String>();
 				for (ACLPackage acl : resource.getAccessingAgents()) {
-					profiles.add(ModelHelper.getProfileWithSaid(DimeClient.getMRC(new DummyLoadingViewHandler()), acl.getSaidSender()).getName());
+					profiles.add(ModelHelper.getProfileWithSaid(DimeClient.getMRC(new SilentLoadingViewHandler()), acl.getSaidSender()).getName());
 					for (ACLPerson aclp : acl.getPersons()) {
 						try {
 							persons.add(AndroidModelHelper.getOwnItemFromStorage(aclp.getPersonId(), false).getName());

@@ -17,7 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import eu.dime.control.DummyLoadingViewHandler;
+import eu.dime.control.SilentLoadingViewHandler;
 import eu.dime.control.LoadingViewHandler;
 import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
@@ -98,13 +98,13 @@ public class Activity_Main extends ActivityDime implements OnClickListener, OnLo
     protected void loadData() {
 		isDimeServerAlive = new DimeHelper().dimeServerIsAlive(DimeClient.getSettings().getRestApiConfiguration());
 		if(isDimeServerAlive) {
-	        situations = (List<SituationItem>) (Object) Model.getInstance().getAllItems(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler()), TYPES.SITUATION);
-	        notifications = (List<UserNotificationItem>) (Object) Model.getInstance().getAllItems(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler()), TYPES.USERNOTIFICATION);
-	        isPlaceAdapterConnected = ModelHelper.isPlaceAdapterConnected(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler()));
+	        situations = (List<SituationItem>) (Object) Model.getInstance().getAllItems(DimeClient.getMRC(dio.getOwnerId(), new SilentLoadingViewHandler()), TYPES.SITUATION);
+	        notifications = (List<UserNotificationItem>) (Object) Model.getInstance().getAllItems(DimeClient.getMRC(dio.getOwnerId(), new SilentLoadingViewHandler()), TYPES.USERNOTIFICATION);
+	        isPlaceAdapterConnected = ModelHelper.isPlaceAdapterConnected(DimeClient.getMRC(dio.getOwnerId(), new SilentLoadingViewHandler()));
 	        if(isPlaceAdapterConnected) {
 		        Place placeTmp = ContextHelper.getCurrentPlace();
 		        if (placeTmp != null) {
-		            currentPlace = (PlaceItem) Model.getInstance().getItem(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler()), TYPES.PLACE, placeTmp.getPlaceId());
+		            currentPlace = (PlaceItem) Model.getInstance().getItem(DimeClient.getMRC(dio.getOwnerId(), new SilentLoadingViewHandler()), TYPES.PLACE, placeTmp.getPlaceId());
 		        } else {
 		        	currentPlace = null;
 		        }
@@ -361,7 +361,7 @@ public class Activity_Main extends ActivityDime implements OnClickListener, OnLo
 	                	startActivity(new Intent(Activity_Main.this, Activity_Shutdown.class));	                	
 	                	finish();
 	                } else if (button.getText().equals("Logout")) {
-	                	AndroidModelHelper.sendEvaluationDataAsynchronously(null, DimeClient.getMRC(new DummyLoadingViewHandler()), "action_logout");
+	                	AndroidModelHelper.sendEvaluationDataAsynchronously(null, DimeClient.getMRC(new SilentLoadingViewHandler()), "action_logout");
 	                	AndroidModelHelper.resetModel();
 	                	Factory.getCrawlerInstance().stop();
 	                    DimeClient.getSettings().setLoginPrefRemembered(false);

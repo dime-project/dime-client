@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import eu.dime.control.DummyLoadingViewHandler;
+import eu.dime.control.SilentLoadingViewHandler;
 import eu.dime.control.LoadingViewHandler;
 import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
@@ -113,13 +113,13 @@ public class Activity_Share_Dialog extends ActivityDime implements OnClickListen
     
     @Override
     protected void loadData() {
-        allPersonsValidForSharing = ModelHelper.getAllPersonsValidForSharing(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler()));
-        allResources = ModelHelper.getAllResources(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler()));
-        allLiveposts = ModelHelper.getAllLivePosts(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler()));
-        allDataboxes = ModelHelper.getAllDataBoxes(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler()));
-        allGroups = ModelHelper.getAllGroups(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler()));
-        allProfilesValidForSharing = ModelHelper.getAllValidProfilesForSharing(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler()));
-        selectedPersons = AndroidModelHelper.getListOfItemsWithGuids(ModelHelper.getAllPersons(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler())), getIntent().getStringArrayListExtra(ModelHelper.getStringType(TYPES.PERSON)));
+        allPersonsValidForSharing = ModelHelper.getAllPersonsValidForSharing(DimeClient.getMRC(dio.getOwnerId(), new SilentLoadingViewHandler()));
+        allResources = ModelHelper.getAllResources(DimeClient.getMRC(dio.getOwnerId(), new SilentLoadingViewHandler()));
+        allLiveposts = ModelHelper.getAllLivePosts(DimeClient.getMRC(dio.getOwnerId(), new SilentLoadingViewHandler()));
+        allDataboxes = ModelHelper.getAllDataBoxes(DimeClient.getMRC(dio.getOwnerId(), new SilentLoadingViewHandler()));
+        allGroups = ModelHelper.getAllGroups(DimeClient.getMRC(dio.getOwnerId(), new SilentLoadingViewHandler()));
+        allProfilesValidForSharing = ModelHelper.getAllValidProfilesForSharing(DimeClient.getMRC(dio.getOwnerId(), new SilentLoadingViewHandler()));
+        selectedPersons = AndroidModelHelper.getListOfItemsWithGuids(ModelHelper.getAllPersons(DimeClient.getMRC(dio.getOwnerId(), new SilentLoadingViewHandler())), getIntent().getStringArrayListExtra(ModelHelper.getStringType(TYPES.PERSON)));
         selectedResources = AndroidModelHelper.getListOfItemsWithGuids(allResources, getIntent().getStringArrayListExtra(ModelHelper.getStringType(TYPES.RESOURCE)));
 		selectedLiveposts = AndroidModelHelper.getListOfItemsWithGuids(allLiveposts, getIntent().getStringArrayListExtra(ModelHelper.getStringType(TYPES.LIVEPOST)));
         selectedGroups = AndroidModelHelper.getListOfItemsWithGuids(allGroups, getIntent().getStringArrayListExtra(ModelHelper.getStringType(TYPES.GROUP)));

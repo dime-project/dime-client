@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.helper.AndroidModelHelper;
-import eu.dime.control.DummyLoadingViewHandler;
+import eu.dime.control.SilentLoadingViewHandler;
 import eu.dime.mobile.helper.objects.NotificationProperties;
 import eu.dime.model.specialitem.usernotification.UserNotificationItem;
 
@@ -28,7 +28,7 @@ public class ClickListenerUserNotifications implements OnClickListener {
 	    	context.startActivity(np.getIntent());
 	    	if(!uni.isRead()) {
 	    		uni.setRead(true);
-	    		AndroidModelHelper.updateGenItemAsynchronously(uni, null, (Activity) context, DimeClient.getMRC(new DummyLoadingViewHandler()), null);
+	    		AndroidModelHelper.updateGenItemAsynchronously(uni, null, (Activity) context, DimeClient.getMRC(new SilentLoadingViewHandler()), null);
 	    	}
 		} catch (Exception e) {
 			e.printStackTrace();

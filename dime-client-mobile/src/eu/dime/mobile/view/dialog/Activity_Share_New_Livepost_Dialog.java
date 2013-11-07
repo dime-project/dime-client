@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-import eu.dime.control.DummyLoadingViewHandler;
+import eu.dime.control.SilentLoadingViewHandler;
 import eu.dime.control.LoadingViewHandler;
 import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
@@ -109,16 +109,16 @@ public class Activity_Share_New_Livepost_Dialog extends ActivityDime implements 
     
     @Override
     protected void loadData() {
-        allPersonsValidForSharing = ModelHelper.getAllPersonsValidForSharing(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler()));
-        allGroups = ModelHelper.getAllGroups(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler()));
-        allProfilesValidForSharing = ModelHelper.getAllValidProfilesForSharing(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler()));
-        selectedPersons = AndroidModelHelper.getListOfItemsWithGuids(ModelHelper.getAllPersons(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler())), getIntent().getStringArrayListExtra(ModelHelper.getStringType(TYPES.PERSON)));
+        allPersonsValidForSharing = ModelHelper.getAllPersonsValidForSharing(DimeClient.getMRC(dio.getOwnerId(), new SilentLoadingViewHandler()));
+        allGroups = ModelHelper.getAllGroups(DimeClient.getMRC(dio.getOwnerId(), new SilentLoadingViewHandler()));
+        allProfilesValidForSharing = ModelHelper.getAllValidProfilesForSharing(DimeClient.getMRC(dio.getOwnerId(), new SilentLoadingViewHandler()));
+        selectedPersons = AndroidModelHelper.getListOfItemsWithGuids(ModelHelper.getAllPersons(DimeClient.getMRC(dio.getOwnerId(), new SilentLoadingViewHandler())), getIntent().getStringArrayListExtra(ModelHelper.getStringType(TYPES.PERSON)));
 //        selectedGroups = AndroidModelHelper.getListOfItemsWithGuids(allGroups, getIntent().getStringArrayListExtra(TYPES.GROUP.toString()));
 //        listOfSelectedAgents.addAll(selectedGroups);
 //        listOfSelectedAgents.addAll(selectedPersons);
         String profileGuid = getIntent().getStringExtra(ModelHelper.getStringType(TYPES.PROFILE));
         if(profileGuid != null) {
-        	selectedProfile = (ProfileItem) Model.getInstance().getItem(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler()), TYPES.PROFILE, profileGuid);
+        	selectedProfile = (ProfileItem) Model.getInstance().getItem(DimeClient.getMRC(dio.getOwnerId(), new SilentLoadingViewHandler()), TYPES.PROFILE, profileGuid);
         }
         if(selectedProfile == null || !selectedProfile.supportsSharing()) {
         	selectedProfile = ModelHelper.getDefaultProfileForSharing(mrContext, listOfSelectedAgents);

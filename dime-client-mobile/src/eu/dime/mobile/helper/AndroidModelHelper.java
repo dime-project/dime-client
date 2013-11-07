@@ -28,7 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
-import eu.dime.control.DummyLoadingViewHandler;
+import eu.dime.control.SilentLoadingViewHandler;
 import eu.dime.mobile.crawler.Constants;
 import eu.dime.mobile.helper.listener.ClickListenerUserNotifications;
 import eu.dime.mobile.helper.objects.AdvisoryProperties;
@@ -225,7 +225,7 @@ public class AndroidModelHelper {
 	public static GenItem getGenItemSynchronously(Context context, DimeIntentObject dio) {
 		GenItem item = null;
 		try {
-			item = Model.getInstance().getItem(DimeClient.getMRC(dio.getOwnerId(), new DummyLoadingViewHandler()), dio.getItemType(), dio.getItemId());
+			item = Model.getInstance().getItem(DimeClient.getMRC(dio.getOwnerId(), new SilentLoadingViewHandler()), dio.getItemType(), dio.getItemId());
 		} catch (LoadingAbortedRuntimeException ex) {
 			Log.d(AndroidModelHelper.class.getSimpleName(), ex.getMessage());
 		}
@@ -508,7 +508,7 @@ public class AndroidModelHelper {
 		(new AsyncTask<Void, Void, List<ProfileItem>>() {	
 			@Override
 			protected List<ProfileItem> doInBackground(Void... params) {
-				return ModelHelper.getAllValidProfilesForSharing(DimeClient.getMRC(person.getGuid(), new DummyLoadingViewHandler()));
+				return ModelHelper.getAllValidProfilesForSharing(DimeClient.getMRC(person.getGuid(), new SilentLoadingViewHandler()));
 			}
 
 			@SuppressWarnings("unchecked")
@@ -747,12 +747,12 @@ public class AndroidModelHelper {
 				String children = "";
 				if (di != null) {
 					if(di.getMType().equals(TYPES.PERSON)) {
-						List<GroupItem> groups = ModelHelper.getGroupsOfPerson(DimeClient.getMRC(owner, new DummyLoadingViewHandler()), di.getGuid());
+						List<GroupItem> groups = ModelHelper.getGroupsOfPerson(DimeClient.getMRC(owner, new SilentLoadingViewHandler()), di.getGuid());
 						for (GroupItem gi : groups) {
 							children += gi.getName() + ", ";
 						}
 					} else if(di.getMType().equals(TYPES.RESOURCE)) {
-						List<DataboxItem> databoxes = ModelHelper.getDataboxesOfResource(DimeClient.getMRC(owner, new DummyLoadingViewHandler()), di.getGuid());
+						List<DataboxItem> databoxes = ModelHelper.getDataboxesOfResource(DimeClient.getMRC(owner, new SilentLoadingViewHandler()), di.getGuid());
 						for (DataboxItem dbi : databoxes) {
 							children += dbi.getName() + ", ";
 						}
@@ -801,7 +801,7 @@ public class AndroidModelHelper {
 			protected List<DisplayableItem> doInBackground(Void... params) {
 				List<DisplayableItem> items; 
 				try {
-					items = ModelHelper.getChildrenOfDisplayableItem(DimeClient.getMRC(owner, new DummyLoadingViewHandler()), item);
+					items = ModelHelper.getChildrenOfDisplayableItem(DimeClient.getMRC(owner, new SilentLoadingViewHandler()), item);
 				} catch (Exception e) {
 					items = new ArrayList<DisplayableItem>();
 				}
@@ -822,7 +822,7 @@ public class AndroidModelHelper {
 			protected String doInBackground(Void... params) {
 				String profiles = "";
 				if (pi != null) {
-					List<ProfileItem> test = ModelHelper.getAllProfiles(DimeClient.getMRC(pi.getUserId(), new DummyLoadingViewHandler()));
+					List<ProfileItem> test = ModelHelper.getAllProfiles(DimeClient.getMRC(pi.getUserId(), new SilentLoadingViewHandler()));
 			        for (ProfileItem profileItem : test) {
 						profiles += profileItem.getName() + "; ";
 					}
@@ -844,7 +844,7 @@ public class AndroidModelHelper {
 			@Override
 			protected String doInBackground(Void... params) {
 				String result = "";
-				List<ProfileAttributeItem> attributes = ModelHelper.getProfileAttributesOfProfile(DimeClient.getMRC(profile.getUserId(), new DummyLoadingViewHandler()), profile);
+				List<ProfileAttributeItem> attributes = ModelHelper.getProfileAttributesOfProfile(DimeClient.getMRC(profile.getUserId(), new SilentLoadingViewHandler()), profile);
 				for (ProfileAttributeItem profileAttributeItem : attributes) {
 					for (String key : profileAttributeItem.getValue().keySet()) {
 						String value = profileAttributeItem.getValue().get(key);
@@ -875,7 +875,7 @@ public class AndroidModelHelper {
 			protected List<DisplayableItem> doInBackground(Void... params) {
 				List<DisplayableItem> result;
 				try {
-					result = (List<DisplayableItem>) (Object) ModelHelper.getAllShareableItemsDirectlySharedToAgent(DimeClient.getMRC(owner, new DummyLoadingViewHandler()), ai.getGuid());
+					result = (List<DisplayableItem>) (Object) ModelHelper.getAllShareableItemsDirectlySharedToAgent(DimeClient.getMRC(owner, new SilentLoadingViewHandler()), ai.getGuid());
 				} catch (Exception e) {
 					result = null;
 				}

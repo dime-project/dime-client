@@ -42,7 +42,7 @@ import android.widget.Toast;
 import android.widget.TextView;
 import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
-import eu.dime.control.DummyLoadingViewHandler;
+import eu.dime.control.SilentLoadingViewHandler;
 import eu.dime.mobile.helper.listener.ItemActionListener;
 import eu.dime.mobile.helper.objects.DimeIntentObject;
 import eu.dime.mobile.helper.objects.ResultObject;
@@ -686,7 +686,7 @@ public class UIHelper {
 			if(aclPackage.iterator().hasNext()) {
 				emptyContainer.setVisibility(View.GONE);
 				for (ACLPackage acl : aclPackage) {
-					ProfileItem profile = ModelHelper.getProfileWithSaid(DimeClient.getMRC(new DummyLoadingViewHandler()), acl.getSaidSender()); //FIXME Load async??
+					ProfileItem profile = ModelHelper.getProfileWithSaid(DimeClient.getMRC(new SilentLoadingViewHandler()), acl.getSaidSender()); //FIXME Load async??
 					TextView profileHeadline = createTextView(context, 0, Typeface.BOLD, 11, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT), false);
 					profileHeadline.setText("@" + profile.getName());
 					profileHeadline.setPadding(getDPvalue(10), 0, 0, 0);

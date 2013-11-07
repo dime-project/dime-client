@@ -30,7 +30,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
-import eu.dime.control.DummyLoadingViewHandler;
+import eu.dime.control.SilentLoadingViewHandler;
 import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
 import eu.dime.mobile.Settings;
@@ -278,7 +278,7 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
 			        	Model.getInstance().updateSettings(settings.getModelConfiguration());
 			        	Logger.getLogger(DimeClient.class.getName()).log(Level.INFO, "updateClientConfiguration - finished");
 			        	DimeClient.toggleContextCrawler();
-			        	AndroidModelHelper.sendEvaluationDataAsynchronously(null, DimeClient.getMRC(new DummyLoadingViewHandler()), "action_login");
+			        	AndroidModelHelper.sendEvaluationDataAsynchronously(null, DimeClient.getMRC(new SilentLoadingViewHandler()), "action_login");
 		        	} else {
 		        		result = "Could not load auth item!";
 		        	}
