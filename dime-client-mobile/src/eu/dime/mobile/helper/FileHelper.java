@@ -12,10 +12,6 @@
 * See the Licence for the specific language governing permissions and limitations under the Licence.
 */
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.dime.mobile.helper;
 
 import android.app.Activity;
