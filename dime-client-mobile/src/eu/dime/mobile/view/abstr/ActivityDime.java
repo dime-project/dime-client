@@ -21,7 +21,6 @@ import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.helper.DimeIntentObjectHelper;
 import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.objects.DimeIntentObject;
-import eu.dime.mobile.view.Activity_Shutdown;
 import eu.dime.model.ModelRequestContext;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -60,8 +59,7 @@ public abstract class ActivityDime extends Activity implements NotificationListe
     	if(DimeClient.getAppContext() != null && DimeClient.getSettings() != null) {
 	    	dio = DimeIntentObjectHelper.readIntent(intent);
 	    	mrContext = DimeClient.getMRC(dio.getOwnerId(), lvHandler);
-    	} else {
-    		startActivity(new Intent(ActivityDime.this, Activity_Shutdown.class));	                	
+    	} else {               	
         	finish();
     	}
     }
@@ -76,8 +74,7 @@ public abstract class ActivityDime extends Activity implements NotificationListe
 	protected void onResume() {
 		super.onResume();
 		if(DimeClient.getSettings() == null || DimeClient.getSettings().getAuthItem() == null) {
-        	Toast.makeText(getApplicationContext(), "Error occurred! Please login again...", Toast.LENGTH_SHORT).show();
-        	startActivity(new Intent(ActivityDime.this, Activity_Shutdown.class));	                	
+        	Toast.makeText(getApplicationContext(), "Error occurred! Please login again...", Toast.LENGTH_SHORT).show();           	
         	finish();
         }
 	}

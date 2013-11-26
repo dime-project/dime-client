@@ -186,6 +186,10 @@ public class UIHelper {
 	public final static boolean isValidEmail(CharSequence target) {
 		return (target == null) ? false : (android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches());
 	}
+	
+	public final static boolean containsOnlyUnicodeLettersOrDigits(String string) {
+		return android.util.Patterns.GOOD_IRI_CHAR.matches(string);
+	}
 
 	@SuppressLint("DefaultLocale")
 	public static int switchInputType(String key) {

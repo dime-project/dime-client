@@ -27,8 +27,6 @@ import java.util.logging.Logger;
  */
 public class DummyLoadingViewHandler extends AbstractLoadingViewHandler {
 
-	
-    private boolean continueAfterTimeOut = true;
 
     public void showLoadingView() {
     	try {

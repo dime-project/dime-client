@@ -33,7 +33,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 import eu.dime.control.LoadingViewHandler;
 import eu.dime.control.NotificationListener;
-import eu.dime.control.NotificationManager;
 import eu.dime.mobile.crawler.Factory;
 import eu.dime.mobile.crawler.IContextCrawler;
 import eu.dime.mobile.helper.AndroidModelHelper;
@@ -48,7 +47,6 @@ import eu.dime.model.context.constants.Scopes;
 import eu.dime.model.specialitem.NotificationItem;
 import eu.dime.model.specialitem.usernotification.UserNotificationItem;
 import eu.dime.restapi.RestApiAccess;
-
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -110,14 +108,6 @@ public class DimeClient extends Application implements NotificationListener {
         	Logger.getLogger(DimeClient.class.getName()).log(Level.INFO, "updateClientConfiguration - stopping context crawler");
             contextCrawler.stop();
         }
-    }
-    
-    public static void shutdown() {
-    	contextCrawler.stop();
-    	NotificationManager.stop();
-    	settings = null;
-    	viewStack = null;
-    	appContext = null;
     }
 
     @SuppressWarnings("deprecation")

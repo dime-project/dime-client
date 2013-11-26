@@ -53,6 +53,7 @@
 	<string name="settings_view_set_open_dialog">see link</string>
 	<string name="settings_view_set_dialog_label">Please contribute to the scientific evaluation</string>
 	<string name="settings_view_set_dialog_text">We kindly ask you to send us anonymous click data. These data cannot be traced back to your person. We use these data only to analyse how users use our prototype. The following data are collected: \n1. an anonymous identifyier which allows us to know what click data and questionaire answers come from the same account. No other identity information like your di.me username, nickname, real name, or email-address is sent. No location information is sent. \n2. statistics about how many contacts, files, messages, and connected systems you use in your system. Only the number and time when created, but no information about names, content, or anything else is sent. \n3. data about what type of pages you click in the system (e.g. a page „person“). This includes the time the page was clicked. No title, text, or other content of the pages are sent. We do not use other click analysis (like e.g. Google Analytics). You can switch this off at any time on the page “Settings“.</string>
+	<string name="settings_view_dimeuserdirectory">To use di.me, you need to publish a a public mini-Profile ("MyPublicCard") on the DimeUserDirectory. This directory is public for all di.me users, so that you can get contacted by others in the network. You can use a nickname and also your real name.</string>
 	
     <!-- dialog labels -->
     <string name="info_dialog_welcome_text">Welcome and many thanks for trying out di.me mobile!</string>
@@ -80,7 +81,7 @@
     <string name="action_mergeSelection">Merge selected person(s)</string>
     <string name="action_shareSelectedItems">Share selected</string>
     <string name="action_share">Share</string>
-    <string name="action_unshare">Unshare</string>
+    <string name="action_unshare">Stop sharing</string>
     <string name="action_saveAsNewGroup">Save as new group</string>
     <string name="action_addNewGroup">Add new group</string>
     <string name="action_deleteSelectedGroups">Delete selected group(s)</string>
@@ -171,7 +172,7 @@
         <item>dime.hci.iao.fraunhofer.de:8443</item>
         <item>dimebcntrial.bdigital.org:8443</item>
         <item>dime.teamlife.it:8080</item>
-        <item>141.99.159.222:8443</item>
+        <item>141.99.159.223:8443</item>
         <item>vmuscs05.deri.ie:8443</item>
         <item>test.dime.cas.de:80</item>
     </string-array>

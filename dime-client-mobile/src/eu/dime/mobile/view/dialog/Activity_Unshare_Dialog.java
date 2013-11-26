@@ -108,7 +108,7 @@ public class Activity_Unshare_Dialog extends ActivityDime implements OnClickList
 		switch (v.getId()) {
 		case R.unshare.button_save:
 			int errors = 0;
-			if(item instanceof AgentItem) {
+			if(ModelHelper.isAgent(item.getMType())) {
 				for(DisplayableItem di : itemsMarkedForUnsharing) {
 					try {
 						di.removeAccessingAgent(item.getGuid(), item.getMType());
@@ -116,7 +116,7 @@ public class Activity_Unshare_Dialog extends ActivityDime implements OnClickList
 						errors++;
 					}
 				}
-			} else if(item instanceof ShareableItem) {
+			} else if(ModelHelper.isShareable(item.getMType())) {
 				for(DisplayableItem di : agentsMarkedForUnsharing) {
 					try {
 						item.removeAccessingAgent(di.getGuid(), di.getMType());

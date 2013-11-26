@@ -50,7 +50,6 @@ import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.objects.DimeIntentObject;
 import eu.dime.mobile.helper.objects.DimeTabObject;
 import eu.dime.mobile.view.Activity_Main;
-import eu.dime.mobile.view.Activity_Shutdown;
 import eu.dime.model.GenItem;
 import eu.dime.model.ModelRequestContext;
 import java.util.ArrayList;
@@ -127,8 +126,7 @@ public abstract class TabActivityDime extends TabActivity implements OnClickList
 	    		DimeClient.addStringToViewStack(TAG.substring(12)); //remove TabActivity_
 			} catch (Exception e) { }
     	} else {
-        	Toast.makeText(getApplicationContext(), "Error occurred! Please login again...", Toast.LENGTH_SHORT).show();
-        	startActivity(new Intent(TabActivityDime.this, Activity_Shutdown.class));	                	
+        	Toast.makeText(getApplicationContext(), "Error occurred! Please login again...", Toast.LENGTH_SHORT).show();              	
         	finish();
         }
     }

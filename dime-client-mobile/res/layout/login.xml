@@ -16,30 +16,32 @@
             android:gravity="right" >
 
             <TextView
+                android:id="@+login/login"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:onClick="onClick"
+                android:paddingRight="10dp"
+                android:text="Login"
+                android:textColor="@color/button_blue_top"
+                android:textSize="11sp" />
+
+            <TextView
                 android:id="@+login/register"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="right"
-                android:autoLink="web"
+                android:clickable="true"
                 android:gravity="center_vertical"
+                android:onClick="onClick"
                 android:paddingRight="10dp"
-                android:text="Landing page"
+                android:text="Register"
                 android:textColor="@android:color/white"
                 android:textSize="11sp" />
 
-            <View
-                android:layout_width="2px"
-                android:layout_height="fill_parent"
-                android:layout_gravity="right"
-                android:background="@drawable/gradient_double_line" />
 
-            <ImageButton
-                android:id="@+id/exit"
-                android:layout_width="60dp"
-                android:layout_height="48dp"
-                android:background="@drawable/button_transp_bar"
-                android:padding="4dp"
-                android:src="@drawable/icon_bar_logout" />
         </LinearLayout>
 
         <View
@@ -58,6 +60,7 @@
             android:layout_height="80dp"
             android:layout_marginLeft="6dp"
             android:layout_marginTop="-42dp"
+            android:onClick="onClick"
             android:src="@drawable/logo_white" />
 
         <ScrollView
@@ -116,55 +119,231 @@
                         android:text="remove" />
                 </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Username" />
-
-                <EditText
-                    android:id="@+login/editText_user"
+                <LinearLayout
+                    android:id="@+login/login_area"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:hint="username"
-                    android:inputType="textNoSuggestions"
-                    android:maxLines="1" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="password"
-                    android:text="Password" />
-
-                <EditText
-                    android:id="@+login/editText_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:hint="password"
-                    android:inputType="textPassword"
-                    android:maxLines="1" />
-
-                <CheckBox
-                    android:id="@+login/checkBox_remember"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="remember login" />
-
-                <Button
-                    android:id="@+login/button_login"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginBottom="10dip"
-                    android:layout_marginLeft="2dp"
-                    android:layout_marginRight="2dp"
                     android:layout_marginTop="10dp"
-                    android:background="@drawable/button_col1_blue"
-                    android:focusable="true"
-                    android:paddingBottom="8dp"
-                    android:paddingTop="8dp"
-                    android:text="login" />
+                    android:orientation="vertical"
+                    android:visibility="visible" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:text="Login" />
+
+                    <EditText
+                        android:id="@+login/editText_user"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="username"
+                        android:inputType="textNoSuggestions"
+                        android:maxLines="1" />
+
+                    <EditText
+                        android:id="@+login/editText_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="password"
+                        android:inputType="textPassword"
+                        android:maxLines="1" />
+
+                    <CheckBox
+                        android:id="@+login/checkBox_remember"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="remember login" />
+
+                    <Button
+                        android:id="@+login/button_login"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="10dip"
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginRight="2dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/button_col1_blue"
+                        android:enabled="false"
+                        android:focusable="true"
+                        android:onClick="onClick"
+                        android:paddingBottom="8dp"
+                        android:paddingTop="8dp"
+                        android:text="login" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+login/register_area"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical"
+                    android:visibility="gone" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:text="Register" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/button_col4_grey_disabled"
+                        android:orientation="vertical"
+                        android:padding="10dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
+                            android:text="1.Registration data" />
+
+                        <EditText
+                            android:id="@+login/editText_register_user"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="username"
+                            android:inputType="textNoSuggestions"
+                            android:maxLines="1" />
+
+                        <EditText
+                            android:id="@+login/editText_register_password"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="password"
+                            android:inputType="textPassword"
+                            android:maxLines="1" />
+
+                        <EditText
+                            android:id="@+login/editText_register_password_retype"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="retype password"
+                            android:inputType="textPassword"
+                            android:maxLines="1" />
+
+                        <EditText
+                            android:id="@+login/editText_register_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="e-mail"
+                            android:inputType="textEmailAddress"
+                            android:maxLines="1" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:background="@color/button_col4_grey_disabled"
+                        android:orientation="vertical"
+                        android:padding="10dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
+                            android:text="2.DimeUserDirectory" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginLeft="10dp"
+                            android:text="@string/settings_view_dimeuserdirectory" />
+
+                        <EditText
+                            android:id="@+login/editText_register_public_nickname"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="public nickname"
+                            android:inputType="textNoSuggestions"
+                            android:maxLines="1" />
+
+                        <EditText
+                            android:id="@+login/editText_register_firstname"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="first name"
+                            android:maxLines="1" />
+
+                        <EditText
+                            android:id="@+login/editText_register_lastname"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="last name"
+                            android:maxLines="1" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:background="@color/button_col4_grey_disabled"
+                        android:orientation="vertical"
+                        android:padding="10dp" >
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
+                            android:text="3.Scientific evaluation" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:orientation="vertical" >
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/settings_view_toggleSet" />
+
+                            <TextView
+                                android:id="@+settings/open_set_dialog"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:clickable="true"
+                                android:onClick="onClick"
+                                android:text="@string/settings_view_set_open_dialog"
+                                android:textColor="@color/dm_text_url" />
+                        </LinearLayout>
+
+                        <CheckBox
+                            android:id="@+login/checkBox_agreeSET"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="I agree" />
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+login/button_register"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="10dip"
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginRight="2dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/button_col1_blue"
+                        android:enabled="false"
+                        android:focusable="true"
+                        android:onClick="onClick"
+                        android:paddingBottom="8dp"
+                        android:paddingTop="8dp"
+                        android:text="register" />
+                </LinearLayout>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

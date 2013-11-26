@@ -15,7 +15,7 @@
 package eu.dime.mobile.view;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
+import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
@@ -61,7 +61,6 @@ import eu.dime.model.specialitem.NotificationItem;
 import eu.dime.model.specialitem.usernotification.UserNotificationItem;
 import eu.dime.restapi.DimeHelper;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Activity_Main extends ActivityDime implements OnClickListener, OnLongClickListener {
@@ -73,7 +72,6 @@ public class Activity_Main extends ActivityDime implements OnClickListener, OnLo
     private List<UserNotificationItem> notifications = null;
     private PlaceItem currentPlace;
     private ImageView dimeLogo;
-    protected Dialog actionDialog = null;
     private TextView dimeUser;
     private boolean isPlaceAdapterConnected = false;
     private boolean isDimeServerAlive = false;
@@ -363,30 +361,19 @@ public class Activity_Main extends ActivityDime implements OnClickListener, OnLo
     }
 
     private void createActionMenu() {
-    	String[] names = {"Logout", "Exit"};
-        actionDialog = UIHelper.createActionDialog(this, Arrays.asList(names), new OnClickListener() {
-			
+    	Builder builder = UIHelper.createAlertDialogBuilder(this, "Do you really want to logout?", true);
+    	builder.setPositiveButton("logout", new DialogInterface.OnClickListener() {
 			@Override
-			public void onClick(View v) {
-				actionDialog.dismiss();
-	            if (v instanceof Button) {
-	                Button button = (Button) v;
-	                if (button.getText().equals("Exit")) {
-	                	startActivity(new Intent(Activity_Main.this, Activity_Shutdown.class));	                	
-	                	finish();
-	                } else if (button.getText().equals("Logout")) {
-	                	AndroidModelHelper.sendEvaluationDataAsynchronously(null, DimeClient.getMRC(new SilentLoadingViewHandler()), "action_logout");
-	                	AndroidModelHelper.resetModel();
-	                	Factory.getCrawlerInstance().stop();
-	                    DimeClient.getSettings().setLoginPrefRemembered(false);
-	                    Intent intent = new Intent(Activity_Main.this, Activity_Login.class);
-	                    startActivity(intent);
-	                }
-	            }
+			public void onClick(DialogInterface dialog, int which) {
+				AndroidModelHelper.sendEvaluationDataAsynchronously(null, DimeClient.getMRC(new SilentLoadingViewHandler()), "action_logout");
+		    	AndroidModelHelper.resetModel();
+		    	Factory.getCrawlerInstance().stop();
+		        DimeClient.getSettings().setLoginPrefRemembered(false);
+		        Intent intent = new Intent(Activity_Main.this, Activity_Login.class);
+		        startActivity(intent);
 			}
-			
-		}, null);
-        actionDialog.show();
+		});
+    	UIHelper.displayAlertDialog(builder, false);
 	}
 
 	@Override

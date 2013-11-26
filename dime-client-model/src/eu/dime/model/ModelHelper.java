@@ -21,6 +21,7 @@
  */
 package eu.dime.model;
 
+import eu.dime.control.SilentLoadingViewHandler;
 import eu.dime.model.acl.ACL;
 import eu.dime.model.displayable.AccountItem;
 import eu.dime.model.displayable.AgentItem;
@@ -41,6 +42,7 @@ import eu.dime.model.specialitem.advisory.AdvisoryItem;
 import eu.dime.model.specialitem.advisory.AdvisoryRequestItem;
 import eu.dime.restapi.DimeHelper;
 import eu.dime.restapi.RestApiAccess;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -49,6 +51,7 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import sit.web.client.HttpHelper;
 
 /**
@@ -594,7 +597,7 @@ public class ModelHelper {
     }
     
     public static List<GenItem> getItemsDirectlySharedToAgent(ModelRequestContext mrContext, String agentGuid, TYPES type) {
-        List<GenItem> result = Model.getInstance().getAllItems(new ModelRequestContext(mrContext.hoster, Model.ME_OWNER, mrContext.lvHandler), type);
+        List<GenItem> result = Model.getInstance().getAllItems(new ModelRequestContext(mrContext.hoster, Model.ME_OWNER, new SilentLoadingViewHandler()), type);
         Iterator<GenItem> iter = result.iterator();
         while (iter.hasNext()) {
             GenItem item = iter.next();

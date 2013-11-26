@@ -19,6 +19,7 @@ package eu.dime.mobile.view;
  *
  * @author simon
  */
+@SuppressWarnings("serial")
 class DimeClientLoginException extends Exception {
 
     public DimeClientLoginException(String message) {

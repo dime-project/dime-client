@@ -35,11 +35,8 @@ import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -52,8 +49,11 @@ import eu.dime.mobile.helper.AndroidModelHelper;
 import eu.dime.mobile.helper.DimeIntentObjectHelper;
 import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.objects.DimeIntentObject;
+import eu.dime.model.ItemFactory;
 import eu.dime.model.Model;
+import eu.dime.model.ModelConfiguration;
 import eu.dime.model.specialitem.AuthItem;
+import eu.dime.model.specialitem.UserItem;
 import eu.dime.model.storage.InitStorageFailedException;
 import eu.dime.restapi.DimeHelper;
 import eu.dime.restapi.RestApiAccess;
@@ -68,17 +68,33 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import sit.web.client.HttpHelper;
 
-public class Activity_Login extends Activity implements OnClickListener, OnEditorActionListener, TextWatcher, OnCheckedChangeListener {
+public class Activity_Login extends Activity implements OnClickListener, OnEditorActionListener, TextWatcher {
 
+	private static final int LOGIN_VIEW = 0;
+	private static final int REGISTRATION_VIEW = 1;
 	private Settings settings;
-    private CheckBox remember;
-    private EditText user;
-    private EditText pass;
-    private Button login;
     private Spinner serverNameAndPort;
     private CheckBox isHttpsCheckBox;
     private ArrayAdapter<CharSequence> knownServersAdapter;
     protected ProgressDialog dialog;
+    private boolean isLoginArea = true;
+    //login area
+    private LinearLayout loginArea;
+    private EditText user;
+    private EditText pass;
+    private CheckBox remember;
+    private Button buttonLogin;
+    //register area
+    private LinearLayout registerArea;
+    private EditText registerUsername;
+    private EditText registerPassword;
+    private EditText registerPasswordRetype;
+    private EditText registerEmail;
+    private EditText registerNickname;
+    private EditText registerFirstname;
+    private EditText registerLastname;
+    private CheckBox registerSET;
+    private Button buttonRegister;
 
     /**
      * Called when the activity is first created.
@@ -88,22 +104,32 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.login);
-        user = (EditText) findViewById(R.login.editText_user);
-        pass = (EditText) findViewById(R.login.editText_password);
-        remember = (CheckBox) findViewById(R.login.checkBox_remember);
-        login = (Button) findViewById(R.login.button_login);
         serverNameAndPort = (Spinner) findViewById(R.login.select_server);
         isHttpsCheckBox = (CheckBox)findViewById(R.login.checkbox_is_https);
-        ImageButton exit = (ImageButton) findViewById(R.id.exit);
-        exit.setOnClickListener(this);
-        TextView register = (TextView) findViewById(R.login.register);
-        register.setOnClickListener(this);
-        login.setOnClickListener(this);
-        login.setEnabled(false);
-        pass.setOnEditorActionListener(this);
-        pass.addTextChangedListener(this);
+        loginArea = (LinearLayout) findViewById(R.login.login_area);
+        user = (EditText) findViewById(R.login.editText_user);
         user.setOnEditorActionListener(this);
         user.addTextChangedListener(this);
+        pass = (EditText) findViewById(R.login.editText_password);
+        pass.setOnEditorActionListener(this);
+        pass.addTextChangedListener(this);
+        remember = (CheckBox) findViewById(R.login.checkBox_remember);
+        buttonLogin = (Button) findViewById(R.login.button_login);
+        registerArea = (LinearLayout) findViewById(R.login.register_area);
+        registerUsername = (EditText) findViewById(R.login.editText_register_user);
+        registerUsername.addTextChangedListener(this);
+        registerPassword = (EditText) findViewById(R.login.editText_register_password);
+        registerPassword.addTextChangedListener(this);
+        registerPasswordRetype = (EditText) findViewById(R.login.editText_register_password_retype);
+        registerPasswordRetype.addTextChangedListener(this);
+        registerEmail = (EditText) findViewById(R.login.editText_register_email);
+        registerEmail.addTextChangedListener(this);
+        registerNickname = (EditText) findViewById(R.login.editText_register_public_nickname);
+        registerNickname.addTextChangedListener(this);
+        registerFirstname = (EditText) findViewById(R.login.editText_register_firstname);
+        registerLastname = (EditText) findViewById(R.login.editText_register_lastname);
+        registerSET = (CheckBox) findViewById(R.login.checkBox_agreeSET);
+        buttonRegister = (Button) findViewById(R.login.button_register);
     }
 
     @Override
@@ -170,6 +196,7 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
 					public void onTextChanged(CharSequence s, int start, int before, int count) { }
 				});
         		break;
+        		
         	case R.login.remove_server:
         		final CharSequence[] ownServers = settings.getOwnServers().toArray(new CharSequence[settings.getOwnServers().size()]);
         		if(ownServers.length > 0) {
@@ -187,6 +214,7 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
         			Toast.makeText(this, "No servers to remove...", Toast.LENGTH_SHORT).show();
         		}
         		break;
+        		
             case R.login.button_login:
             	try {
                     login();
@@ -194,20 +222,37 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
                     showDialog(ex.getMessage());
                 }
             	break;
+            	
+            case R.login.button_register:
+            	try {
+					register();
+				} catch (Exception ex) {
+					showDialog(ex.getMessage());
+				}
+            	break;
             
-            case R.id.exit:
-            	startActivity(new Intent(Activity_Login.this, Activity_Shutdown.class));
-            	finish();
-                break;
-            
-            case R.login.register:
+            case R.login.dime_logo:
     			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.project_landing_page)));
     			startActivity(browserIntent);
+            	break;
+            	
+            case R.login.login:
+            	switchArea(LOGIN_VIEW);
+            	break;
+            	
+            case R.login.register:
+            	switchArea(REGISTRATION_VIEW);
+            	break;
+            	
+            case R.settings.open_set_dialog:
+            	builder = UIHelper.createAlertDialogBuilder(this, getString(R.string.settings_view_set_dialog_label), true);
+            	builder.setMessage(R.string.settings_view_set_dialog_text);
+            	UIHelper.displayAlertDialog(builder, false);
             	break;
         }
     }
 
-    class ServerAndPort{
+	class ServerAndPort{
         String serverName;
         int port = DimeHelper.DEFAULT_PORT;
 
@@ -226,19 +271,99 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
             }
         }
     }
-
-    private void validateUserNamePasswordGiven() throws DimeClientLoginException{
-        if (!(user.getText().toString().length() > 0)) {
-            throw new DimeClientLoginException("Please provide a username");
-        } else if (!(pass.getText().toString().length() > 0)) {
-            throw new DimeClientLoginException("Please provide a password");
-        }
-    }
     
-    private void login() throws DimeClientLoginException {
-        validateUserNamePasswordGiven();
+    private void register() throws DimeClientLoginException {
+    	validateRegistrationValues();
+    	final ServerAndPort sap = new ServerAndPort(serverNameAndPort.getSelectedItem().toString());
+		UserItem userToRegister = ItemFactory.createNewUserItem(registerUsername.getText().toString(), 
+						registerPassword.getText().toString(), 
+						registerNickname.getText().toString(), 
+						registerFirstname.getText().toString(), 
+						registerLastname.getText().toString(), 
+						registerSET.isChecked(), 
+						registerEmail.getText().toString());
+		final AsyncTask<Void, Void, String> registerTask = new MyRegisterAsyncTask(sap.serverName, sap.port, isHttpsCheckBox.isChecked(), userToRegister);
+		dialog = ProgressDialog.show(this, null, "Trying to register...", true, true);
+    	dialog.setOnCancelListener(new OnCancelListener() {
+			@Override
+			public void onCancel(DialogInterface dialog) {
+				registerTask.cancel(true);
+				dialog.dismiss();
+			}
+		});
+    	((TextView) dialog.findViewById(android.R.id.message)).setTextColor(Color.WHITE);
+    	registerTask.execute();
+	}
+    
+    private void validateRegistrationValues() throws DimeClientLoginException {
+    	if(UIHelper.containsOnlyUnicodeLettersOrDigits(registerUsername.getText().toString())) {
+    		throw new DimeClientLoginException("Please provide a username, which contains only unicode letters or digits!");
+    	}
+    	if(!UIHelper.isValidEmail(registerEmail.getText().toString())) {
+            throw new DimeClientLoginException("Please provide a valid email address!");
+        }
+	}
+    
+    private class MyRegisterAsyncTask extends AsyncTask<Void, Void, String> {
+    	
+        private String hostname;
+        private int port;
+        private UserItem userToRegister;
+        private boolean https;
+        
+        public MyRegisterAsyncTask(String hostname, int port, boolean https, UserItem userToRegister){
+        	this.hostname = hostname;
+        	this.port = port;
+        	this.userToRegister = userToRegister;
+        	this.https = https;
+        }
+        
+        @Override
+        protected String doInBackground(Void... params) {
+			String result = "";
+			try {
+				ModelConfiguration conf = RestApiAccess.registerNewUserCall(userToRegister, hostname, port, https);
+				if (!new DimeHelper().dimeServerIsAuthenticated(conf.mainSAID, conf.restApiConfiguration)) {
+					result = "Error occurred trying to register!";
+				}
+			} catch (Exception ex) {
+				result = "Error occured trying to register: " + ex.getMessage() + "!";
+			}
+			return result;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+    		if(result.length() == 0){
+    			user.setText(userToRegister.getUsername());
+    			pass.setText(userToRegister.getPassword());
+    			switchArea(LOGIN_VIEW);
+            	Toast.makeText(Activity_Login.this, "Registration successful for user " + userToRegister.getUsername(), Toast.LENGTH_LONG).show();
+            	try {
+                    login();
+                } catch (DimeClientLoginException ex) {
+                    showDialog(ex.getMessage());
+                }
+        	} else {
+        		showDialog(result);
+        	}
+    		if(dialog != null && dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        }
+        
+        @Override
+        protected void onCancelled() {
+        	super.onCancelled();
+        	Log.d(Activity_Login.class.getSimpleName(), "Registration attempt canceled!");
+        }
+        
+    }
+
+	private void login() throws DimeClientLoginException {
+        validateLoginValues();
         final ServerAndPort sap = new ServerAndPort(serverNameAndPort.getSelectedItem().toString());
-    	final AsyncTask<Void, Void, String> loginTask = new MyAsyncTask(sap.serverName,
+    	final AsyncTask<Void, Void, String> loginTask = new MyLoginAsyncTask(sap.serverName,
 				user.getText().toString(), 
 				pass.getText().toString(),
 				sap.port,
@@ -256,7 +381,16 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
     	loginTask.execute();
     }
     
-    private class MyAsyncTask extends AsyncTask<Void, Void, String> {
+    private void validateLoginValues() throws DimeClientLoginException {
+        if (!(user.getText().toString().length() > 0)) {
+            throw new DimeClientLoginException("Please provide a username!");
+        }
+        if (!(pass.getText().toString().length() > 0)) {
+            throw new DimeClientLoginException("Please provide a password!");
+        }
+    }
+    
+    private class MyLoginAsyncTask extends AsyncTask<Void, Void, String> {
     	
         private String hostname;
         private String username; //== mainSAID
@@ -265,7 +399,7 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
         private boolean useHTTPS;
         private boolean loginPrefRemembered;
         
-        public MyAsyncTask(String hostname, String username, String password, int port, boolean useHTTPS, boolean loginPrefRemembered) {
+        public MyLoginAsyncTask(String hostname, String username, String password, int port, boolean useHTTPS, boolean loginPrefRemembered) {
             this.hostname = hostname;
             this.username = username; //== mainSAID
             this.password = password;
@@ -338,9 +472,29 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
         
     }
     
+    public void switchArea(int areaCode) {
+    	isLoginArea = (areaCode == LOGIN_VIEW);
+    	registerArea.setVisibility(isLoginArea ? View.GONE : View.VISIBLE);
+    	loginArea.setVisibility(isLoginArea ? View.VISIBLE : View.GONE);
+    	int enabled = getResources().getColor(R.color.button_blue_top);
+    	int disabled = getResources().getColor(android.R.color.white);
+    	((TextView)findViewById(R.login.register)).setTextColor(isLoginArea ? disabled : enabled);
+    	((TextView)findViewById(R.login.login)).setTextColor(isLoginArea ? enabled : disabled);
+    }
+    
+    private void showDialog(final String message) {
+    	runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				AlertDialog alert = UIHelper.createInfoDialog(Activity_Login.this, message, "ok");
+		        alert.show();
+			}
+		});
+    }
+    
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if(event != null && event.getAction() == KeyEvent.ACTION_DOWN) {        	
+        if(event != null && (event.getAction() == KeyEvent.ACTION_DOWN || event.getAction() == KeyEvent.KEYCODE_FORWARD)) {        	
             try {
                 login();
             } catch (DimeClientLoginException ex) {
@@ -352,7 +506,12 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
     
     @Override
     public void afterTextChanged(Editable s) {
-    	login.setEnabled(loginAttemptPossible());
+    	if(isLoginArea) {
+    		buttonLogin.setEnabled(!(user.getText().length() == 0 || pass.getText().length() == 0));
+    	} else {
+    		buttonRegister.setEnabled(!(((registerUsername.getText().length() == 0 || registerNickname.getText().length() == 0 || registerPassword.getText().length() == 0 || registerEmail.getText().length() == 0)) 
+    				|| !registerPassword.getText().toString().equals(registerPasswordRetype.getText().toString())));	
+    	}
     }
 
 	@Override
@@ -360,28 +519,5 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
 
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-	@Override
-	public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-		login.setEnabled(loginAttemptPossible());
-	}
-	
-	private boolean loginAttemptPossible(){
-		boolean possible = true;
-		if ((!(user.getText().toString().length() > 0)) || (!(pass.getText().toString().length() > 0))) {
-            possible = false;
-        }
-		return possible;
-	}
-	
-    private void showDialog(final String message) {
-    	runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				AlertDialog alert = UIHelper.createInfoDialog(Activity_Login.this, message, "ok");
-		        alert.show();
-			}
-		});
-    }
 
 }

@@ -25,19 +25,12 @@
         android:icon="@drawable/logo_black"
         android:label="@string/app_name"
         android:theme="@style/dimeTheme" >
-        <activity
-            android:name=".view.Activity_Main"
-            android:label="@string/app_name"
-            android:launchMode="singleTask" >
-            <intent-filter>
-                <category android:name="android.intent.category.ALTERNATIVE" />
-            </intent-filter>
-        </activity>
-
+        
         <!-- login -->
         <activity
             android:name=".view.Activity_Login"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -45,18 +38,17 @@
             </intent-filter>
         </activity>
         <!-- login -->
-
-
-        <!-- shutdown -->
+        
+        <!-- main -->
         <activity
-            android:name=".view.Activity_Shutdown"
-            android:label="@string/app_name" >
+            android:name=".view.Activity_Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTop" >
             <intent-filter>
                 <category android:name="android.intent.category.ALTERNATIVE" />
             </intent-filter>
         </activity>
-        <!-- shutdown -->
-
+        <!-- main -->
 
         <!-- people -->
         <activity
@@ -427,7 +419,7 @@
         <activity
             android:name="eu.dime.mobile.view.dialog.Activity_Edit_Item_Dialog"
             android:label="@string/app_name"
-            android:launchMode="singleTop"
+            android:noHistory="true"
             android:windowSoftInputMode="stateHidden" >
             <intent-filter>
                 <category android:name="android.intent.category.ALTERNATIVE" />
@@ -435,7 +427,8 @@
         </activity>
         <activity
             android:name="eu.dime.mobile.view.dialog.Activity_Account_Configuration_Dialog"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:noHistory="true" >
             <intent-filter>
                 <category android:name="android.intent.category.ALTERNATIVE" />
             </intent-filter>
