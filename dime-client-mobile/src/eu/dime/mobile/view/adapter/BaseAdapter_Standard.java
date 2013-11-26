@@ -91,14 +91,14 @@ public class BaseAdapter_Standard extends BaseAdapterDisplayableItem {
 			break;
 		case PERSON:
 			PersonItem person = (PersonItem) di;
+			AndroidModelHelper.loadGroupsOfChildAsynchronously(context, mrContext.owner, di, viewHolder.attribute1);
 			String defaultProfile = person.getDefaultProfileGuid();
 			isValidForSharing = (defaultProfile != null && defaultProfile.length() > 0) ? true : false;
-//			if(isValidForSharing) {
-				AndroidModelHelper.loadProfilesOfPersonAsynchronously(context, person, viewHolder.attribute1);
-//			} else {
-//				viewHolder.attribute1.setVisibility(View.GONE);
-//			}
-			AndroidModelHelper.loadGroupsOfChildAsynchronously(context, mrContext.owner, di, viewHolder.attribute2);
+			if(isValidForSharing) {
+				AndroidModelHelper.loadProfilesOfPersonAsynchronously(context, person, viewHolder.attribute2);
+			} else {
+				viewHolder.attribute2.setVisibility(View.GONE);
+			}
 			break;
 		case RESOURCE:
 			ResourceItem resource = (ResourceItem) di;

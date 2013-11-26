@@ -24,7 +24,6 @@ import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.helper.FileHelper;
 import eu.dime.mobile.helper.UIHelper;
 import eu.dime.model.specialitem.AuthItem;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

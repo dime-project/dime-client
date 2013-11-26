@@ -61,7 +61,6 @@ public class BaseAdapter_ProfileCard extends BaseAdapterDisplayableItem {
 			viewHolder.previewContainer.removeAllViews();
 			viewHolder.sharedContainer.removeAllViews();
 		}
-//		viewHolder.borderContainer.setBackgroundColor(context.getResources().getColor(profile.isEditable() ? android.R.color.transparent : R.color.background_green));
     	boolean isValidForSharing = profile.getUserId().equals(Model.ME_OWNER) && profile.supportsSharing();
 		viewHolder.name.setText(profile.getName());
 		AndroidModelHelper.loadProfileAttributesOfProfileAsynchronously(context, viewHolder.attribute1, profile, null);

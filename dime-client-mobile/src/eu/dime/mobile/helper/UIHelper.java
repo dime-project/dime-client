@@ -121,6 +121,8 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UIHelper {
 
@@ -187,8 +189,11 @@ public class UIHelper {
 		return (target == null) ? false : (android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches());
 	}
 	
-	public final static boolean containsOnlyUnicodeLettersOrDigits(String string) {
-		return android.util.Patterns.GOOD_IRI_CHAR.matches(string);
+	public final static boolean containsOnlyUnicodeLettersOrDigits(CharSequence string) {
+		Pattern pattern = Pattern.compile("^[0-9a-zA-Z]+$", Pattern.CASE_INSENSITIVE);  
+	    Matcher matcher = pattern.matcher(string);
+	    boolean result = matcher.matches();
+		return result;
 	}
 
 	@SuppressLint("DefaultLocale")

@@ -296,7 +296,7 @@ public class Activity_Login extends Activity implements OnClickListener, OnEdito
 	}
     
     private void validateRegistrationValues() throws DimeClientLoginException {
-    	if(UIHelper.containsOnlyUnicodeLettersOrDigits(registerUsername.getText().toString())) {
+    	if(!UIHelper.containsOnlyUnicodeLettersOrDigits(registerUsername.getText().toString())) {
     		throw new DimeClientLoginException("Please provide a username, which contains only unicode letters or digits!");
     	}
     	if(!UIHelper.isValidEmail(registerEmail.getText().toString())) {

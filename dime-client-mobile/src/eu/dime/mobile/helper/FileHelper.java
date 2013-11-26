@@ -251,7 +251,9 @@ public class FileHelper implements sit.io.FileHelperI {
 				if(activity instanceof ListActivityDime) {
 					((ListActivityDime<GenItem>) activity).reloadList();
 				} else if(activity instanceof UploadPictureToPS) {
-					activity.startActivity(DimeIntentObjectHelper.populateIntent(new Intent(activity, TabActivity_Data.class), new DimeIntentObject(TYPES.RESOURCE)));
+					try {
+						activity.startActivity(DimeIntentObjectHelper.populateIntent(new Intent(activity, TabActivity_Data.class), new DimeIntentObject(TYPES.RESOURCE)));
+					} catch (Exception e) {	} //Could not open activity
 				}
 			}
 		}).execute();
