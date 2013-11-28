@@ -165,6 +165,7 @@
     <string name="self_evaluation_tool_dialog_account_configuration_update">account_updated</string>
     <string name="self_evaluation_tool_dialog_unshare_save">unshare_items_confirmed</string>
     <string name="self_evaluation_tool_dialog_merge_save">merge_confirmed</string>
+    <string name="self_evaluation_tool_dialog_merge_decline">merge_declined</string>
     <string name="self_evaluation_tool_dialog_public_search_save">person_from_public_resolver_added</string>
 
 

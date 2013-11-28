@@ -28,6 +28,23 @@
                 android:layout_height="wrap_content"
                 android:text="person name"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="similarity: " />
+
+                <TextView
+                    android:id="@+merge/similarity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 %" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
@@ -77,7 +94,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="@drawable/button_transp_bar"
-            android:padding="10dp"
+            android:padding="5dp"
             android:src="@drawable/icon_white_info" />
 
         <Button
@@ -87,9 +104,23 @@
             android:layout_weight="1"
             android:background="@drawable/button_col2_yellow"
             android:focusable="true"
+            android:onClick="onClick"
             android:paddingBottom="12dp"
             android:paddingTop="12dp"
             android:text="Accept" />
+
+        <Button
+            android:id="@+merge/button_decline"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_col2_yellow"
+            android:focusable="true"
+            android:onClick="onClick"
+            android:paddingBottom="12dp"
+            android:paddingTop="12dp"
+            android:text="Decline" />
 
         <Button
             android:id="@+merge/button_cancel"
@@ -99,6 +130,7 @@
             android:layout_weight="1"
             android:background="@drawable/button_col2_yellow"
             android:focusable="true"
+            android:onClick="onClick"
             android:paddingBottom="12dp"
             android:paddingTop="12dp"
             android:text="Cancel" />

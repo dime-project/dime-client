@@ -14,17 +14,20 @@
 
 package eu.dime.mobile.view.dialog;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import eu.dime.control.LoadingViewHandler;
+import eu.dime.mobile.DimeClient;
 import eu.dime.mobile.R;
 import eu.dime.mobile.helper.AndroidModelHelper;
 import eu.dime.mobile.helper.ImageHelper;
+import eu.dime.mobile.helper.UIHelper;
 import eu.dime.mobile.helper.handler.LoadingViewHandlerFactory;
 import eu.dime.mobile.view.abstr.ListActivityDisplayableItem;
 import eu.dime.mobile.view.adapter.BaseAdapter_Match;
@@ -36,15 +39,17 @@ import eu.dime.model.displayable.PersonItem;
 import eu.dime.model.specialitem.NotificationItem;
 import eu.dime.model.specialitem.usernotification.UNEntryMergeRecommendation;
 import eu.dime.model.specialitem.usernotification.UserNotificationItem;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ListActivity_Merge_Dialog extends ListActivityDisplayableItem implements OnClickListener{
 	
 	private UserNotificationItem uni;
 	private PersonItem pi;
-	private Button okButton;
-    private Button dismissButton;
+	private TextView similarity;
+    private double similarityValue = 0.0;
 
     /**
      * Called when the activity is first created.
@@ -55,16 +60,14 @@ public class ListActivity_Merge_Dialog extends ListActivityDisplayableItem imple
 		TAG = ListActivity_Merge_Dialog.class.getSimpleName();
 		setContentView(R.layout.dialog_merge);
 		setBaseAdapter(new BaseAdapter_Match());
-		okButton = (Button) findViewById(R.merge.button_merge);
-	    dismissButton = (Button) findViewById(R.merge.button_cancel);
-	    okButton.setOnClickListener(this);
-	    dismissButton.setOnClickListener(this);
+		similarity = (TextView) findViewById(R.merge.similarity);
 	}
   
 	@Override
 	protected List<DisplayableItem> loadListData() {
 		uni = (UserNotificationItem) Model.getInstance().getItem(mrContext, dio.getItemType(), dio.getItemId());
 		UNEntryMergeRecommendation entry = (UNEntryMergeRecommendation)uni.getUnEntry();
+		similarityValue = entry.getSimilarity();
 		pi = (PersonItem) Model.getInstance().getItem(mrContext, TYPES.PERSON, entry.getSourceId());
 		List<DisplayableItem> matchSuggestions = new ArrayList<DisplayableItem>();
 		PersonItem person = (PersonItem) Model.getInstance().getItem(mrContext, TYPES.PERSON, entry.getTargetId());
@@ -80,17 +83,69 @@ public class ListActivity_Merge_Dialog extends ListActivityDisplayableItem imple
 			ImageHelper.loadImageAsynchronously(image, pi, this);
 			name.setText(pi.getName());
 		}
+		similarity.setText(UIHelper.formatDoubleToPercentage(similarityValue));
 	}
 	
 	@Override
 	public void onClick(View v) {
+		 UNEntryMergeRecommendation entry = (UNEntryMergeRecommendation)uni.getUnEntry();
 		 switch (v.getId()) {
          case R.merge.button_merge:
-        	 UNEntryMergeRecommendation entry = (UNEntryMergeRecommendation)uni.getUnEntry();
         	 entry.setStatus(UNEntryMergeRecommendation.STATUS_TYPES[1]);
         	 uni.setUnEntry(entry);
-        	 AndroidModelHelper.updateGenItemAsynchronously(uni, null, this, mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_merge_save));
+        	 (new AsyncTask<Void, Void, String>() {
+         		
+     			@Override
+                 protected String doInBackground(Void... params) {
+     				String result = "";
+     				try {
+     					UNEntryMergeRecommendation entry = (UNEntryMergeRecommendation)uni.getUnEntry();
+     					Model.getInstance().mergeItems(mrContext, TYPES.PERSON, Arrays.asList(entry.getSourceId(), entry.getTargetId()));
+     					Model.getInstance().removeItem(mrContext, uni.getGuid(), uni.getMType());
+     					result = "Successfully merged the persons!";
+     				} catch (Exception e) {
+     					result= "Could not merge persons!";
+     				}
+                    return result;
+                 }
+
+     			@Override
+                 protected void onPostExecute(String result) {
+     				Toast.makeText(DimeClient.getAppContext(), result, Toast.LENGTH_LONG).show();
+     				AndroidModelHelper.sendEvaluationDataAsynchronously(null, mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_merge_save));
+     				ListActivity_Merge_Dialog.this.finish();
+                 }
+                 
+             }).execute();
              break;
+             
+         case R.merge.button_decline:
+        	 entry.setStatus(UNEntryMergeRecommendation.STATUS_TYPES[2]);
+        	 uni.setUnEntry(entry);
+        	 (new AsyncTask<Void, Void, String>() {
+         		
+     			@Override
+                 protected String doInBackground(Void... params) {
+     				String result = "";
+     				try {
+     					Model.getInstance().updateItem(mrContext, uni);
+     					Model.getInstance().removeItem(mrContext, uni.getGuid(), uni.getMType());
+     					result = "Merge declined successfully!";
+     				} catch (Exception e) {
+     					result= "Could not decline merge!";
+     				}
+                     return result;
+                 }
+
+     			@Override
+                protected void onPostExecute(String result) {
+     				Toast.makeText(DimeClient.getAppContext(), result, Toast.LENGTH_LONG).show();
+     				AndroidModelHelper.sendEvaluationDataAsynchronously(null, mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_merge_save));
+     				ListActivity_Merge_Dialog.this.finish();
+                }
+                 
+             }).execute();
+        	 break;
 
          case R.merge.button_cancel: 
         	 AndroidModelHelper.sendEvaluationDataAsynchronously(new ArrayList<GenItem>(), mrContext, getResources().getString(R.string.self_evaluation_tool_dialog_canceled));

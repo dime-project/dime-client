@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
@@ -35,7 +34,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
-import android.text.TextUtils.TruncateAt;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -518,37 +516,6 @@ public class AndroidModelHelper {
             }
             
         }).execute();
-	}
-	
-	public static void loadProfilesOfPersonAsynchronously(final Context context, final PersonItem person, final TextView attribute1) {
-		(new AsyncTask<Void, Void, List<ProfileItem>>() {	
-			@Override
-			protected List<ProfileItem> doInBackground(Void... params) {
-				return ModelHelper.getAllValidProfilesForSharing(DimeClient.getMRC(person.getGuid(), new SilentLoadingViewHandler()));
-			}
-
-			@Override
-			protected void onPostExecute(List<ProfileItem> result) {
-				if(result == null || result.size() == 0) {
-					attribute1.setVisibility(View.VISIBLE);
-					attribute1.setText("no profiles available!");
-				} else if (result.size() == 1){
-					attribute1.setVisibility(View.GONE);
-				} else {
-					attribute1.setVisibility(View.VISIBLE);
-					String defaultProfile = "Default Profile: ";
-					for (ProfileItem profileItem : result) {
-						if(person.getDefaultProfileGuid().equals(profileItem.getGuid())) {
-							defaultProfile += profileItem.getName();
-						}
-					}
-					attribute1.setText(defaultProfile);
-					attribute1.setSingleLine(true);
-					attribute1.setEllipsize(TruncateAt.END);
-				}
-			}
-
-		}).execute();
 	}
 	
 	@SuppressWarnings("unchecked")
