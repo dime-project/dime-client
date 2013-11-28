@@ -171,7 +171,7 @@
     <string-array name="known_dime_servers">
         <item>dime.hci.iao.fraunhofer.de:8443</item>
         <item>dimebcntrial.bdigital.org:8443</item>
-        <item>dime.teamlife.it:8080</item>
+        <item>dime.teamlife.it:443</item>
         <item>141.99.159.223:8443</item>
         <item>vmuscs05.deri.ie:8443</item>
         <item>test.dime.cas.de:80</item>
